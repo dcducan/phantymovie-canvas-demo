@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PhanthyMovie 项目列表</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="page-shell">
+      <div class="ambient ambient-a"></div>
+      <div class="ambient ambient-b"></div>
+      <div class="ambient ambient-c"></div>
+
+      <header class="topbar">
+        <div class="brand">
+          <img
+            class="brand-icon"
+            src="https://www.figma.com/api/mcp/asset/85d253dc-744c-49e2-a48f-9b1b0bf61e72"
+            alt="PhanthyMovie 标志"
+          />
+          <img
+            class="brand-wordmark"
+            src="https://www.figma.com/api/mcp/asset/44c3ba8b-add9-470e-9abb-90c59e8b6cdc"
+            alt="PhanthyMovie"
+          />
+        </div>
+
+        <div class="topbar-actions">
+          <button class="link-button" type="button">充值中心</button>
+          <button class="credit-button" type="button">
+            <img src="https://www.figma.com/api/mcp/asset/66b4687b-d372-4a46-9cff-fc9892c72eef" alt="" />
+            <span>2000</span>
+          </button>
+          <button class="icon-button dimmed" type="button" id="notice-trigger" aria-label="提醒">
+            <img src="https://www.figma.com/api/mcp/asset/9f5af5e5-163d-4174-b97e-7e7e84eff29f" alt="" />
+          </button>
+          <button class="avatar-button" type="button" id="avatar-trigger" aria-label="用户头像">
+            <img src="https://www.figma.com/api/mcp/asset/70ec9efd-9a83-4dce-a0ce-4324da5a489c" alt="" />
+          </button>
+        </div>
+      </header>
+
+      <div class="floating-layer">
+        <div class="avatar-panel" id="avatar-panel">
+          <div class="avatar-notice">
+            <p>您尚未设置密码，建议立即设置以保障账户安全</p>
+            <div class="avatar-notice-actions">
+              <button type="button" class="accent-link">立即设置</button>
+              <button type="button" class="muted-link">稍后</button>
+            </div>
+          </div>
+
+          <div class="avatar-profile">
+            <img src="https://www.figma.com/api/mcp/asset/448d7763-7347-4cf0-8709-5656a2128ff6" alt="Sunny" />
+            <div>
+              <strong>Sunny</strong>
+              <span>138****0000</span>
+            </div>
+          </div>
+
+          <div class="avatar-stat-card">
+            <div>
+              <strong>专业版</strong>
+              <span>578天</span>
+            </div>
+            <button type="button" class="accent-link">管理</button>
+          </div>
+
+          <div class="avatar-balance-card">
+            <div>
+              <span>团队星钻余额</span>
+              <strong>193,000</strong>
+            </div>
+            <div>
+              <span>可分配</span>
+              <strong>775,000</strong>
+            </div>
+          </div>
+
+          <div class="avatar-links">
+            <button type="button">账号设置</button>
+            <button type="button">交易记录</button>
+            <button type="button">我的消耗明细</button>
+            <button type="button">AI水印设置</button>
+          </div>
+
+          <div class="avatar-logout">
+            <button type="button">退出登录</button>
+          </div>
+        </div>
+
+        <div class="notice-panel" id="notice-panel">
+          <div class="notice-panel-header">
+            <strong>通知中心</strong>
+            <span>3 条未读</span>
+          </div>
+          <div class="notice-list">
+            <div class="notice-item">
+              <strong>创作任务完成</strong>
+              <p>《霓虹魅影：东京》第一批画面已生成完成。</p>
+              <span>刚刚</span>
+            </div>
+            <div class="notice-item">
+              <strong>团队额度提醒</strong>
+              <p>团队星钻已接近阈值，建议前往管理页查看。</p>
+              <span>10 分钟前</span>
+            </div>
+            <div class="notice-item">
+              <strong>系统公告</strong>
+              <p>本周创作手册新增了画面切分与擦除教程。</p>
+              <span>今天 09:20</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section class="content" id="list-view">
+        <aside class="canvas-list-sidebar" id="canvas-list-sidebar">
+          <button class="sidebar-back" type="button" id="sidebar-back-trigger">返回项目列表</button>
+          <div class="sidebar-project-card">
+            <span class="sidebar-project-label">当前项目</span>
+            <strong id="sidebar-project-name">测试项目</strong>
+            <div class="sidebar-tags">
+              <span class="sidebar-tag" id="sidebar-ratio-tag">16:9 横屏</span>
+              <span class="sidebar-tag" id="sidebar-style-tag">电影感</span>
+            </div>
+          </div>
+          <nav class="sidebar-nav">
+            <button class="sidebar-nav-item active" type="button">画布列表</button>
+            <button class="sidebar-nav-item" type="button">资产库</button>
+            <button class="sidebar-nav-item" type="button">团队管理</button>
+          </nav>
+        </aside>
+
+        <div class="content-main" id="content-main">
+        <div class="heading-row">
+          <div class="heading-copy">
+            <button class="back-link" type="button" id="back-trigger">返回项目列表</button>
+            <h1 id="page-title">我的项目</h1>
+            <p id="page-subtitle">管理您的 AI影视创作</p>
+          </div>
+
+          <div class="toolbar">
+            <label class="pill input-pill" aria-label="搜索">
+              <img src="https://www.figma.com/api/mcp/asset/d8ceee3c-a479-4538-826a-1978b29fa918" alt="" />
+              <input id="search-input" type="text" placeholder="搜索" />
+            </label>
+
+            <div class="batch-cluster">
+              <button class="pill action-pill" type="button" id="batch-trigger">
+                <img src="https://www.figma.com/api/mcp/asset/202cddd3-13ee-4678-a736-2121cc8184aa" alt="" />
+                <span>批量操作</span>
+              </button>
+            </div>
+
+            <div class="menu-anchor sort-anchor">
+              <button class="pill action-pill sort-pill" type="button" id="sort-trigger" aria-expanded="false">
+                <img src="https://www.figma.com/api/mcp/asset/431c19ee-33cd-4202-bca0-ec9bee8fd203" alt="" />
+                <span id="sort-label">时间倒序</span>
+                <img class="arrow-icon" src="https://www.figma.com/api/mcp/asset/2be26fc8-2666-4917-81f6-35769c52efe1" alt="" />
+              </button>
+
+              <div class="dropdown-menu sort-menu" id="sort-menu">
+                <button class="menu-item" type="button" data-sort="date-asc">时间正序</button>
+                <button class="menu-item selected" type="button" data-sort="date-desc">
+                  <span>时间倒序</span>
+                  <img src="https://www.figma.com/api/mcp/asset/2d8b6f3e-22a6-4e6b-aee4-8f080c92debd" alt="" />
+                </button>
+                <button class="menu-item" type="button" data-sort="name-asc">名称正序</button>
+                <button class="menu-item" type="button" data-sort="name-desc">名称倒序</button>
+              </div>
+            </div>
+
+            <button class="pill create-pill" type="button" id="create-trigger">
+              <img src="https://www.figma.com/api/mcp/asset/6d8d0f2c-b50a-405a-9541-b8d376db1bb6" alt="" />
+              <span id="create-label">创建新项目</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="batch-bottom-tools" id="batch-bottom-tools">
+          <button class="mini-pill" type="button" id="select-all-trigger">全选</button>
+          <button class="mini-pill danger-pill" type="button" id="batch-delete-trigger">删除所选</button>
+        </div>
+
+        <div class="project-grid" id="project-grid"></div>
+        </div>
+      </section>
+
+      <section class="canvas-detail-view" id="canvas-detail-view">
+        <div class="canvas-stage" id="canvas-stage"></div>
+      </section>
+
+      <input id="cover-upload-input" type="file" accept="image/*" hidden />
+      <input id="node-image-upload-input" type="file" accept="image/*" hidden />
+
+      <div class="modal-backdrop" id="create-modal">
+        <div class="modal-shell create-modal-shell" role="dialog" aria-modal="true" aria-labelledby="create-title">
+          <div class="modal-header">
+            <h2 id="create-title">创建新项目</h2>
+            <button class="icon-close" type="button" data-close-modal="create-modal" aria-label="关闭">
+              <img src="https://www.figma.com/api/mcp/asset/ba616df8-84a6-44ae-9ea2-83c5c3dcba9f" alt="" />
+            </button>
+          </div>
+
+          <div class="modal-body create-modal-body">
+            <section class="form-section">
+              <div class="section-label">
+                <img src="https://www.figma.com/api/mcp/asset/6c91d7ad-b80e-480e-b0a1-45d830474f61" alt="" />
+                <span id="name-label">项目名称</span>
+              </div>
+              <input class="dark-input" id="project-name-input" type="text" placeholder="输入项目名称..." />
+            </section>
+
+            <section class="form-section" id="ratio-section">
+              <div class="section-label">
+                <img src="https://www.figma.com/api/mcp/asset/3746125c-9b57-4e0a-bb9b-349019340a1f" alt="" />
+                <span>画面比例</span>
+              </div>
+              <div class="ratio-grid">
+                <button class="ratio-card active" type="button" data-ratio="16:9">
+                  <span class="ratio-icon ratio-wide"></span>
+                  <span>16:9 横屏</span>
+                </button>
+                <button class="ratio-card" type="button" data-ratio="9:16">
+                  <span class="ratio-icon ratio-portrait"></span>
+                  <span>9:16 竖屏</span>
+                </button>
+                <button class="ratio-card" type="button" data-ratio="1:1">
+                  <span class="ratio-icon ratio-square"></span>
+                  <span>1:1 正方形</span>
+                </button>
+              </div>
+            </section>
+
+            <section class="form-section" id="style-section">
+              <div class="section-label">
+                <img src="https://www.figma.com/api/mcp/asset/76b4e4cb-9eef-491d-87b3-04194990b739" alt="" />
+                <span>风格</span>
+              </div>
+              <div class="style-grid" id="style-grid"></div>
+            </section>
+          </div>
+
+          <div class="modal-footer">
+            <button class="pill ghost-footer-pill" type="button" data-close-modal="create-modal" id="cancel-create-trigger">取消创建</button>
+            <button class="pill confirm-footer-pill" type="button" id="confirm-create-trigger">创建项目</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-backdrop" id="delete-modal">
+        <div class="modal-shell delete-modal-shell" role="dialog" aria-modal="true" aria-labelledby="delete-title">
+          <div class="modal-header">
+            <h2 id="delete-title">确认删除</h2>
+            <button class="icon-close" type="button" data-close-modal="delete-modal" aria-label="关闭">
+              <img src="https://www.figma.com/api/mcp/asset/ba616df8-84a6-44ae-9ea2-83c5c3dcba9f" alt="" />
+            </button>
+          </div>
+
+          <div class="modal-body delete-modal-body">
+            <p id="delete-message">项目将被永久删除且无法找回，是否确认删除？</p>
+          </div>
+
+          <div class="modal-footer">
+            <button class="pill ghost-footer-pill compact-footer-pill" type="button" data-close-modal="delete-modal">
+              取消
+            </button>
+            <button class="pill confirm-footer-pill compact-footer-pill" type="button" id="confirm-delete-trigger">
+              确认
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
