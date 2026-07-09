@@ -2247,6 +2247,19 @@ input::placeholder {
   object-fit: contain;
 }
 
+.canvas-toolbar-inline-icon {
+  width: 16px;
+  height: 16px;
+  display: grid;
+  place-items: center;
+}
+
+.canvas-toolbar-inline-icon svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
 .canvas-toolbar-icon {
   width: 16px;
   height: 16px;
@@ -2275,6 +2288,102 @@ input::placeholder {
   transform: translate(-0.5px, -0.5px);
 }
 
+.canvas-action-modal {
+  position: absolute;
+  inset: 0;
+  z-index: 34;
+}
+
+.canvas-action-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(6, 7, 8, 0.56);
+}
+
+.canvas-action-modal-panel {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 720px;
+  min-height: 304px;
+  transform: translate(-50%, -50%);
+  padding: 0;
+  overflow: hidden;
+  border-radius: 18px;
+  background: #1f2225;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 28px 48px rgba(0, 0, 0, 0.34);
+}
+
+.canvas-action-modal-header {
+  height: 92px;
+  padding: 0 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.96);
+}
+
+.canvas-action-modal-header strong {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.canvas-action-modal-close {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.42);
+  font-size: 34px;
+  line-height: 1;
+}
+
+.canvas-action-modal-body {
+  padding: 32px 28px 0;
+}
+
+.canvas-action-modal-body p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 18px;
+  line-height: 1.5;
+}
+
+.canvas-action-modal-footer {
+  position: absolute;
+  right: 30px;
+  bottom: 30px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.canvas-action-modal-button {
+  min-width: 116px;
+  height: 56px;
+  padding: 0 24px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.canvas-action-modal-button.is-ghost {
+  background: rgba(255, 255, 255, 0.02);
+  border-color: rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.94);
+}
+
+.canvas-action-modal-button.is-primary {
+  background: #bdeeff;
+  color: #0f1418;
+}
+
 .canvas-node-titlebar {
   margin-left: 105px;
   margin-bottom: 13px;
@@ -2297,10 +2406,18 @@ input::placeholder {
   gap: 8px;
 }
 
-.canvas-node-title-meta img {
+.canvas-node-title-icon {
   width: 16px;
   height: 16px;
-  object-fit: contain;
+  display: grid;
+  place-items: center;
+  color: rgba(255, 255, 255, 0.74);
+}
+
+.canvas-node-title-icon svg {
+  width: 16px;
+  height: 16px;
+  display: block;
 }
 
 .canvas-node-image-frame {
@@ -2370,6 +2487,8 @@ input::placeholder {
 }
 
 .canvas-node-prompt-card {
+  position: relative;
+  overflow: visible;
   width: 650px;
   height: 128px;
   margin-top: 24px;
@@ -2442,6 +2561,160 @@ input::placeholder {
   place-items: center;
   border-radius: 94px;
   background: rgba(255, 255, 255, 0.9);
+}
+
+.canvas-node-camera-button {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.canvas-node-camera-button svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+.canvas-node-camera-button.is-active {
+  color: var(--accent);
+}
+
+.canvas-camera-popover {
+  position: absolute;
+  right: 94px;
+  top: calc(100% + 14px);
+  z-index: 30;
+  width: 620px;
+  padding: 16px 16px 74px;
+  border-radius: 22px;
+  background: #232426;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 22px 44px rgba(0, 0, 0, 0.4);
+}
+
+.canvas-camera-popover::before {
+  content: "";
+  position: absolute;
+  right: 38px;
+  top: -8px;
+  width: 14px;
+  height: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  background: #232426;
+  transform: rotate(45deg);
+}
+
+.canvas-camera-popover-header {
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: rgba(255, 255, 255, 0.94);
+}
+
+.canvas-camera-popover-header strong {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.canvas-camera-close {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 22px;
+}
+
+.canvas-camera-wheel-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.canvas-camera-wheel-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.canvas-camera-wheel-block > span {
+  padding-left: 4px;
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 13px;
+}
+
+.canvas-camera-select {
+  width: 100%;
+  height: 42px;
+  padding: 0 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 13px;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, rgba(255, 255, 255, 0.68) 50%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.68) 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) calc(50% - 2px),
+    calc(100% - 12px) calc(50% - 2px);
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+}
+
+.canvas-camera-select:focus {
+  border-color: color-mix(in srgb, var(--accent) 58%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 28%, transparent);
+}
+
+.canvas-camera-corner-toggle {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 13px;
+}
+
+.canvas-camera-toggle {
+  width: 50px;
+  height: 28px;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.canvas-camera-toggle span {
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: #fff;
+  transition: transform 160ms ease;
+}
+
+.canvas-camera-toggle.is-enabled {
+  background: color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+.canvas-camera-toggle.is-enabled span {
+  transform: translateX(22px);
 }
 
 .canvas-panorama-node {

@@ -33,7 +33,6 @@ const CANVAS_NODE_AVATAR_BG = "https://www.figma.com/api/mcp/asset/008045bc-f2d1
 const CANVAS_NODE_AVATAR_IMAGE = "https://www.figma.com/api/mcp/asset/099d98f3-45d9-4f9b-b402-a79698456e90";
 const CANVAS_NODE_PREVIEW = "https://www.figma.com/api/mcp/asset/f2d35a46-0209-4545-8e65-518ffcff7cab";
 const CANVAS_NODE_BACK = "https://www.figma.com/api/mcp/asset/abbcc5fd-0c62-4734-91d3-5e02eff7ce18";
-const CANVAS_NODE_TOP_IMAGE = "https://www.figma.com/api/mcp/asset/02b92bf5-a150-4388-b2c1-ca9139a84391";
 const CANVAS_NODE_SIDE_ADD = "https://www.figma.com/api/mcp/asset/f6010321-fc6d-4602-8d63-25440c9b8445";
 const CANVAS_NODE_BRAIN = "https://www.figma.com/api/mcp/asset/5f305e90-97f2-4254-abec-3d23a13d0d1b";
 const CANVAS_NODE_COUNT = "https://www.figma.com/api/mcp/asset/90c98c30-75de-4f1f-aa72-783442fa8f50";
@@ -91,7 +90,7 @@ const icon = {
   grid3:
     '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 3h4.167v4.167H3V3Zm5.417 0h4.166v4.167H8.417V3Zm5.416 0H18v4.167h-4.167V3ZM3 8.417h4.167v4.166H3V8.417Zm5.417 0h4.166v4.166H8.417V8.417Zm5.416 0H18v4.166h-4.167V8.417ZM3 13.833h4.167V18H3v-4.167Zm5.417 0h4.166V18H8.417v-4.167Zm5.416 0H18V18h-4.167v-4.167Z" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/></svg>',
   refresh:
-    '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M16.617 8.287A6.999 6.999 0 1 0 17 10m0 0V5.5m0 4.5h-4.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="m10.15 3.4.62 1.72a1.2 1.2 0 0 0 .71.72l1.72.62-1.72.62a1.2 1.2 0 0 0-.71.71l-.62 1.72-.62-1.72a1.2 1.2 0 0 0-.71-.71l-1.72-.62 1.72-.62a1.2 1.2 0 0 0 .71-.72l.62-1.72ZM5.26 10.82l.44 1.22a.85.85 0 0 0 .5.5l1.22.44-1.22.44a.85.85 0 0 0-.5.5l-.44 1.22-.44-1.22a.85.85 0 0 0-.5-.5l-1.22-.44 1.22-.44a.85.85 0 0 0 .5-.5l.44-1.22ZM13.8 10.2l2 2m-1.06-4.1 1.72.62m-9.4 7.34 5.8-5.8" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   guides:
     '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 3v14M10 3v14M14 3v14M3 6h14M3 10h14M3 14h14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
   expand:
@@ -165,6 +164,22 @@ const styleSeed = [
 const styleNameMap = Object.fromEntries(styleSeed.map((style) => [style.id, style.name]));
 const NAV_STATE_KEY = "phanty-movie-nav-state";
 const PROJECTS_STATE_KEY = "phanty-movie-projects-state";
+const CAMERA_OPTIONS = [
+  "ARRI Alexa Mini",
+  "ARRI Alexa 65",
+  "ARRI Alexa 35",
+  "ARRI Alexa Classic",
+  "Sony Venice",
+  "RED V-Raptor",
+  "Canon C500",
+  "Sony FX6",
+  "Sony FX",
+  "IMAX 15/70 film camera",
+];
+const LENS_OPTIONS = ["Anamorphic Lens", "Spherical Lens", "Vintage Lens", "Macro Lens", "Cooke lens"];
+const FOCAL_LENGTH_OPTIONS = ["8mm", "14mm", "24mm", "35mm", "50mm", "75mm", "125mm"];
+const APERTURE_OPTIONS = ["f/1.4", "f/4", "f/11"];
+const WASH_IMAGE_COST = 30;
 
 const createImageNode = ({
   id,
@@ -176,6 +191,7 @@ const createImageNode = ({
   type = "image",
   panoramaSource = null,
   panoramaOffset = null,
+  cameraControl = null,
 } = {}) => ({
   id: id || `n${Date.now()}${Math.floor(Math.random() * 1000)}`,
   type,
@@ -186,6 +202,13 @@ const createImageNode = ({
   prompt: prompt || DEFAULT_NODE_PROMPT,
   panoramaSource,
   panoramaOffset,
+  cameraControl: {
+    enabled: cameraControl?.enabled || false,
+    camera: cameraControl?.camera || "Sony Venice",
+    lens: cameraControl?.lens || "Anamorphic Lens",
+    focalLength: cameraControl?.focalLength || "35mm",
+    aperture: cameraControl?.aperture || "f/1.4",
+  },
   topTags: ["全景", "多角度", "打光", "九宫格", "擦除", "宫格切分"],
   badge: "",
   model: "Gemini 3.1 Flash Lite",
@@ -324,6 +347,9 @@ const state = {
   avatarOpen: false,
   noticeOpen: false,
   fullscreenPanoramaId: null,
+  cameraControlNodeId: null,
+  cameraControlDraft: null,
+  washConfirmNodeId: null,
 };
 
 const canvasRuntime = {
@@ -621,6 +647,10 @@ const renderCanvasDetail = () => {
       </div>
     </div>
   `;
+  const renderSelectOptions = (items, value) =>
+    items
+      .map((item) => `<option value="${escapeHtml(item)}"${item === value ? " selected" : ""}>${escapeHtml(item)}</option>`)
+      .join("");
   const renderPanoramaGuides = (enabled) =>
     enabled
       ? `
@@ -676,7 +706,7 @@ const renderCanvasDetail = () => {
             (shot) => `
               <div class="canvas-shot-card">
                 <div class="canvas-shot-card-title">
-                  <img src="${CANVAS_NODE_TOP_IMAGE}" alt="" />
+                  <span class="canvas-node-title-icon" aria-hidden="true">${icon.image}</span>
                   <span>${escapeHtml(shot.name)}</span>
                 </div>
                 ${renderPanoramaShotFrame(shot.source, shot.panoramaOffset, "canvas-shot-card-frame")}
@@ -710,7 +740,7 @@ const renderCanvasDetail = () => {
 
             <div class="canvas-panorama-head" data-node-drag="true">
               <div class="canvas-node-title-meta">
-                <img src="${CANVAS_NODE_TOP_IMAGE}" alt="" />
+                <span class="canvas-node-title-icon" aria-hidden="true">${icon.image}</span>
                 <span>${escapeHtml(node.name)}</span>
               </div>
               <span class="canvas-node-resolution">${escapeHtml(node.resolution)}</span>
@@ -785,6 +815,7 @@ const renderCanvasDetail = () => {
               <div class="canvas-toolbar-chip"><img src="${CANVAS_NODE_TOOLBAR_LIGHT}" alt="" /><span>打光</span></div>
               <div class="canvas-toolbar-chip"><img src="${CANVAS_NODE_TOOLBAR_GRID}" alt="" /><span>九宫格</span></div>
               <div class="canvas-toolbar-chip"><span class="canvas-mask-icon canvas-erase-icon"><img src="${CANVAS_NODE_TOOLBAR_ERASE_MASK}" alt="" /><img src="${CANVAS_NODE_TOOLBAR_ERASE}" alt="" /></span><span>擦除</span></div>
+              <button class="canvas-toolbar-chip" type="button" data-toolbar-action="wash-image" data-node-id="${node.id}"><span class="canvas-toolbar-inline-icon">${icon.refresh}</span><span>洗图</span></button>
               <div class="canvas-toolbar-chip"><img src="${CANVAS_NODE_TOOLBAR_SLICE}" alt="" /><span>宫格切分</span></div>
               <button class="canvas-toolbar-icon" type="button"><img src="${CANVAS_NODE_TOOLBAR_MORE}" alt="" /></button>
               <button class="canvas-toolbar-icon" type="button"><img src="${CANVAS_NODE_TOOLBAR_UPLOAD}" alt="" /></button>
@@ -796,7 +827,7 @@ const renderCanvasDetail = () => {
 
           <div class="canvas-node-titlebar" data-node-drag="true">
             <div class="canvas-node-title-meta">
-              <img src="${CANVAS_NODE_TOP_IMAGE}" alt="" />
+                <span class="canvas-node-title-icon" aria-hidden="true">${icon.image}</span>
               <span>${escapeHtml(node.name)}</span>
             </div>
             <span class="canvas-node-resolution">${escapeHtml(node.resolution)}</span>
@@ -827,10 +858,55 @@ const renderCanvasDetail = () => {
                 <div class="canvas-node-meta-chip"><img src="${CANVAS_NODE_COUNT}" alt="" /><span>${escapeHtml(node.outputCount)}</span></div>
               </div>
               <div class="canvas-node-footer-right">
+                <button class="canvas-node-camera-button${node.cameraControl?.enabled ? " is-active" : ""}" type="button" data-node-action="open-camera-control" data-node-id="${node.id}" aria-label="摄像机控制">${icon.camera}</button>
                 <div class="canvas-node-like-chip"><img src="${CANVAS_NODE_LIKE}" alt="" /><span>${escapeHtml(node.likes)}</span></div>
                 <button class="canvas-node-send-button" type="button" data-node-action="upload-image" data-node-id="${node.id}"><img src="${CANVAS_NODE_SEND}" alt="" /></button>
               </div>
             </div>
+            ${
+              state.cameraControlNodeId === node.id && state.cameraControlDraft
+                ? `
+                  <div class="canvas-camera-popover">
+                    <div class="canvas-camera-popover-header">
+                      <strong>摄像机</strong>
+                      <button class="canvas-camera-close" type="button" data-canvas-action="close-camera-control" aria-label="关闭摄像机设置">✕</button>
+                    </div>
+                    <div class="canvas-camera-wheel-grid">
+                      <section class="canvas-camera-wheel-block">
+                        <span>相机</span>
+                        <select class="canvas-camera-select" data-camera-field="camera">
+                          ${renderSelectOptions(CAMERA_OPTIONS, state.cameraControlDraft.camera)}
+                        </select>
+                      </section>
+                      <section class="canvas-camera-wheel-block">
+                        <span>镜头</span>
+                        <select class="canvas-camera-select" data-camera-field="lens">
+                          ${renderSelectOptions(LENS_OPTIONS, state.cameraControlDraft.lens)}
+                        </select>
+                      </section>
+                      <section class="canvas-camera-wheel-block">
+                        <span>焦距</span>
+                        <select class="canvas-camera-select" data-camera-field="focalLength">
+                          ${renderSelectOptions(FOCAL_LENGTH_OPTIONS, state.cameraControlDraft.focalLength)}
+                        </select>
+                      </section>
+                      <section class="canvas-camera-wheel-block">
+                        <span>光圈</span>
+                        <select class="canvas-camera-select" data-camera-field="aperture">
+                          ${renderSelectOptions(APERTURE_OPTIONS, state.cameraControlDraft.aperture)}
+                        </select>
+                      </section>
+                    </div>
+                    <div class="canvas-camera-corner-toggle">
+                      <span>摄像机控制</span>
+                      <button class="canvas-camera-toggle${state.cameraControlDraft.enabled ? " is-enabled" : ""}" type="button" data-canvas-action="toggle-camera-control-enabled" aria-label="切换摄像机控制">
+                        <span></span>
+                      </button>
+                    </div>
+                  </div>
+                `
+                : ""
+            }
           </div>
         </article>
       `;
@@ -855,6 +931,27 @@ const renderCanvasDetail = () => {
             <img src="${escapeHtml(fullscreenNode.image)}" alt="" aria-hidden="true" />
           </div>
           ${renderPanoramaGuides(fullscreenNode.showGuides)}
+        </div>
+      </div>
+    `
+    : "";
+  const washConfirmNode = state.washConfirmNodeId ? findNodeById(state.washConfirmNodeId) : null;
+  const washConfirmMarkup = washConfirmNode
+    ? `
+      <div class="canvas-action-modal">
+        <button class="canvas-action-modal-backdrop" type="button" data-canvas-action="close-wash-confirm" aria-label="关闭洗图弹窗"></button>
+        <div class="canvas-action-modal-panel" role="dialog" aria-modal="true" aria-labelledby="wash-image-title">
+          <div class="canvas-action-modal-header">
+            <strong id="wash-image-title">确认洗图</strong>
+            <button class="canvas-action-modal-close" type="button" data-canvas-action="close-wash-confirm" aria-label="关闭洗图弹窗">✕</button>
+          </div>
+          <div class="canvas-action-modal-body">
+            <p>洗图动作会扣除${WASH_IMAGE_COST}星钻</p>
+          </div>
+          <div class="canvas-action-modal-footer">
+            <button class="canvas-action-modal-button is-ghost" type="button" data-canvas-action="close-wash-confirm">取消</button>
+            <button class="canvas-action-modal-button is-primary" type="button" data-canvas-action="confirm-wash-image">确认</button>
+          </div>
         </div>
       </div>
     `
@@ -902,7 +999,7 @@ const renderCanvasDetail = () => {
       <div class="canvas-page-header">
         <button class="canvas-page-crumb" type="button" data-canvas-action="back-to-canvases">
           <span class="canvas-page-back"><img src="${headerBackIcon}" alt="" /></span>
-          <span>${escapeHtml(project.name)}</span>
+          <span>${escapeHtml(canvas.name)}</span>
         </button>
 
         <div class="canvas-page-header-right">
@@ -920,6 +1017,7 @@ const renderCanvasDetail = () => {
           ${nodesMarkup}
         </div>
         ${fullscreenMarkup}
+        ${washConfirmMarkup}
 
         ${canvas.nodes.length ? "" : `
           <div class="canvas-empty-state">
@@ -990,6 +1088,7 @@ const findNodeById = (nodeId) => currentCanvasNodes().find((node) => node.id ===
 const closeCanvasPopups = () => {
   state.canvasAddPanelOpen = false;
   state.canvasContextMenu = null;
+  state.washConfirmNodeId = null;
 };
 
 const openCanvasAddPanel = () => {
@@ -1038,12 +1137,43 @@ const centerViewportOnNode = (nodeId) => {
   syncCanvasTransform();
 };
 
+const openCameraControlPanel = (nodeId) => {
+  const node = findNodeById(nodeId);
+  if (!node || node.type !== "image" || node.panoramaSource) return;
+  state.cameraControlNodeId = nodeId;
+  state.cameraControlDraft = structuredClone(node.cameraControl);
+  renderCanvasDetail();
+};
+
+const closeCameraControlPanel = () => {
+  state.cameraControlNodeId = null;
+  state.cameraControlDraft = null;
+  renderCanvasDetail();
+};
+
+const syncCameraControlDraft = (field, value) => {
+  const node = findNodeById(state.cameraControlNodeId);
+  if (!node || !state.cameraControlDraft) return;
+  state.cameraControlDraft[field] = value;
+  node.cameraControl = structuredClone(state.cameraControlDraft);
+  saveProjectsState();
+  renderCanvasDetail();
+};
+
 const getPanoramaBaseName = (nodeId) => {
   const canvas = currentCanvas();
   if (!canvas) return "720全景图1";
   const panoramaNodes = canvas.nodes.filter((node) => node.type === "panorama");
   const index = Math.max(0, panoramaNodes.findIndex((node) => node.id === nodeId)) + 1;
   return `720全景图${index || 1}`;
+};
+
+const getImageBaseName = (nodeId) => {
+  const canvas = currentCanvas();
+  if (!canvas) return "图片节点1";
+  const imageNodes = canvas.nodes.filter((node) => node.type === "image");
+  const index = Math.max(0, imageNodes.findIndex((node) => node.id === nodeId)) + 1;
+  return `图片节点${index || 1}`;
 };
 
 const getNextPanoramaOutputIndex = (baseName, matcher) => {
@@ -1203,6 +1333,40 @@ const openPanoramaFullscreen = (nodeId) => {
 const closePanoramaFullscreen = () => {
   if (!state.fullscreenPanoramaId) return;
   state.fullscreenPanoramaId = null;
+  renderCanvasDetail();
+};
+
+const openWashImageConfirm = (nodeId) => {
+  const node = findNodeById(nodeId);
+  if (!node || node.type !== "image") return;
+  state.washConfirmNodeId = nodeId;
+  renderCanvasDetail();
+};
+
+const createWashedImageNode = (nodeId) => {
+  const canvas = currentCanvas();
+  const sourceNode = findNodeById(nodeId);
+  if (!canvas || !sourceNode || sourceNode.type !== "image") return;
+  const baseName = getImageBaseName(nodeId);
+  const resultIndex = getNextPanoramaOutputIndex(baseName, (name) => name.startsWith(`${baseName}-洗图结果`));
+  const washedNode = createImageNode({
+    name: `${baseName}-洗图结果${resultIndex}`,
+    image: sourceNode.image,
+    prompt: `${sourceNode.prompt}\n\n洗图结果`,
+    cameraControl: sourceNode.cameraControl,
+    x: sourceNode.x + 720,
+    y: sourceNode.y + 36,
+  });
+  canvas.nodes.push(washedNode);
+  canvas.connections.push({
+    id: `link${Date.now()}${Math.floor(Math.random() * 1000)}`,
+    from: sourceNode.id,
+    to: washedNode.id,
+  });
+  canvas.selectedNodeId = washedNode.id;
+  state.washConfirmNodeId = null;
+  closeCanvasPopups();
+  saveProjectsState();
   renderCanvasDetail();
 };
 
@@ -1496,6 +1660,10 @@ const selectNode = (nodeId) => {
   if (!canvas) return;
   canvas.selectedNodeId = nodeId;
   state.canvasContextMenu = null;
+  if (state.cameraControlNodeId && state.cameraControlNodeId !== nodeId) {
+    state.cameraControlNodeId = null;
+    state.cameraControlDraft = null;
+  }
   renderCanvasDetail();
 };
 
@@ -1619,10 +1787,37 @@ canvasStage.addEventListener("click", (event) => {
       state.uploadNodeTarget = null;
       nodeImageUploadInput?.click();
     }
+    if (action === "close-camera-control") {
+      event.preventDefault();
+      event.stopPropagation();
+      closeCameraControlPanel();
+      return;
+    }
+    if (action === "toggle-camera-control-enabled") {
+      event.preventDefault();
+      event.stopPropagation();
+      if (state.cameraControlDraft) {
+        syncCameraControlDraft("enabled", !state.cameraControlDraft.enabled);
+      }
+      return;
+    }
     if (action === "close-fullscreen") {
       event.preventDefault();
       event.stopPropagation();
       closePanoramaFullscreen();
+      return;
+    }
+    if (action === "close-wash-confirm") {
+      event.preventDefault();
+      event.stopPropagation();
+      state.washConfirmNodeId = null;
+      renderCanvasDetail();
+      return;
+    }
+    if (action === "confirm-wash-image") {
+      event.preventDefault();
+      event.stopPropagation();
+      if (state.washConfirmNodeId) createWashedImageNode(state.washConfirmNodeId);
       return;
     }
     if (action === "reset-zoom") {
@@ -1652,11 +1847,20 @@ canvasStage.addEventListener("click", (event) => {
     return;
   }
 
+  const cameraPick = event.target.closest("[data-camera-pick]");
+  if (cameraPick) {
+    event.preventDefault();
+    event.stopPropagation();
+    syncCameraControlDraft(cameraPick.dataset.cameraPick, cameraPick.dataset.cameraValue);
+    return;
+  }
+
   const toolbarAction = event.target.closest("[data-toolbar-action]");
   if (toolbarAction) {
     const nodeId = toolbarAction.dataset.nodeId;
     const action = toolbarAction.dataset.toolbarAction;
     if (action === "panorama") createPanoramaNode(nodeId);
+    if (action === "wash-image") openWashImageConfirm(nodeId);
     if (action === "current-shot") createPanoramaCurrentShot(nodeId);
     if (action === "quad-shot") createPanoramaShotGroup(nodeId, "quad");
     if (action === "dodeca-shot") createPanoramaShotGroup(nodeId, "dodeca");
@@ -1676,6 +1880,7 @@ canvasStage.addEventListener("click", (event) => {
       state.uploadNodeTarget = nodeId;
       nodeImageUploadInput?.click();
     }
+    if (action === "open-camera-control") openCameraControlPanel(nodeId);
     if (action === "focus") centerViewportOnNode(nodeId);
     if (action === "add-near") createNodeNear(nodeId, nodeAction.dataset.nodeSide);
     return;
@@ -1708,6 +1913,13 @@ canvasStage.addEventListener("input", (event) => {
   saveProjectsState();
 });
 
+canvasStage.addEventListener("change", (event) => {
+  if (state.currentView !== "canvas-detail") return;
+  const field = event.target.dataset.cameraField;
+  if (!field || !state.cameraControlDraft) return;
+  syncCameraControlDraft(field, event.target.value);
+});
+
 canvasStage.addEventListener("dblclick", (event) => {
   if (state.currentView !== "canvas-detail") return;
   const board = event.target.closest("#canvas-board");
@@ -1729,6 +1941,14 @@ canvasStage.addEventListener(
 
 canvasStage.addEventListener("pointerdown", (event) => {
   if (state.currentView !== "canvas-detail") return;
+  if (event.target.closest(".canvas-camera-popover")) {
+    event.stopPropagation();
+    return;
+  }
+  if (event.target.closest(".canvas-action-modal-panel")) {
+    event.stopPropagation();
+    return;
+  }
   if (event.target.closest(".canvas-panorama-fullscreen")) {
     event.stopPropagation();
     return;
@@ -1921,6 +2141,11 @@ document.addEventListener("click", (event) => {
 document.addEventListener("keydown", (event) => {
   if (state.currentView !== "canvas-detail") return;
   if (event.key === "Escape") {
+    if (state.washConfirmNodeId) {
+      state.washConfirmNodeId = null;
+      renderCanvasDetail();
+      return;
+    }
     if (state.canvasAddPanelOpen || state.canvasContextMenu) {
       closeCanvasPopups();
       renderGrid();
