@@ -91,6 +91,8 @@ const icon = {
     '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 3h4.167v4.167H3V3Zm5.417 0h4.166v4.167H8.417V3Zm5.416 0H18v4.167h-4.167V3ZM3 8.417h4.167v4.166H3V8.417Zm5.417 0h4.166v4.166H8.417V8.417Zm5.416 0H18v4.166h-4.167V8.417ZM3 13.833h4.167V18H3v-4.167Zm5.417 0h4.166V18H8.417v-4.167Zm5.416 0H18V18h-4.167v-4.167Z" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/></svg>',
   refresh:
     '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="m10.15 3.4.62 1.72a1.2 1.2 0 0 0 .71.72l1.72.62-1.72.62a1.2 1.2 0 0 0-.71.71l-.62 1.72-.62-1.72a1.2 1.2 0 0 0-.71-.71l-1.72-.62 1.72-.62a1.2 1.2 0 0 0 .71-.72l.62-1.72ZM5.26 10.82l.44 1.22a.85.85 0 0 0 .5.5l1.22.44-1.22.44a.85.85 0 0 0-.5.5l-.44 1.22-.44-1.22a.85.85 0 0 0-.5-.5l-1.22-.44 1.22-.44a.85.85 0 0 0 .5-.5l.44-1.22ZM13.8 10.2l2 2m-1.06-4.1 1.72.62m-9.4 7.34 5.8-5.8" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  sparkles:
+    '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="m8.6 3.4.65 1.82a1 1 0 0 0 .59.59l1.82.65-1.82.65a1 1 0 0 0-.59.59L8.6 10.52l-.65-1.82a1 1 0 0 0-.59-.59l-1.82-.65 1.82-.65a1 1 0 0 0 .59-.59L8.6 3.4Zm6.08 6.2.42 1.18a.7.7 0 0 0 .42.42l1.18.42-1.18.42a.7.7 0 0 0-.42.42l-.42 1.18-.42-1.18a.7.7 0 0 0-.42-.42l-1.18-.42 1.18-.42a.7.7 0 0 0 .42-.42l.42-1.18ZM4.3 12.6h6.2m-6.2 3h8.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   guides:
     '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 3v14M10 3v14M14 3v14M3 6h14M3 10h14M3 14h14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
   expand:
@@ -180,6 +182,7 @@ const LENS_OPTIONS = ["Anamorphic Lens", "Spherical Lens", "Vintage Lens", "Macr
 const FOCAL_LENGTH_OPTIONS = ["8mm", "14mm", "24mm", "35mm", "50mm", "75mm", "125mm"];
 const APERTURE_OPTIONS = ["f/1.4", "f/4", "f/11"];
 const WASH_IMAGE_COST = 30;
+const REVERSE_PROMPT_COST = 30;
 
 const createImageNode = ({
   id,
@@ -267,6 +270,24 @@ const createShotGroupNode = ({
   shots,
 });
 
+const createTextNode = ({
+  id,
+  name,
+  text,
+  x = 0,
+  y = 0,
+  type = "text",
+} = {}) => ({
+  id: id || `t${Date.now()}${Math.floor(Math.random() * 1000)}`,
+  type,
+  name: name || "文本节点",
+  text:
+    text ||
+    "一位年轻角色站在柔和自然光下，镜头聚焦面部与上半身，肤质细腻，背景虚化，整体呈现电影感写实风格。",
+  x,
+  y,
+});
+
 const hydrateCanvasNode = (node, nodeIndex = 0) => {
   if (node?.type === "panorama") {
     return createPanoramaPlayerNode({
@@ -277,6 +298,13 @@ const hydrateCanvasNode = (node, nodeIndex = 0) => {
   }
   if (node?.type === "shot-group") {
     return createShotGroupNode({
+      ...node,
+      x: node.x ?? 140 + nodeIndex * 28,
+      y: node.y ?? 126 + nodeIndex * 24,
+    });
+  }
+  if (node?.type === "text") {
+    return createTextNode({
       ...node,
       x: node.x ?? 140 + nodeIndex * 28,
       y: node.y ?? 126 + nodeIndex * 24,
@@ -326,7 +354,7 @@ const saveProjectsState = () => {
 
 const state = {
   projects: loadProjectsState(),
-  currentView: "projects",
+  currentView: "home",
   currentProjectId: null,
   currentCanvasId: null,
   selectedIds: new Set(),
@@ -350,6 +378,8 @@ const state = {
   cameraControlNodeId: null,
   cameraControlDraft: null,
   washConfirmNodeId: null,
+  reversePromptConfirmNodeId: null,
+  projectModeTargetId: null,
 };
 
 const canvasRuntime = {
@@ -367,9 +397,12 @@ const canvasRuntime = {
 };
 
 const grid = document.getElementById("project-grid");
+const homeView = document.getElementById("home-view");
 const listView = document.getElementById("list-view");
 const detailView = document.getElementById("canvas-detail-view");
 const canvasStage = document.getElementById("canvas-stage");
+const topbarNav = document.querySelector(".topbar-nav");
+const homeProjectCount = document.getElementById("home-project-count");
 const sortMenu = document.getElementById("sort-menu");
 const sortTrigger = document.getElementById("sort-trigger");
 const sortLabel = document.getElementById("sort-label");
@@ -393,6 +426,7 @@ const noticeTrigger = document.getElementById("notice-trigger");
 const noticePanel = document.getElementById("notice-panel");
 const createModal = document.getElementById("create-modal");
 const deleteModal = document.getElementById("delete-modal");
+const projectModeModal = document.getElementById("project-mode-modal");
 const createTitle = document.getElementById("create-title");
 const createTrigger = document.getElementById("create-trigger");
 const confirmCreateTrigger = document.getElementById("confirm-create-trigger");
@@ -459,6 +493,12 @@ const routeFromState = () => {
   if (state.currentView === "canvases" && state.currentProjectId) {
     return `#/project/${state.currentProjectId}/canvases`;
   }
+  if (state.currentView === "projects") {
+    return "#/projects";
+  }
+  if (state.currentView === "home") {
+    return "#/home";
+  }
   return "#/projects";
 };
 
@@ -498,6 +538,20 @@ const restoreNavigationState = () => {
     }
   }
 
+  if (window.location.hash === "#/projects") {
+    state.currentView = "projects";
+    state.currentProjectId = null;
+    state.currentCanvasId = null;
+    return;
+  }
+
+  if (!window.location.hash || window.location.hash === "#/" || window.location.hash === "#/home") {
+    state.currentView = "home";
+    state.currentProjectId = null;
+    state.currentCanvasId = null;
+    return;
+  }
+
   try {
     const saved = JSON.parse(localStorage.getItem(NAV_STATE_KEY) || "null");
     if (saved?.currentView === "canvas-detail" && saved.currentProjectId && saved.currentCanvasId) {
@@ -515,12 +569,23 @@ const restoreNavigationState = () => {
       state.currentCanvasId = null;
       return;
     }
+    if (saved?.currentView === "projects") {
+      state.currentView = "projects";
+      state.currentProjectId = null;
+      state.currentCanvasId = null;
+      return;
+    }
+    if (saved?.currentView === "home") {
+      state.currentView = "home";
+      state.currentProjectId = null;
+      state.currentCanvasId = null;
+      return;
+    }
   } catch {}
 
-  const fallback = firstCanvasTarget();
-  state.currentView = fallback.canvasId ? "canvas-detail" : "projects";
-  state.currentProjectId = fallback.projectId;
-  state.currentCanvasId = fallback.canvasId;
+  state.currentView = "home";
+  state.currentProjectId = null;
+  state.currentCanvasId = null;
 };
 
 const renderStyleCards = () => {
@@ -538,6 +603,7 @@ const renderStyleCards = () => {
 };
 
 const syncHeader = () => {
+  const inHomeView = state.currentView === "home";
   const inCanvasView = state.currentView === "canvases";
   const inCanvasDetail = state.currentView === "canvas-detail";
   const project = currentProject();
@@ -545,16 +611,26 @@ const syncHeader = () => {
   pageTitle.textContent = inCanvasView ? `${project?.name || ""} · 画布列表` : "我的项目";
   pageSubtitle.textContent = inCanvasView ? "管理项目下的 AI画布创作" : "管理您的 AI影视创作";
   createLabel.textContent = inCanvasView ? "新建画布" : "创建新项目";
-  listView.classList.toggle("is-hidden", state.currentView === "canvas-detail");
+  homeView.classList.toggle("is-hidden", !inHomeView);
+  listView.classList.toggle("is-hidden", inHomeView || state.currentView === "canvas-detail");
   listView.classList.toggle("canvas-list-mode", state.currentView === "canvases");
   detailView.classList.toggle("is-open", state.currentView === "canvas-detail");
-  document.querySelector(".topbar")?.classList.toggle("is-hidden", inCanvasDetail);
+  document.querySelector(".topbar")?.classList.toggle("is-hidden", inCanvasView || inCanvasDetail);
   sidebar.classList.toggle("is-visible", state.currentView === "canvases");
   sidebarProjectName.textContent = project?.name || "测试项目";
   sidebarRatioTag.textContent = project?.ratio || "16:9 横屏";
   sidebarStyleTag.textContent = project?.style || "电影感";
   avatarPanel.classList.toggle("is-open", state.avatarOpen);
   noticePanel.classList.toggle("is-open", state.noticeOpen);
+  topbarNav?.querySelectorAll("[data-nav-target]").forEach((item) => {
+    const target = item.dataset.navTarget;
+    const active =
+      (target === "home" && inHomeView) ||
+      (target === "projects" && (state.currentView === "projects" || state.currentView === "canvases")) ||
+      (target !== "home" && target !== "projects" && false);
+    item.classList.toggle("active", active);
+  });
+  document.title = inHomeView ? "PhanthyMovie" : inCanvasDetail ? (currentCanvas()?.name || "PhanthyMovie 画布") : "PhanthyMovie 项目列表";
 };
 
 const syncBatchBar = () => {
@@ -566,6 +642,12 @@ const renderGrid = () => {
   saveProjectsState();
   persistNavigationState();
   syncHeader();
+  if (state.currentView === "home") {
+    if (homeProjectCount) {
+      homeProjectCount.textContent = "所有生成的项目将自动保存至您的个人库中";
+    }
+    return;
+  }
   if (state.currentView === "canvas-detail") {
     renderCanvasDetail();
     return;
@@ -668,6 +750,9 @@ const renderCanvasDetail = () => {
     }
     if (node.type === "shot-group") {
       return { leftX: node.x + 20, rightX: node.x + 20, centerY: node.y + 180 };
+    }
+    if (node.type === "text") {
+      return { leftX: node.x + 24, rightX: node.x + 476, centerY: node.y + 124 };
     }
     return { leftX: node.x + 89, rightX: node.x + 539, centerY: node.y + 185 };
   };
@@ -806,10 +891,33 @@ const renderCanvasDetail = () => {
           </article>
         `;
       }
+      if (node.type === "text") {
+        return `
+          <article class="canvas-canvas-node canvas-text-node${selected ? " is-selected" : ""}" data-node-id="${node.id}" style="left:${node.x}px; top:${node.y}px;">
+            <div class="canvas-text-node-head" data-node-drag="true">
+              <div class="canvas-node-title-meta">
+                <span class="canvas-node-title-icon" aria-hidden="true">${icon.image}</span>
+                <span>${escapeHtml(node.name)}</span>
+              </div>
+            </div>
+            <button class="canvas-node-side-anchor is-left" type="button" data-node-action="add-near" data-node-side="left" data-node-id="${node.id}">
+              <img src="${CANVAS_NODE_SIDE_ADD}" alt="" />
+            </button>
+            <button class="canvas-node-side-anchor is-right" type="button" data-node-action="add-near" data-node-side="right" data-node-id="${node.id}">
+              <img src="${CANVAS_NODE_SIDE_ADD}" alt="" />
+            </button>
+            <div class="canvas-text-node-card">
+              <div class="canvas-text-node-label">反推提示词</div>
+              <textarea class="canvas-text-node-editor" data-node-field="text" data-node-id="${node.id}" rows="8">${escapeHtml(node.text)}</textarea>
+            </div>
+          </article>
+        `;
+      }
       return `
         <article class="canvas-canvas-node canvas-image-node${selected ? " is-selected" : ""}" data-node-id="${node.id}" style="left:${node.x}px; top:${node.y}px;">
           ${selected ? `
             <div class="canvas-floating-toolbar">
+              <button class="canvas-toolbar-chip" type="button" data-toolbar-action="reverse-prompt" data-node-id="${node.id}"><span class="canvas-toolbar-inline-icon">${icon.sparkles}</span><span>反推</span></button>
               <button class="canvas-toolbar-chip" type="button" data-toolbar-action="panorama" data-node-id="${node.id}"><img src="${CANVAS_NODE_TOOLBAR_FULLSCREEN}" alt="" /><span>全景</span></button>
               <div class="canvas-toolbar-chip"><img src="${CANVAS_NODE_TOOLBAR_MULTI}" alt="" /><span>多角度</span></div>
               <div class="canvas-toolbar-chip"><img src="${CANVAS_NODE_TOOLBAR_LIGHT}" alt="" /><span>打光</span></div>
@@ -936,7 +1044,27 @@ const renderCanvasDetail = () => {
     `
     : "";
   const washConfirmNode = state.washConfirmNodeId ? findNodeById(state.washConfirmNodeId) : null;
-  const washConfirmMarkup = washConfirmNode
+  const reversePromptNode = state.reversePromptConfirmNodeId ? findNodeById(state.reversePromptConfirmNodeId) : null;
+  const actionModalMarkup = reversePromptNode
+    ? `
+      <div class="canvas-action-modal">
+        <button class="canvas-action-modal-backdrop" type="button" data-canvas-action="close-reverse-prompt-confirm" aria-label="关闭反推弹窗"></button>
+        <div class="canvas-action-modal-panel" role="dialog" aria-modal="true" aria-labelledby="reverse-prompt-title">
+          <div class="canvas-action-modal-header">
+            <strong id="reverse-prompt-title">确认反推</strong>
+            <button class="canvas-action-modal-close" type="button" data-canvas-action="close-reverse-prompt-confirm" aria-label="关闭反推弹窗">✕</button>
+          </div>
+          <div class="canvas-action-modal-body">
+            <p>反推动作会扣除${REVERSE_PROMPT_COST}星钻</p>
+          </div>
+          <div class="canvas-action-modal-footer">
+            <button class="canvas-action-modal-button is-ghost" type="button" data-canvas-action="close-reverse-prompt-confirm">取消</button>
+            <button class="canvas-action-modal-button is-primary" type="button" data-canvas-action="confirm-reverse-prompt">确认</button>
+          </div>
+        </div>
+      </div>
+    `
+    : washConfirmNode
     ? `
       <div class="canvas-action-modal">
         <button class="canvas-action-modal-backdrop" type="button" data-canvas-action="close-wash-confirm" aria-label="关闭洗图弹窗"></button>
@@ -1017,7 +1145,7 @@ const renderCanvasDetail = () => {
           ${nodesMarkup}
         </div>
         ${fullscreenMarkup}
-        ${washConfirmMarkup}
+        ${actionModalMarkup}
 
         ${canvas.nodes.length ? "" : `
           <div class="canvas-empty-state">
@@ -1089,6 +1217,7 @@ const closeCanvasPopups = () => {
   state.canvasAddPanelOpen = false;
   state.canvasContextMenu = null;
   state.washConfirmNodeId = null;
+  state.reversePromptConfirmNodeId = null;
 };
 
 const openCanvasAddPanel = () => {
@@ -1336,10 +1465,42 @@ const closePanoramaFullscreen = () => {
   renderCanvasDetail();
 };
 
+const openReversePromptConfirm = (nodeId) => {
+  const node = findNodeById(nodeId);
+  if (!node || node.type !== "image") return;
+  state.reversePromptConfirmNodeId = nodeId;
+  renderCanvasDetail();
+};
+
 const openWashImageConfirm = (nodeId) => {
   const node = findNodeById(nodeId);
   if (!node || node.type !== "image") return;
   state.washConfirmNodeId = nodeId;
+  renderCanvasDetail();
+};
+
+const createReversePromptTextNode = (nodeId) => {
+  const canvas = currentCanvas();
+  const sourceNode = findNodeById(nodeId);
+  if (!canvas || !sourceNode || sourceNode.type !== "image") return;
+  const baseName = getImageBaseName(nodeId);
+  const resultIndex = getNextPanoramaOutputIndex(baseName, (name) => name.startsWith(`${baseName}-反推结果`));
+  const textNode = createTextNode({
+    name: `${baseName}-反推结果${resultIndex}`,
+    text: sourceNode.prompt || DEFAULT_NODE_PROMPT,
+    x: sourceNode.x + 720,
+    y: sourceNode.y + 28,
+  });
+  canvas.nodes.push(textNode);
+  canvas.connections.push({
+    id: `link${Date.now()}${Math.floor(Math.random() * 1000)}`,
+    from: sourceNode.id,
+    to: textNode.id,
+  });
+  canvas.selectedNodeId = textNode.id;
+  state.reversePromptConfirmNodeId = null;
+  closeCanvasPopups();
+  saveProjectsState();
   renderCanvasDetail();
 };
 
@@ -1388,7 +1549,10 @@ const setCanvasZoom = (nextScale, clientX = null, clientY = null) => {
 };
 
 const openModal = (el) => el.classList.add("is-open");
-const closeModal = (el) => el.classList.remove("is-open");
+const closeModal = (el) => {
+  el.classList.remove("is-open");
+  if (el === projectModeModal) state.projectModeTargetId = null;
+};
 
 const openCreateModal = (mode, id = null) => {
   state.createMode = mode;
@@ -1423,6 +1587,28 @@ const openDeleteModal = (ids) => {
       ? `选中的 ${ids.length} 个${itemLabel}将被永久删除且无法找回，是否确认删除？`
       : `${itemLabel}将被永久删除且无法找回，是否确认删除？`;
   openModal(deleteModal);
+};
+
+const openProjectModeModal = (projectId) => {
+  state.projectModeTargetId = projectId;
+  openModal(projectModeModal);
+};
+
+const enterProjectMode = (projectId, mode) => {
+  const project = state.projects.find((item) => item.id === projectId);
+  if (!project) return;
+  if (mode === "infinite-canvas") {
+    state.currentView = "canvases";
+    state.currentProjectId = project.id;
+    state.currentCanvasId = null;
+    state.batchMode = false;
+    state.selectedIds.clear();
+    state.activeMenuId = null;
+    searchInput.value = "";
+    closeModal(projectModeModal);
+    renderGrid();
+    return;
+  }
 };
 
 const mutateCurrentCollection = (updater) => {
@@ -1511,6 +1697,59 @@ sidebarBackTrigger.addEventListener("click", () => {
   renderGrid();
 });
 
+sidebar?.addEventListener("click", (event) => {
+  const openModeModal = event.target.closest("[data-open-mode-modal]");
+  if (openModeModal) {
+    if (state.currentProjectId) openProjectModeModal(state.currentProjectId);
+    return;
+  }
+  const modeSwitch = event.target.closest("[data-mode-switch]");
+  if (!modeSwitch || modeSwitch.disabled) return;
+  const mode = modeSwitch.dataset.modeSwitch;
+  if (mode === "infinite-canvas") {
+    renderGrid();
+  }
+});
+
+topbarNav?.addEventListener("click", (event) => {
+  const target = event.target.closest("[data-nav-target]");
+  if (!target) return;
+  const view = target.dataset.navTarget;
+  state.batchMode = false;
+  state.selectedIds.clear();
+  state.activeMenuId = null;
+  state.avatarOpen = false;
+  state.noticeOpen = false;
+  if (view === "home") {
+    state.currentView = "home";
+    state.currentProjectId = null;
+    state.currentCanvasId = null;
+  } else if (view === "projects") {
+    state.currentView = "projects";
+    state.currentProjectId = null;
+    state.currentCanvasId = null;
+  }
+  renderGrid();
+});
+
+homeView?.addEventListener("click", (event) => {
+  const navTarget = event.target.closest("[data-nav-target]");
+  if (navTarget) {
+    if (navTarget.dataset.navTarget === "projects") {
+      state.currentView = "projects";
+      state.currentProjectId = null;
+      state.currentCanvasId = null;
+      renderGrid();
+    }
+    return;
+  }
+  const homeAction = event.target.closest("[data-home-action]");
+  if (!homeAction) return;
+  if (homeAction.dataset.homeAction === "open-latest-canvas") {
+    openCreateModal("project-create");
+  }
+});
+
 grid.addEventListener("click", (event) => {
   const createBlank = event.target.closest("#empty-create-trigger");
   if (createBlank) {
@@ -1556,12 +1795,7 @@ grid.addEventListener("click", (event) => {
   const card = event.target.closest("[data-card-id]");
   if (card && !state.batchMode) {
     if (state.currentView === "projects") {
-      state.currentView = "canvases";
-      state.currentProjectId = card.dataset.cardId;
-      state.selectedIds.clear();
-      state.activeMenuId = null;
-      searchInput.value = "";
-      renderGrid();
+      openProjectModeModal(card.dataset.cardId);
       return;
     }
     if (state.currentView === "canvases") {
@@ -1579,10 +1813,14 @@ createTrigger.addEventListener("click", () => {
 });
 
 confirmCreateTrigger.addEventListener("click", () => {
-  const name = projectNameInput.value.trim() || (state.currentView === "projects" ? `新项目 ${state.projects.length + 1}` : `新画布 ${Date.now() % 1000}`);
+  const name =
+    projectNameInput.value.trim() ||
+    (state.createMode === "project-create" || state.createMode === "project-edit"
+      ? `新项目 ${state.projects.length + 1}`
+      : `新画布 ${Date.now() % 1000}`);
 
   if (state.createMode === "project-create") {
-    state.projects.unshift({
+    const nextProject = {
       id: `p${Date.now()}`,
       name,
       timestamp: DEFAULT_TIMESTAMP,
@@ -1590,7 +1828,13 @@ confirmCreateTrigger.addEventListener("click", () => {
       style: styleNameMap[state.selectedStyle] || "写实主义",
       cover: DEFAULT_COVER,
       canvases: [],
-    });
+    };
+    state.projects.unshift(nextProject);
+    state.currentProjectId = nextProject.id;
+    closeModal(createModal);
+    openProjectModeModal(nextProject.id);
+    renderGrid();
+    return;
   } else if (state.createMode === "project-edit") {
     const project = state.projects.find((item) => item.id === state.createTargetId);
     if (project) project.name = name;
@@ -1613,6 +1857,12 @@ confirmCreateTrigger.addEventListener("click", () => {
 
   closeModal(createModal);
   renderGrid();
+});
+
+projectModeModal?.addEventListener("click", (event) => {
+  const target = event.target.closest("[data-project-mode]");
+  if (!target || !state.projectModeTargetId) return;
+  enterProjectMode(state.projectModeTargetId, target.dataset.projectMode);
 });
 
 confirmDeleteTrigger.addEventListener("click", () => {
@@ -1814,10 +2064,23 @@ canvasStage.addEventListener("click", (event) => {
       renderCanvasDetail();
       return;
     }
+    if (action === "close-reverse-prompt-confirm") {
+      event.preventDefault();
+      event.stopPropagation();
+      state.reversePromptConfirmNodeId = null;
+      renderCanvasDetail();
+      return;
+    }
     if (action === "confirm-wash-image") {
       event.preventDefault();
       event.stopPropagation();
       if (state.washConfirmNodeId) createWashedImageNode(state.washConfirmNodeId);
+      return;
+    }
+    if (action === "confirm-reverse-prompt") {
+      event.preventDefault();
+      event.stopPropagation();
+      if (state.reversePromptConfirmNodeId) createReversePromptTextNode(state.reversePromptConfirmNodeId);
       return;
     }
     if (action === "reset-zoom") {
@@ -1859,6 +2122,7 @@ canvasStage.addEventListener("click", (event) => {
   if (toolbarAction) {
     const nodeId = toolbarAction.dataset.nodeId;
     const action = toolbarAction.dataset.toolbarAction;
+    if (action === "reverse-prompt") openReversePromptConfirm(nodeId);
     if (action === "panorama") createPanoramaNode(nodeId);
     if (action === "wash-image") openWashImageConfirm(nodeId);
     if (action === "current-shot") createPanoramaCurrentShot(nodeId);
@@ -2141,6 +2405,11 @@ document.addEventListener("click", (event) => {
 document.addEventListener("keydown", (event) => {
   if (state.currentView !== "canvas-detail") return;
   if (event.key === "Escape") {
+    if (state.reversePromptConfirmNodeId) {
+      state.reversePromptConfirmNodeId = null;
+      renderCanvasDetail();
+      return;
+    }
     if (state.washConfirmNodeId) {
       state.washConfirmNodeId = null;
       renderCanvasDetail();

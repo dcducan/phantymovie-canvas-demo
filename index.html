@@ -16,15 +16,24 @@
         <div class="brand">
           <img
             class="brand-icon"
-            src="https://www.figma.com/api/mcp/asset/85d253dc-744c-49e2-a48f-9b1b0bf61e72"
+            src="./assets/home/brand-icon.svg"
             alt="PhanthyMovie 标志"
           />
           <img
             class="brand-wordmark"
-            src="https://www.figma.com/api/mcp/asset/44c3ba8b-add9-470e-9abb-90c59e8b6cdc"
+            src="./assets/home/brand-wordmark.svg"
             alt="PhanthyMovie"
           />
         </div>
+
+        <nav class="topbar-nav" aria-label="主导航">
+          <button class="topbar-nav-item active" type="button" data-nav-target="home">创作中心</button>
+          <button class="topbar-nav-item" type="button" data-nav-target="projects">项目管理</button>
+          <button class="topbar-nav-item" type="button" data-nav-target="personal-assets">个人资产库</button>
+          <button class="topbar-nav-item" type="button" data-nav-target="team-assets">团队资产库</button>
+          <button class="topbar-nav-item" type="button" data-nav-target="team">团队中心</button>
+          <button class="topbar-nav-item" type="button" data-nav-target="materials">素材广场</button>
+        </nav>
 
         <div class="topbar-actions">
           <button class="link-button" type="button">充值中心</button>
@@ -115,17 +124,89 @@
         </div>
       </div>
 
+      <section class="home-view" id="home-view">
+        <div class="home-heading">
+          <h1>开启您的创作旅程</h1>
+          <p>选择一种方式开始生成您的 AI 短剧</p>
+        </div>
+
+        <div class="home-entry-grid">
+          <article class="home-entry-card">
+            <div class="home-entry-icon-wrap">
+              <img src="./assets/home/home-workflow.svg" alt="" />
+            </div>
+            <div class="home-entry-copy">
+              <strong>工作流</strong>
+              <p>已有剧本/小说文件，AI自动识别角色、拆解场景、生成台词，大幅提升效率的同时，全流程精细可控，帮助创作者稳定产出高质量可持续扩展的漫剧内容。</p>
+            </div>
+            <button class="home-entry-start" type="button" data-home-action="open-latest-canvas">
+              <span>开始</span>
+              <img src="./assets/home/home-arrow.svg" alt="" />
+            </button>
+          </article>
+
+          <article class="home-entry-card">
+            <div class="home-entry-icon-wrap">
+              <img src="./assets/home/home-auto.svg" alt="" />
+            </div>
+            <div class="home-entry-copy">
+              <strong>全自动 AI 生成</strong>
+              <p>极致效率，只需上传剧本/小说，即可自动拆解集/场/镜，提取并生成角色服装场景等，批量生成剧集视频。</p>
+            </div>
+            <button class="home-entry-start" type="button" data-home-action="open-latest-canvas">
+              <span>开始</span>
+              <img src="./assets/home/home-arrow.svg" alt="" />
+            </button>
+          </article>
+
+          <article class="home-entry-card">
+            <div class="home-entry-icon-wrap">
+              <img src="./assets/home/home-canvas.svg" alt="" />
+            </div>
+            <div class="home-entry-copy">
+              <strong>无限画布</strong>
+              <p>直接和AI对话，从创意构思开始，构建故事方向，创作导演级剧本，调用phanmovie大模型一键生成及实际连贯可直接拍摄的剧本。</p>
+            </div>
+            <button class="home-entry-start" type="button" data-home-action="open-latest-canvas">
+              <span>开始</span>
+              <img src="./assets/home/home-arrow.svg" alt="" />
+            </button>
+          </article>
+        </div>
+
+        <div class="home-footnote">
+          <img src="./assets/home/home-footnote.svg" alt="" />
+          <span id="home-project-count">所有生成的项目将自动保存至您的个人库中</span>
+        </div>
+      </section>
+
       <section class="content" id="list-view">
         <aside class="canvas-list-sidebar" id="canvas-list-sidebar">
-          <button class="sidebar-back" type="button" id="sidebar-back-trigger">返回项目列表</button>
-          <div class="sidebar-project-card">
-            <span class="sidebar-project-label">当前项目</span>
+          <div class="sidebar-project-head">
+            <button class="sidebar-back" type="button" id="sidebar-back-trigger" aria-label="返回项目列表">
+              <svg viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M9.667 3.333 5 8l4.667 4.667" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
             <strong id="sidebar-project-name">测试项目</strong>
+          </div>
+          <div class="sidebar-project-card">
             <div class="sidebar-tags">
               <span class="sidebar-tag" id="sidebar-ratio-tag">16:9 横屏</span>
               <span class="sidebar-tag" id="sidebar-style-tag">电影感</span>
             </div>
           </div>
+          <section class="sidebar-mode-panel">
+            <div class="sidebar-mode-head">
+              <span class="sidebar-project-label">当前模式</span>
+              <div class="sidebar-mode-row">
+                <strong class="sidebar-mode-current">无限画布</strong>
+                <button class="sidebar-mode-switch" type="button" data-open-mode-modal="true">
+                  <span>切换模式</span>
+                </button>
+              </div>
+            </div>
+          </section>
           <nav class="sidebar-nav">
             <button class="sidebar-nav-item active" type="button">画布列表</button>
             <button class="sidebar-nav-item" type="button">资产库</button>
@@ -270,6 +351,54 @@
             <button class="pill confirm-footer-pill compact-footer-pill" type="button" id="confirm-delete-trigger">
               确认
             </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-backdrop" id="project-mode-modal">
+        <div class="modal-shell project-mode-modal-shell" role="dialog" aria-modal="true" aria-labelledby="project-mode-title">
+          <div class="modal-header">
+            <h2 id="project-mode-title">创作模式</h2>
+            <button class="icon-close" type="button" data-close-modal="project-mode-modal" aria-label="关闭">
+              <img src="https://www.figma.com/api/mcp/asset/ba616df8-84a6-44ae-9ea2-83c5c3dcba9f" alt="" />
+            </button>
+          </div>
+
+          <div class="modal-body project-mode-modal-body">
+            <div class="project-mode-modal-hero">
+              <h3>创作模式</h3>
+              <p>同一项目下共享项目资产数据。请选择一种模式开始你的创作之旅。</p>
+            </div>
+            <div class="project-mode-grid">
+              <button class="project-mode-card" type="button" data-project-mode="workflow" disabled>
+                <div class="project-mode-card-icon">
+                  <img src="./assets/home/home-workflow.svg" alt="" />
+                </div>
+                <strong>工作流</strong>
+                <span>适合流程化拆解与自动化生成，强调创作链路与环节衔接。</span>
+                <em>即将开放</em>
+              </button>
+              <button class="project-mode-card" type="button" data-project-mode="auto" disabled>
+                <div class="project-mode-card-icon">
+                  <img src="./assets/home/home-auto.svg" alt="" />
+                </div>
+                <strong>全自动 AI 生成</strong>
+                <span>适合自动拆场、批量出图与生成，偏向高效率批处理制作。</span>
+                <em>即将开放</em>
+              </button>
+              <button class="project-mode-card is-primary" type="button" data-project-mode="infinite-canvas">
+                <div class="project-mode-card-icon">
+                  <img src="./assets/home/home-canvas.svg" alt="" />
+                </div>
+                <strong>无限画布</strong>
+                <span>进入画布列表，使用节点式创作方式组织镜头、图片与全景生成。</span>
+                <em>立即进入</em>
+              </button>
+            </div>
+            <div class="project-mode-modal-footnote">
+              <img src="./assets/home/home-footnote.svg" alt="" />
+              <span>当前仅开放无限画布模式，后续模式会直接复用当前项目资产数据。</span>
+            </div>
           </div>
         </div>
       </div>
