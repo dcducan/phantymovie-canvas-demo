@@ -36,16 +36,17 @@
         </nav>
 
         <div class="topbar-actions">
+          <button class="activity-link-button" type="button" id="limited-activity-trigger">限时活动</button>
           <button class="link-button" type="button">充值中心</button>
           <button class="credit-button" type="button">
-            <img src="https://www.figma.com/api/mcp/asset/66b4687b-d372-4a46-9cff-fc9892c72eef" alt="" />
+            <img src="./assets/icons/credit.svg" alt="" />
             <span>2000</span>
           </button>
           <button class="icon-button dimmed" type="button" id="notice-trigger" aria-label="提醒">
-            <img src="https://www.figma.com/api/mcp/asset/9f5af5e5-163d-4174-b97e-7e7e84eff29f" alt="" />
+            <img src="./assets/icons/bell.svg" alt="" />
           </button>
           <button class="avatar-button" type="button" id="avatar-trigger" aria-label="用户头像">
-            <img src="https://www.figma.com/api/mcp/asset/70ec9efd-9a83-4dce-a0ce-4324da5a489c" alt="" />
+            <img src="./assets/images/avatar-sunny.jpg" alt="" />
           </button>
         </div>
       </header>
@@ -61,7 +62,7 @@
           </div>
 
           <div class="avatar-profile">
-            <img src="https://www.figma.com/api/mcp/asset/448d7763-7347-4cf0-8709-5656a2128ff6" alt="Sunny" />
+            <img src="./assets/images/avatar-sunny.jpg" alt="Sunny" />
             <div>
               <strong>Sunny</strong>
               <span>138****0000</span>
@@ -92,6 +93,7 @@
             <button type="button">交易记录</button>
             <button type="button">我的消耗明细</button>
             <button type="button">AI水印设置</button>
+            <button type="button" id="contact-support-trigger">联系客服</button>
           </div>
 
           <div class="avatar-logout">
@@ -224,29 +226,29 @@
 
           <div class="toolbar">
             <label class="pill input-pill" aria-label="搜索">
-              <img src="https://www.figma.com/api/mcp/asset/d8ceee3c-a479-4538-826a-1978b29fa918" alt="" />
+              <img src="./assets/icons/search.svg" alt="" />
               <input id="search-input" type="text" placeholder="搜索" />
             </label>
 
             <div class="batch-cluster">
               <button class="pill action-pill" type="button" id="batch-trigger">
-                <img src="https://www.figma.com/api/mcp/asset/202cddd3-13ee-4678-a736-2121cc8184aa" alt="" />
+                <img src="./assets/icons/batch.svg" alt="" />
                 <span>批量操作</span>
               </button>
             </div>
 
             <div class="menu-anchor sort-anchor">
               <button class="pill action-pill sort-pill" type="button" id="sort-trigger" aria-expanded="false">
-                <img src="https://www.figma.com/api/mcp/asset/431c19ee-33cd-4202-bca0-ec9bee8fd203" alt="" />
+                <img src="./assets/icons/menu-deep.svg" alt="" />
                 <span id="sort-label">时间倒序</span>
-                <img class="arrow-icon" src="https://www.figma.com/api/mcp/asset/2be26fc8-2666-4917-81f6-35769c52efe1" alt="" />
+                <img class="arrow-icon" src="./assets/icons/chevron-down.svg" alt="" />
               </button>
 
               <div class="dropdown-menu sort-menu" id="sort-menu">
                 <button class="menu-item" type="button" data-sort="date-asc">时间正序</button>
                 <button class="menu-item selected" type="button" data-sort="date-desc">
                   <span>时间倒序</span>
-                  <img src="https://www.figma.com/api/mcp/asset/2d8b6f3e-22a6-4e6b-aee4-8f080c92debd" alt="" />
+                  <img src="./assets/icons/check.svg" alt="" />
                 </button>
                 <button class="menu-item" type="button" data-sort="name-asc">名称正序</button>
                 <button class="menu-item" type="button" data-sort="name-desc">名称倒序</button>
@@ -254,7 +256,7 @@
             </div>
 
             <button class="pill create-pill" type="button" id="create-trigger">
-              <img src="https://www.figma.com/api/mcp/asset/6d8d0f2c-b50a-405a-9541-b8d376db1bb6" alt="" />
+              <img src="./assets/icons/plus-dark.svg" alt="" />
               <span id="create-label">创建新项目</span>
             </button>
           </div>
@@ -281,14 +283,14 @@
           <div class="modal-header">
             <h2 id="create-title">创建新项目</h2>
             <button class="icon-close" type="button" data-close-modal="create-modal" aria-label="关闭">
-              <img src="https://www.figma.com/api/mcp/asset/ba616df8-84a6-44ae-9ea2-83c5c3dcba9f" alt="" />
+              <img src="./assets/icons/close.svg" alt="" />
             </button>
           </div>
 
           <div class="modal-body create-modal-body">
             <section class="form-section">
               <div class="section-label">
-                <img src="https://www.figma.com/api/mcp/asset/6c91d7ad-b80e-480e-b0a1-45d830474f61" alt="" />
+                <img src="./assets/icons/project-name.svg" alt="" />
                 <span id="name-label">项目名称</span>
               </div>
               <input class="dark-input" id="project-name-input" type="text" placeholder="输入项目名称..." />
@@ -296,7 +298,7 @@
 
             <section class="form-section" id="ratio-section">
               <div class="section-label">
-                <img src="https://www.figma.com/api/mcp/asset/3746125c-9b57-4e0a-bb9b-349019340a1f" alt="" />
+                <img src="./assets/icons/ratio.svg" alt="" />
                 <span>画面比例</span>
               </div>
               <div class="ratio-grid">
@@ -317,7 +319,7 @@
 
             <section class="form-section" id="style-section">
               <div class="section-label">
-                <img src="https://www.figma.com/api/mcp/asset/76b4e4cb-9eef-491d-87b3-04194990b739" alt="" />
+                <img src="./assets/icons/style.svg" alt="" />
                 <span>风格</span>
               </div>
               <div class="style-grid" id="style-grid"></div>
@@ -336,7 +338,7 @@
           <div class="modal-header">
             <h2 id="delete-title">确认删除</h2>
             <button class="icon-close" type="button" data-close-modal="delete-modal" aria-label="关闭">
-              <img src="https://www.figma.com/api/mcp/asset/ba616df8-84a6-44ae-9ea2-83c5c3dcba9f" alt="" />
+              <img src="./assets/icons/close.svg" alt="" />
             </button>
           </div>
 
@@ -360,7 +362,7 @@
           <div class="modal-header">
             <h2 id="project-mode-title">创作模式</h2>
             <button class="icon-close" type="button" data-close-modal="project-mode-modal" aria-label="关闭">
-              <img src="https://www.figma.com/api/mcp/asset/ba616df8-84a6-44ae-9ea2-83c5c3dcba9f" alt="" />
+              <img src="./assets/icons/close.svg" alt="" />
             </button>
           </div>
 
@@ -399,6 +401,68 @@
               <img src="./assets/home/home-footnote.svg" alt="" />
               <span>当前仅开放无限画布模式，后续模式会直接复用当前项目资产数据。</span>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-backdrop" id="limited-activity-modal">
+        <div class="modal-shell limited-activity-modal-shell" role="dialog" aria-modal="true" aria-labelledby="limited-activity-title">
+          <button class="limited-activity-close" type="button" data-close-modal="limited-activity-modal" aria-label="关闭">
+            <img src="./assets/icons/close.svg" alt="" />
+          </button>
+
+          <div class="limited-activity-card">
+            <article class="limited-activity-letter">
+              <div class="limited-activity-letter-paper">
+                <h2 id="limited-activity-title">致 PhanthyMovie 全体影视创作者的一封信</h2>
+                <p>各位深耕影视创作的伙伴：</p>
+                <p>懂大家打磨影片、投放宣发处处都要预算，每一分投入都想留给镜头与好故事。</p>
+                <p>平台限时7天充值福利暖心开启，积分充值享7折特惠：原价1元兑换100积分，活动期仅0.7元即可兑换，降低宣发成本，让你的优质影像被更多人看见。</p>
+                <p>优惠时效有限，把握机会轻装上阵，平台始终与各位创作者并肩前行。</p>
+                <p class="limited-activity-signature">PhanthyMovie运营团队</p>
+              </div>
+            </article>
+
+            <div class="limited-activity-actions">
+              <div class="activity-countdown" aria-label="活动倒计时">
+                <span>距活动结束</span>
+                <div class="activity-countdown-grid">
+                  <strong id="activity-countdown-days">00</strong>
+                  <em>天</em>
+                  <strong id="activity-countdown-hours">00</strong>
+                  <em>时</em>
+                  <strong id="activity-countdown-minutes">00</strong>
+                  <em>分</em>
+                  <strong id="activity-countdown-seconds">00</strong>
+                  <em>秒</em>
+                </div>
+              </div>
+              <button class="limited-activity-cta" type="button" id="activity-recharge-trigger">去充值</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-backdrop" id="contact-support-modal">
+        <div class="modal-shell contact-support-modal-shell" role="dialog" aria-modal="true" aria-labelledby="contact-support-title">
+          <div class="modal-header">
+            <h2 id="contact-support-title">联系客服</h2>
+            <button class="icon-close" type="button" data-close-modal="contact-support-modal" aria-label="关闭">
+              <img src="./assets/icons/close.svg" alt="" />
+            </button>
+          </div>
+
+          <div class="modal-body contact-support-modal-body">
+            <div class="support-qr-card" aria-label="客服企微二维码">
+              <div class="support-qr">
+                <span></span>
+                <span></span>
+                <span></span>
+                <i></i>
+              </div>
+            </div>
+            <strong>扫码添加客服企微</strong>
+            <p>请使用企业微信或微信扫码添加客服，获取账号、额度与创作流程支持。</p>
           </div>
         </div>
       </div>

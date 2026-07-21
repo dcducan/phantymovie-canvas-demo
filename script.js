@@ -1,65 +1,65 @@
 const DEFAULT_TIMESTAMP = "2016年01月01日 12:30:23";
-const DEFAULT_COVER = "https://www.figma.com/api/mcp/asset/daa1d3f1-61c2-4836-a871-b452d66180f1";
+const DEFAULT_COVER = "./assets/images/default-cover.jpg";
 const DEFAULT_NODE_PROMPT =
   "两只软萌圆滚滚小黄鸡，雌性小鸡头戴贵族小皇冠与花朵，雄性小鸡佩戴小礼帽，二者漫步在开满糖果色小花的草地里。整体为卡通 Q版治愈画风，毛茸茸质感，圆润线条";
-const CANVAS_EMPTY_CREDIT = "https://www.figma.com/api/mcp/asset/4843611a-9392-458f-973f-a93e3c2f7feb";
-const CANVAS_EMPTY_BELL = "https://www.figma.com/api/mcp/asset/099f0a93-035f-48c6-abdd-92dcc00f478a";
-const CANVAS_EMPTY_AVATAR_BG = "https://www.figma.com/api/mcp/asset/1a7ace7f-5018-4a97-bf74-3c093bf57f4a";
-const CANVAS_EMPTY_AVATAR_IMAGE = "https://www.figma.com/api/mcp/asset/77099d11-57f1-48fe-a98f-e8a4f8bf9dba";
-const CANVAS_EMPTY_DOCK_GRID = "https://www.figma.com/api/mcp/asset/5ffa11fe-0a21-41cc-b842-392127e74258";
-const CANVAS_EMPTY_DOCK_SCENE = "https://www.figma.com/api/mcp/asset/9f4cf144-ed57-4dac-b12c-27df980329b8";
-const CANVAS_EMPTY_DOCK_POINTER = "https://www.figma.com/api/mcp/asset/8b07d88c-f92e-4db7-945d-cbce9f124c02";
-const CANVAS_EMPTY_DOCK_MINUS = "https://www.figma.com/api/mcp/asset/33d4e7bd-4eaa-4866-a92c-bf85a92655ac";
-const CANVAS_EMPTY_DOCK_PLUS = "https://www.figma.com/api/mcp/asset/aaaa3ee6-7888-4293-9fe6-625b8d56c550";
-const CANVAS_EMPTY_BACK = "https://www.figma.com/api/mcp/asset/0b52205d-ee12-4fab-8b84-bf491d02134c";
-const CANVAS_EMPTY_ADD_TEXT = "https://www.figma.com/api/mcp/asset/c32a3c8b-6979-4c0a-bea3-3c00a1a1c8e0";
-const CANVAS_EMPTY_ADD_IMAGE = "https://www.figma.com/api/mcp/asset/6f8cab11-3c5f-493c-b6c9-093ecf6e4743";
-const CANVAS_EMPTY_ADD_UPLOAD_MASK = "https://www.figma.com/api/mcp/asset/067071a1-04c4-4bd7-a3f1-88d1e8efea71";
-const CANVAS_EMPTY_ADD_UPLOAD = "https://www.figma.com/api/mcp/asset/399fb76f-a4fc-430f-830f-98b16eb55901";
-const CANVAS_ADD_PANEL_TEXT = "https://www.figma.com/api/mcp/asset/7049f337-ffa7-4db0-aebc-40a61a68e429";
-const CANVAS_ADD_PANEL_IMAGE = "https://www.figma.com/api/mcp/asset/c2c5268c-72d1-4d37-8609-1a5d1f48794c";
-const CANVAS_ADD_PANEL_UPLOAD_MASK = "https://www.figma.com/api/mcp/asset/1e40b42b-a49f-438a-9f36-2760b0ec2a4f";
-const CANVAS_ADD_PANEL_UPLOAD = "https://www.figma.com/api/mcp/asset/30c12697-f98c-491e-bb65-2c5b717ba2ef";
-const CANVAS_ADD_PANEL_LINE = "https://www.figma.com/api/mcp/asset/f7e405a9-3c41-438e-bd81-fad026de7dfb";
-const CANVAS_EMPTY_LEFT_ADD = "https://www.figma.com/api/mcp/asset/455ec177-a803-48fe-9419-7ee08748e6d6";
-const CANVAS_EMPTY_LEFT_SEARCH = "https://www.figma.com/api/mcp/asset/65aa0313-b1fb-44e1-b816-fa9bfee305d1";
-const CANVAS_EMPTY_LEFT_GRID = "https://www.figma.com/api/mcp/asset/5ffa11fe-0a21-41cc-b842-392127e74258";
-const CANVAS_EMPTY_LEFT_CLOCK = "https://www.figma.com/api/mcp/asset/880dcaf1-5afc-4165-b18e-7addf5ac29fd";
-const CANVAS_EMPTY_LEFT_DELETE = "https://www.figma.com/api/mcp/asset/89b1b107-1a55-4d97-a4f8-90f82807524f";
-const CANVAS_LINE = "https://www.figma.com/api/mcp/asset/2e983b04-1ccc-42d9-8f3d-82174c412f13";
-const CANVAS_NODE_CREDIT = "https://www.figma.com/api/mcp/asset/75adc873-d8e9-4902-9e47-2d07fc33ee32";
-const CANVAS_NODE_BELL = "https://www.figma.com/api/mcp/asset/a2282628-2786-4876-9d81-b529a344d800";
-const CANVAS_NODE_AVATAR_BG = "https://www.figma.com/api/mcp/asset/008045bc-f2d1-4e4d-8746-ff619f630107";
-const CANVAS_NODE_AVATAR_IMAGE = "https://www.figma.com/api/mcp/asset/099d98f3-45d9-4f9b-b402-a79698456e90";
-const CANVAS_NODE_PREVIEW = "https://www.figma.com/api/mcp/asset/f2d35a46-0209-4545-8e65-518ffcff7cab";
-const CANVAS_NODE_BACK = "https://www.figma.com/api/mcp/asset/abbcc5fd-0c62-4734-91d3-5e02eff7ce18";
-const CANVAS_NODE_SIDE_ADD = "https://www.figma.com/api/mcp/asset/f6010321-fc6d-4602-8d63-25440c9b8445";
-const CANVAS_NODE_BRAIN = "https://www.figma.com/api/mcp/asset/5f305e90-97f2-4254-abec-3d23a13d0d1b";
-const CANVAS_NODE_COUNT = "https://www.figma.com/api/mcp/asset/90c98c30-75de-4f1f-aa72-783442fa8f50";
-const CANVAS_NODE_LIKE = "https://www.figma.com/api/mcp/asset/e6961ea7-c0b3-4da8-9754-8677f824bac6";
-const CANVAS_NODE_SEND = "https://www.figma.com/api/mcp/asset/30627cb7-583a-42f9-a34b-a56b7fb954f3";
-const CANVAS_NODE_TOOLBAR_FULLSCREEN = "https://www.figma.com/api/mcp/asset/9acd3da2-9418-424b-b4e4-a08542b31655";
-const CANVAS_NODE_TOOLBAR_MULTI = "https://www.figma.com/api/mcp/asset/1cc74e61-8dcb-49d8-b348-b8b624a5751a";
-const CANVAS_NODE_TOOLBAR_LIGHT = "https://www.figma.com/api/mcp/asset/2243d812-41f0-4c95-bbe7-817143cc3219";
-const CANVAS_NODE_TOOLBAR_GRID = "https://www.figma.com/api/mcp/asset/a26d9e33-8bfb-4206-b3df-43f48bc90c63";
-const CANVAS_NODE_TOOLBAR_ERASE_MASK = "https://www.figma.com/api/mcp/asset/69df20fb-d7f1-4fd9-a176-c596f4cb28d2";
-const CANVAS_NODE_TOOLBAR_ERASE = "https://www.figma.com/api/mcp/asset/776bd198-7cd5-41b0-9863-002484996485";
-const CANVAS_NODE_TOOLBAR_SLICE = "https://www.figma.com/api/mcp/asset/b3af10d9-1d28-4a1b-adc7-84552d767e3d";
-const CANVAS_NODE_TOOLBAR_MORE = "https://www.figma.com/api/mcp/asset/9b7e5ad5-2b32-4bc3-a81f-ccbe0e3a25ff";
-const CANVAS_NODE_TOOLBAR_UPLOAD = "https://www.figma.com/api/mcp/asset/cab18674-eafa-49b5-8313-7244c224bc4a";
-const CANVAS_NODE_TOOLBAR_DOWNLOAD = "https://www.figma.com/api/mcp/asset/82038ea0-7537-486c-8f7f-1feb7ea177bb";
-const CANVAS_NODE_TOOLBAR_EXPAND = "https://www.figma.com/api/mcp/asset/46520337-8c81-40dc-982d-71149cd4aac5";
-const CANVAS_NODE_TOOLBAR_CLOSE = "https://www.figma.com/api/mcp/asset/07dc411a-ccf1-4efc-81bf-1da8d3e93851";
-const CANVAS_NODE_LEFT_ADD = "https://www.figma.com/api/mcp/asset/0423360a-92d4-4c2e-878f-9530024545e5";
-const CANVAS_NODE_LEFT_SEARCH = "https://www.figma.com/api/mcp/asset/9acd3da2-9418-424b-b4e4-a08542b31655";
-const CANVAS_NODE_LEFT_GRID = "https://www.figma.com/api/mcp/asset/c2ae8e8a-66de-460c-b0ed-0e0f56fc3a06";
-const CANVAS_NODE_LEFT_CLOCK = "https://www.figma.com/api/mcp/asset/c96201aa-ed5b-406f-ae30-333f85146559";
-const CANVAS_NODE_LEFT_DELETE = "https://www.figma.com/api/mcp/asset/51063ac1-dc38-4161-a2ef-8ecfafeb015c";
-const CANVAS_NODE_DOCK_GRID = "https://www.figma.com/api/mcp/asset/c2ae8e8a-66de-460c-b0ed-0e0f56fc3a06";
-const CANVAS_NODE_DOCK_SCENE = "https://www.figma.com/api/mcp/asset/c96201aa-ed5b-406f-ae30-333f85146559";
-const CANVAS_NODE_DOCK_POINTER = "https://www.figma.com/api/mcp/asset/51063ac1-dc38-4161-a2ef-8ecfafeb015c";
-const CANVAS_NODE_DOCK_MINUS = "https://www.figma.com/api/mcp/asset/8bb1f196-a3d7-41b1-b6d3-adf531988287";
-const CANVAS_NODE_DOCK_PLUS = "https://www.figma.com/api/mcp/asset/483fe804-024b-4214-95ec-c340ac8573f4";
+const CANVAS_EMPTY_CREDIT = "./assets/icons/credit.svg";
+const CANVAS_EMPTY_BELL = "./assets/icons/bell.svg";
+const CANVAS_EMPTY_AVATAR_BG = "./assets/icons/avatar-bg.svg";
+const CANVAS_EMPTY_AVATAR_IMAGE = "./assets/images/avatar-sunny.jpg";
+const CANVAS_EMPTY_DOCK_GRID = "./assets/icons/grid.svg";
+const CANVAS_EMPTY_DOCK_SCENE = "./assets/icons/image.svg";
+const CANVAS_EMPTY_DOCK_POINTER = "./assets/icons/pointer.svg";
+const CANVAS_EMPTY_DOCK_MINUS = "./assets/icons/minus.svg";
+const CANVAS_EMPTY_DOCK_PLUS = "./assets/icons/plus.svg";
+const CANVAS_EMPTY_BACK = "./assets/icons/back.svg";
+const CANVAS_EMPTY_ADD_TEXT = "./assets/icons/text.svg";
+const CANVAS_EMPTY_ADD_IMAGE = "./assets/icons/image.svg";
+const CANVAS_EMPTY_ADD_UPLOAD_MASK = "./assets/icons/upload.svg";
+const CANVAS_EMPTY_ADD_UPLOAD = "./assets/icons/upload.svg";
+const CANVAS_ADD_PANEL_TEXT = "./assets/icons/text.svg";
+const CANVAS_ADD_PANEL_IMAGE = "./assets/icons/image.svg";
+const CANVAS_ADD_PANEL_UPLOAD_MASK = "./assets/icons/upload.svg";
+const CANVAS_ADD_PANEL_UPLOAD = "./assets/icons/upload.svg";
+const CANVAS_ADD_PANEL_LINE = "./assets/icons/divider-line.svg";
+const CANVAS_EMPTY_LEFT_ADD = "./assets/icons/plus.svg";
+const CANVAS_EMPTY_LEFT_SEARCH = "./assets/icons/search.svg";
+const CANVAS_EMPTY_LEFT_GRID = "./assets/icons/grid.svg";
+const CANVAS_EMPTY_LEFT_CLOCK = "./assets/icons/clock.svg";
+const CANVAS_EMPTY_LEFT_DELETE = "./assets/icons/trash.svg";
+const CANVAS_LINE = "./assets/icons/divider-line.svg";
+const CANVAS_NODE_CREDIT = "./assets/icons/credit.svg";
+const CANVAS_NODE_BELL = "./assets/icons/bell.svg";
+const CANVAS_NODE_AVATAR_BG = "./assets/icons/avatar-bg.svg";
+const CANVAS_NODE_AVATAR_IMAGE = "./assets/images/avatar-sunny.jpg";
+const CANVAS_NODE_PREVIEW = "./assets/images/canvas-node-preview.png";
+const CANVAS_NODE_BACK = "./assets/icons/back.svg";
+const CANVAS_NODE_SIDE_ADD = "./assets/icons/connector-plus.svg";
+const CANVAS_NODE_BRAIN = "./assets/icons/brain.svg";
+const CANVAS_NODE_COUNT = "./assets/icons/count.svg";
+const CANVAS_NODE_LIKE = "./assets/icons/heart.svg";
+const CANVAS_NODE_SEND = "./assets/icons/send.svg";
+const CANVAS_NODE_TOOLBAR_FULLSCREEN = "./assets/icons/fullscreen.svg";
+const CANVAS_NODE_TOOLBAR_MULTI = "./assets/icons/multi-angle.svg";
+const CANVAS_NODE_TOOLBAR_LIGHT = "./assets/icons/light.svg";
+const CANVAS_NODE_TOOLBAR_GRID = "./assets/icons/grid.svg";
+const CANVAS_NODE_TOOLBAR_ERASE_MASK = "./assets/icons/eraser.svg";
+const CANVAS_NODE_TOOLBAR_ERASE = "./assets/icons/eraser.svg";
+const CANVAS_NODE_TOOLBAR_SLICE = "./assets/icons/slice.svg";
+const CANVAS_NODE_TOOLBAR_MORE = "./assets/icons/more.svg";
+const CANVAS_NODE_TOOLBAR_UPLOAD = "./assets/icons/upload.svg";
+const CANVAS_NODE_TOOLBAR_DOWNLOAD = "./assets/icons/download.svg";
+const CANVAS_NODE_TOOLBAR_EXPAND = "./assets/icons/fullscreen.svg";
+const CANVAS_NODE_TOOLBAR_CLOSE = "./assets/icons/close.svg";
+const CANVAS_NODE_LEFT_ADD = "./assets/icons/plus.svg";
+const CANVAS_NODE_LEFT_SEARCH = "./assets/icons/search.svg";
+const CANVAS_NODE_LEFT_GRID = "./assets/icons/grid.svg";
+const CANVAS_NODE_LEFT_CLOCK = "./assets/icons/clock.svg";
+const CANVAS_NODE_LEFT_DELETE = "./assets/icons/trash.svg";
+const CANVAS_NODE_DOCK_GRID = "./assets/icons/grid.svg";
+const CANVAS_NODE_DOCK_SCENE = "./assets/icons/image.svg";
+const CANVAS_NODE_DOCK_POINTER = "./assets/icons/pointer.svg";
+const CANVAS_NODE_DOCK_MINUS = "./assets/icons/minus.svg";
+const CANVAS_NODE_DOCK_PLUS = "./assets/icons/plus.svg";
 const icon = {
   back:
     '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6.333 4 10.333 8 6.333 12" fill="none" stroke="currentColor" stroke-width="1.333" stroke-linecap="round" stroke-linejoin="round"/></svg>',
@@ -79,6 +79,8 @@ const icon = {
     '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 4.5A1.5 1.5 0 0 0 2.5 6v8A1.5 1.5 0 0 0 4 15.5h12a1.5 1.5 0 0 0 1.5-1.5V6A1.5 1.5 0 0 0 16 4.5H4Zm0-1.5h12A3 3 0 0 1 19 6v8a3 3 0 0 1-3 3H4a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3Zm1.9 8.9 1.9-2.2a1 1 0 0 1 1.5 0l1.5 1.8 1.2-1.3a1 1 0 0 1 1.5.1L16 13H4l1.9-2.1ZM6.5 7.2a1.3 1.3 0 1 1 0 2.6 1.3 1.3 0 0 1 0-2.6Z" fill="currentColor"/></svg>',
   plus:
     '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.667 8h10.666M8 2.667v10.666" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  circleDashedPlus:
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5a8.5 8.5 0 0 1 8.5 8.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="2.6 3.2"/><path d="M20.1 14.6a8.5 8.5 0 0 1-5.5 5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="2.6 3.2"/><path d="M12 20.5A8.5 8.5 0 0 1 3.5 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="2.6 3.2"/><path d="M3.9 9.4a8.5 8.5 0 0 1 5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="2.6 3.2"/><path d="M12 8.2v7.6M8.2 12h7.6" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>',
   minus:
     '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 6h7" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   plusSmall:
@@ -108,10 +110,10 @@ const projectSeed = [
     timestamp: DEFAULT_TIMESTAMP,
     ratio: "16:9 横屏",
     style: "电影感",
-    cover: "https://www.figma.com/api/mcp/asset/b1384ae6-6cc3-4a5f-95ab-215d40ebb555",
+    cover: "./assets/images/project-neon-tokyo.jpg",
     canvases: [
       { id: "c1", name: "开场镜头", timestamp: DEFAULT_TIMESTAMP, cover: DEFAULT_COVER },
-      { id: "c2", name: "角色定妆", timestamp: DEFAULT_TIMESTAMP, cover: "https://www.figma.com/api/mcp/asset/06395c9a-4830-4d9e-be4c-61ad5c4beb26" },
+      { id: "c2", name: "角色定妆", timestamp: DEFAULT_TIMESTAMP, cover: "./assets/images/canvas-character.jpg" },
     ],
   },
   {
@@ -122,8 +124,8 @@ const projectSeed = [
     style: "水墨风格",
     cover: DEFAULT_COVER,
     canvases: [
-      { id: "c3", name: "山水画布", timestamp: DEFAULT_TIMESTAMP, cover: "https://www.figma.com/api/mcp/asset/6fb40ad0-e18f-4dc2-a573-61ac6c79c78b" },
-      { id: "c4", name: "追踪序列", timestamp: DEFAULT_TIMESTAMP, cover: "https://www.figma.com/api/mcp/asset/5dff791e-9d4a-42c2-8638-5d7dfe171509" },
+      { id: "c3", name: "山水画布", timestamp: DEFAULT_TIMESTAMP, cover: "./assets/images/canvas-ink-landscape.jpg" },
+      { id: "c4", name: "追踪序列", timestamp: DEFAULT_TIMESTAMP, cover: "./assets/images/canvas-chase-sequence.jpg" },
     ],
   },
   {
@@ -132,7 +134,7 @@ const projectSeed = [
     timestamp: DEFAULT_TIMESTAMP,
     ratio: "9:16 竖屏",
     style: "赛博朋克",
-    cover: "https://www.figma.com/api/mcp/asset/5dff791e-9d4a-42c2-8638-5d7dfe171509",
+    cover: "./assets/images/canvas-chase-sequence.jpg",
     canvases: [{ id: "c5", name: "时间裂缝", timestamp: DEFAULT_TIMESTAMP, cover: DEFAULT_COVER }],
   },
   {
@@ -141,7 +143,7 @@ const projectSeed = [
     timestamp: DEFAULT_TIMESTAMP,
     ratio: "16:9 横屏",
     style: "写实主义",
-    cover: "https://www.figma.com/api/mcp/asset/6fb40ad0-e18f-4dc2-a573-61ac6c79c78b",
+    cover: "./assets/images/canvas-ink-landscape.jpg",
     canvases: [{ id: "c6", name: "峰顶全景", timestamp: DEFAULT_TIMESTAMP, cover: DEFAULT_COVER }],
   },
   {
@@ -150,22 +152,23 @@ const projectSeed = [
     timestamp: DEFAULT_TIMESTAMP,
     ratio: "1:1 正方形",
     style: "极简风格",
-    cover: "https://www.figma.com/api/mcp/asset/06395c9a-4830-4d9e-be4c-61ad5c4beb26",
+    cover: "./assets/images/canvas-character.jpg",
     canvases: [{ id: "c7", name: "循环主体", timestamp: DEFAULT_TIMESTAMP, cover: DEFAULT_COVER }],
   },
 ];
 
 const styleSeed = [
-  { id: "realistic", name: "写实主义", image: "https://www.figma.com/api/mcp/asset/f4cb63ab-fb2d-4abe-b46f-37621be5d562" },
-  { id: "anime", name: "动漫风格", image: "https://www.figma.com/api/mcp/asset/31f879c8-5fa3-4260-ae84-a6cf6ecc161f" },
-  { id: "cyberpunk", name: "赛博朋克", image: "https://www.figma.com/api/mcp/asset/2b80302b-52af-482b-945f-854afe5e91f8" },
-  { id: "cinematic", name: "电影感", image: "https://www.figma.com/api/mcp/asset/ac744281-84f4-4397-9a8f-0c7dafdc6646" },
-  { id: "three-d", name: "3D风格", image: "https://www.figma.com/api/mcp/asset/ce6f33f4-f0b5-4d97-805e-cfa725c7dc9d" },
+  { id: "realistic", name: "写实主义", image: "./assets/images/style-realistic.jpg" },
+  { id: "anime", name: "动漫风格", image: "./assets/images/style-anime.jpg" },
+  { id: "cyberpunk", name: "赛博朋克", image: "./assets/images/style-cyberpunk.jpg" },
+  { id: "cinematic", name: "电影感", image: "./assets/images/style-cinematic.jpg" },
+  { id: "three-d", name: "3D风格", image: "./assets/images/style-3d.jpg" },
 ];
 
 const styleNameMap = Object.fromEntries(styleSeed.map((style) => [style.id, style.name]));
 const NAV_STATE_KEY = "phanty-movie-nav-state";
 const PROJECTS_STATE_KEY = "phanty-movie-projects-state";
+const ACTIVITY_END_AT = new Date("2026-08-01T00:00:00+08:00").getTime();
 const CAMERA_OPTIONS = [
   "ARRI Alexa Mini",
   "ARRI Alexa 65",
@@ -427,6 +430,15 @@ const noticePanel = document.getElementById("notice-panel");
 const createModal = document.getElementById("create-modal");
 const deleteModal = document.getElementById("delete-modal");
 const projectModeModal = document.getElementById("project-mode-modal");
+const limitedActivityModal = document.getElementById("limited-activity-modal");
+const limitedActivityTrigger = document.getElementById("limited-activity-trigger");
+const activityRechargeTrigger = document.getElementById("activity-recharge-trigger");
+const activityCountdownDays = document.getElementById("activity-countdown-days");
+const activityCountdownHours = document.getElementById("activity-countdown-hours");
+const activityCountdownMinutes = document.getElementById("activity-countdown-minutes");
+const activityCountdownSeconds = document.getElementById("activity-countdown-seconds");
+const contactSupportModal = document.getElementById("contact-support-modal");
+const contactSupportTrigger = document.getElementById("contact-support-trigger");
 const createTitle = document.getElementById("create-title");
 const createTrigger = document.getElementById("create-trigger");
 const confirmCreateTrigger = document.getElementById("confirm-create-trigger");
@@ -672,19 +684,19 @@ const renderGrid = () => {
               <h2>${item.name}</h2>
               <div class="menu-anchor">
                 <button class="more-button" type="button" data-card-trigger="${item.id}" aria-expanded="${String(menuOpen)}" aria-label="更多操作">
-                  <img src="https://www.figma.com/api/mcp/asset/e20eb946-0cc4-43be-8ffc-85d58935c03f" alt="" />
+                  <img src="./assets/icons/more.svg" alt="" />
                 </button>
                 <div class="dropdown-menu card-menu${menuOpen ? " is-open" : ""}">
                   <button class="menu-item with-icon" type="button" data-card-action="upload" data-item-id="${item.id}">
-                    <img src="https://www.figma.com/api/mcp/asset/fd8f850b-0eb7-4d9c-b7e9-c09926b16096" alt="" />
+                    <img src="./assets/icons/upload.svg" alt="" />
                     <span>${menuLabels.upload}</span>
                   </button>
                   <button class="menu-item with-icon" type="button" data-card-action="edit" data-item-id="${item.id}">
-                    <img src="https://www.figma.com/api/mcp/asset/9590bb09-75ae-4686-9e44-06f680c196db" alt="" />
+                    <img src="./assets/icons/edit.svg" alt="" />
                     <span>${menuLabels.edit}</span>
                   </button>
                   <button class="menu-item with-icon" type="button" data-card-action="delete" data-item-id="${item.id}">
-                    <img src="https://www.figma.com/api/mcp/asset/ba842b94-8675-4214-aef8-3445244416d2" alt="" />
+                    <img src="./assets/icons/trash.svg" alt="" />
                     <span>${menuLabels.delete}</span>
                   </button>
                 </div>
@@ -700,8 +712,8 @@ const renderGrid = () => {
   const emptyLabel = state.currentView === "projects" ? "创建空白项目" : "新建画布";
   grid.innerHTML = `${cards}
     <button class="empty-card" type="button" id="empty-create-trigger">
-      <img src="https://www.figma.com/api/mcp/asset/34e123af-e3dd-41ae-a4c6-22ca1cc9146d" alt="" />
-      <span>${emptyLabel}</span>
+      <span class="empty-card-icon">${icon.circleDashedPlus}</span>
+      <span class="empty-card-label">${emptyLabel}</span>
     </button>`;
 };
 
@@ -1554,6 +1566,40 @@ const closeModal = (el) => {
   if (el === projectModeModal) state.projectModeTargetId = null;
 };
 
+const formatCountdownUnit = (value) => String(value).padStart(2, "0");
+
+const updateActivityCountdown = () => {
+  const remaining = Math.max(0, ACTIVITY_END_AT - Date.now());
+  const totalSeconds = Math.floor(remaining / 1000);
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  activityCountdownDays.textContent = formatCountdownUnit(days);
+  activityCountdownHours.textContent = formatCountdownUnit(hours);
+  activityCountdownMinutes.textContent = formatCountdownUnit(minutes);
+  activityCountdownSeconds.textContent = formatCountdownUnit(seconds);
+  limitedActivityModal?.classList.toggle("is-expired", remaining <= 0);
+};
+
+const openLimitedActivityModal = () => {
+  state.avatarOpen = false;
+  state.noticeOpen = false;
+  syncHeader();
+  updateActivityCountdown();
+  openModal(limitedActivityModal);
+};
+
+limitedActivityTrigger?.addEventListener("click", openLimitedActivityModal);
+activityRechargeTrigger?.addEventListener("click", () => closeModal(limitedActivityModal));
+
+contactSupportTrigger?.addEventListener("click", () => {
+  state.avatarOpen = false;
+  state.noticeOpen = false;
+  syncHeader();
+  openModal(contactSupportModal);
+});
+
 const openCreateModal = (mode, id = null) => {
   state.createMode = mode;
   const inCanvasMode = mode === "canvas-create" || mode === "canvas-edit";
@@ -1639,6 +1685,9 @@ const readFileAsDataUrl = (file) =>
 restoreNavigationState();
 renderStyleCards();
 renderGrid();
+updateActivityCountdown();
+setInterval(updateActivityCountdown, 1000);
+setTimeout(openLimitedActivityModal, 350);
 
 sortTrigger.addEventListener("click", (event) => {
   event.stopPropagation();
