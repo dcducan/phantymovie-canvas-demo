@@ -1,5 +1,12 @@
 const DEFAULT_TIMESTAMP = "2016年01月01日 12:30:23";
 const DEFAULT_COVER = "./assets/images/default-cover.jpg";
+const EXISTING_VIDEO_PLACEHOLDER = "__existing_video__";
+const VIDEO_STATUS = {
+  pending: "待审核",
+  failed: "审核不通过",
+  published: "已发布",
+  shelfOff: "已下架",
+};
 const DEFAULT_NODE_PROMPT =
   "两只软萌圆滚滚小黄鸡，雌性小鸡头戴贵族小皇冠与花朵，雄性小鸡佩戴小礼帽，二者漫步在开满糖果色小花的草地里。整体为卡通 Q版治愈画风，毛茸茸质感，圆润线条";
 const CANVAS_EMPTY_CREDIT = "./assets/icons/credit.svg";
@@ -165,9 +172,82 @@ const styleSeed = [
   { id: "three-d", name: "3D风格", image: "./assets/images/style-3d.jpg" },
 ];
 
+const videoSeed = [
+  {
+    id: "v1",
+    title: "霓虹雨夜追车片段",
+    uploadedAt: "2026年07月21日 10:24",
+    uploadedAtMs: new Date("2026-07-21T10:24:00+08:00").getTime(),
+    userName: "Sunny",
+    avatar: "./assets/images/avatar-sunny.jpg",
+    cover: "./assets/images/project-neon-tokyo.jpg",
+    likes: 12800,
+    videoSrc: "",
+  },
+  {
+    id: "v2",
+    title: "水墨山谷开场镜头",
+    uploadedAt: "2026年07月20日 18:42",
+    uploadedAtMs: new Date("2026-07-20T18:42:00+08:00").getTime(),
+    userName: "墨影导演",
+    avatar: "./assets/images/avatar-sunny.jpg",
+    cover: "./assets/images/canvas-ink-landscape.jpg",
+    likes: 9400,
+    videoSrc: "",
+  },
+  {
+    id: "v3",
+    title: "赛博城市角色亮相",
+    uploadedAt: "2026年07月19日 21:16",
+    uploadedAtMs: new Date("2026-07-19T21:16:00+08:00").getTime(),
+    userName: "FutureLab",
+    avatar: "./assets/images/avatar-sunny.jpg",
+    cover: "./assets/images/canvas-chase-sequence.jpg",
+    likes: 17600,
+    videoSrc: "",
+  },
+  {
+    id: "v4",
+    title: "角色定妆幕后预览",
+    uploadedAt: "2026年07月18日 09:05",
+    uploadedAtMs: new Date("2026-07-18T09:05:00+08:00").getTime(),
+    userName: "分镜师阿岚",
+    avatar: "./assets/images/avatar-sunny.jpg",
+    cover: "./assets/images/canvas-character.jpg",
+    likes: 6800,
+    videoSrc: "",
+  },
+  {
+    id: "v5",
+    title: "星港巡航概念预告",
+    uploadedAt: "2026年07月22日 11:18",
+    uploadedAtMs: new Date("2026-07-22T11:18:00+08:00").getTime(),
+    userName: "Sunny",
+    avatar: "./assets/images/avatar-sunny.jpg",
+    cover: "./assets/images/style-cinematic.jpg",
+    likes: 0,
+    status: "pending",
+    videoSrc: "",
+  },
+  {
+    id: "v6",
+    title: "森林秘境角色试映",
+    uploadedAt: "2026年07月22日 09:46",
+    uploadedAtMs: new Date("2026-07-22T09:46:00+08:00").getTime(),
+    userName: "Sunny",
+    avatar: "./assets/images/avatar-sunny.jpg",
+    cover: "./assets/images/style-realistic.jpg",
+    likes: 0,
+    status: "pending",
+    videoSrc: "",
+  },
+];
+
 const styleNameMap = Object.fromEntries(styleSeed.map((style) => [style.id, style.name]));
 const NAV_STATE_KEY = "phanty-movie-nav-state";
 const PROJECTS_STATE_KEY = "phanty-movie-projects-state";
+const VIDEOS_STATE_KEY = "phanty-movie-videos-state";
+const VIDEOS_REVIEW_INIT_KEY = "phanty-movie-videos-review-init";
 const ACTIVITY_END_AT = new Date("2026-08-01T00:00:00+08:00").getTime();
 const CAMERA_OPTIONS = [
   "ARRI Alexa Mini",
@@ -355,8 +435,73 @@ const saveProjectsState = () => {
   localStorage.setItem(PROJECTS_STATE_KEY, JSON.stringify(state.projects));
 };
 
+const defaultVideoStatus = (video, index = 0) => {
+  if (video.status) return video.status;
+  if (video.id === "v5" || video.id === "v6") return "pending";
+  if (video.id === "v2" || index === 1) return "pending";
+  if (video.id === "v4" || index === 3) return "failed";
+  return "published";
+};
+
+const normalizeVideo = (video, index = 0) => ({
+  id: video.id || `v${Date.now()}${index}`,
+  title: video.title || `未命名视频 ${index + 1}`,
+  uploadedAt: video.uploadedAt || DEFAULT_TIMESTAMP,
+  uploadedAtMs: video.uploadedAtMs || Date.now() - index * 3600000,
+  publishedAt: video.publishedAt || (defaultVideoStatus(video, index) === "published" ? video.uploadedAt || DEFAULT_TIMESTAMP : ""),
+  publishedAtMs: video.publishedAtMs || (defaultVideoStatus(video, index) === "published" ? video.uploadedAtMs || Date.now() - index * 3600000 : null),
+  userName: video.userName || "Sunny",
+  avatar: video.avatar || "./assets/images/avatar-sunny.jpg",
+  cover: video.cover || DEFAULT_COVER,
+  likes: Number(video.likes) || 0,
+  status: defaultVideoStatus(video, index),
+  isShelfOff: Boolean(video.isShelfOff),
+  videoSrc: video.videoSrc || "",
+  videoFileName: video.videoFileName || "",
+});
+
+const loadVideosState = () => {
+  try {
+    const saved = JSON.parse(localStorage.getItem(VIDEOS_STATE_KEY) || "null");
+    if (Array.isArray(saved)) {
+      const shouldInitializeReviewState = localStorage.getItem(VIDEOS_REVIEW_INIT_KEY) !== "1";
+      const videos = saved.map((video, index) => {
+        const normalized = normalizeVideo(video, index);
+        if (shouldInitializeReviewState && /^v[1-4]$/.test(normalized.id)) {
+          normalized.status = defaultVideoStatus({ id: normalized.id }, index);
+          normalized.isShelfOff = false;
+        }
+        return normalized;
+      });
+      const existingIds = new Set(videos.map((video) => video.id));
+      let addedSeedVideos = false;
+      videoSeed.forEach((video, index) => {
+        if (!existingIds.has(video.id)) {
+          videos.push(normalizeVideo(video, index));
+          addedSeedVideos = true;
+        }
+      });
+      if (shouldInitializeReviewState) {
+        localStorage.setItem(VIDEOS_REVIEW_INIT_KEY, "1");
+        localStorage.setItem(VIDEOS_STATE_KEY, JSON.stringify(videos));
+      } else if (addedSeedVideos) {
+        localStorage.setItem(VIDEOS_STATE_KEY, JSON.stringify(videos));
+      }
+      return videos;
+    }
+  } catch {}
+  const videos = structuredClone(videoSeed).map(normalizeVideo);
+  localStorage.setItem(VIDEOS_REVIEW_INIT_KEY, "1");
+  return videos;
+};
+
+const saveVideosState = () => {
+  localStorage.setItem(VIDEOS_STATE_KEY, JSON.stringify(state.videos));
+};
+
 const state = {
   projects: loadProjectsState(),
+  videos: loadVideosState(),
   currentView: "home",
   currentProjectId: null,
   currentCanvasId: null,
@@ -368,6 +513,8 @@ const state = {
   createMode: "project-create",
   selectedRatio: "16:9",
   selectedStyle: "realistic",
+  videoSortKey: "latest",
+  activeVideoId: null,
   uploadTarget: null,
   uploadNodeTarget: null,
   canvasClipboard: null,
@@ -383,6 +530,18 @@ const state = {
   washConfirmNodeId: null,
   reversePromptConfirmNodeId: null,
   projectModeTargetId: null,
+  creatorVideoMenuId: null,
+  creatorCoverTargetId: null,
+  creatorVideoDeleteTargetId: null,
+  reviewVideoTargetId: null,
+  shelfVideoTargetId: null,
+  reviewStatusFilter: "all",
+  publishVideoMode: "create",
+  publishVideoEditTargetId: null,
+  publishDraftCover: "",
+  publishDraftVideo: "",
+  publishDraftCoverName: "",
+  publishDraftVideoName: "",
 };
 
 const canvasRuntime = {
@@ -401,11 +560,17 @@ const canvasRuntime = {
 
 const grid = document.getElementById("project-grid");
 const homeView = document.getElementById("home-view");
+const creatorCenterView = document.getElementById("creator-center-view");
+const reviewCenterView = document.getElementById("review-center-view");
 const listView = document.getElementById("list-view");
 const detailView = document.getElementById("canvas-detail-view");
 const canvasStage = document.getElementById("canvas-stage");
 const topbarNav = document.querySelector(".topbar-nav");
 const homeProjectCount = document.getElementById("home-project-count");
+const homeVideoGrid = document.getElementById("home-video-grid");
+const creatorVideoList = document.getElementById("creator-video-list");
+const reviewVideoList = document.getElementById("review-video-list");
+const reviewFilterSelect = document.getElementById("review-filter-select");
 const sortMenu = document.getElementById("sort-menu");
 const sortTrigger = document.getElementById("sort-trigger");
 const sortLabel = document.getElementById("sort-label");
@@ -439,6 +604,26 @@ const activityCountdownMinutes = document.getElementById("activity-countdown-min
 const activityCountdownSeconds = document.getElementById("activity-countdown-seconds");
 const contactSupportModal = document.getElementById("contact-support-modal");
 const contactSupportTrigger = document.getElementById("contact-support-trigger");
+const creatorCenterTrigger = document.getElementById("creator-center-trigger");
+const reviewCenterTrigger = document.getElementById("review-center-trigger");
+const videoPreviewModal = document.getElementById("video-preview-modal");
+const videoPreviewContent = document.getElementById("video-preview-content");
+const publishSuccessModal = document.getElementById("publish-success-modal");
+const reviewVideoModal = document.getElementById("review-video-modal");
+const reviewVideoName = document.getElementById("review-video-name");
+const reviewPassTrigger = document.getElementById("review-pass-trigger");
+const reviewFailTrigger = document.getElementById("review-fail-trigger");
+const publishVideoModal = document.getElementById("publish-video-modal");
+const publishVideoTrigger = document.getElementById("publish-video-trigger");
+const publishVideoNameInput = document.getElementById("publish-video-name-input");
+const publishCoverInput = document.getElementById("publish-cover-input");
+const publishVideoInput = document.getElementById("publish-video-input");
+const publishCoverTrigger = document.getElementById("publish-cover-trigger");
+const publishVideoFileTrigger = document.getElementById("publish-video-file-trigger");
+const publishCoverPreview = document.getElementById("publish-cover-preview");
+const publishCoverName = document.getElementById("publish-cover-name");
+const publishVideoFileName = document.getElementById("publish-video-file-name");
+const confirmPublishVideoTrigger = document.getElementById("confirm-publish-video-trigger");
 const createTitle = document.getElementById("create-title");
 const createTrigger = document.getElementById("create-trigger");
 const confirmCreateTrigger = document.getElementById("confirm-create-trigger");
@@ -452,6 +637,7 @@ const styleSection = document.getElementById("style-section");
 const nameLabel = document.getElementById("name-label");
 const coverUploadInput = document.getElementById("cover-upload-input");
 const nodeImageUploadInput = document.getElementById("node-image-upload-input");
+const creatorCoverUploadInput = document.getElementById("creator-cover-upload-input");
 
 const sortLabelMap = {
   "date-asc": "时间正序",
@@ -465,6 +651,30 @@ const compareItems = (a, b, sortKey) => {
   if (sortKey === "name-desc") return b.name.localeCompare(a.name, "zh-CN");
   return sortKey === "date-asc" ? a.id.localeCompare(b.id) : b.id.localeCompare(a.id);
 };
+
+const formatLikeCount = (value) => {
+  if (value >= 10000) return `${(value / 10000).toFixed(value % 10000 === 0 ? 0 : 1)}万`;
+  return String(value);
+};
+
+const formatPublishTime = (date = new Date()) => {
+  const pad = (value) => String(value).padStart(2, "0");
+  return `${date.getFullYear()}年${pad(date.getMonth() + 1)}月${pad(date.getDate())}日 ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+};
+
+const videoPublishedTimeText = (video) => video.publishedAt || "--";
+
+const videoPublishedTimeValue = (video) => video.publishedAtMs || 0;
+
+const videoDisplayStatus = (video) => {
+  if (video.status === "published" && video.isShelfOff) {
+    return { key: "shelfOff", label: VIDEO_STATUS.shelfOff };
+  }
+  return { key: video.status || "pending", label: VIDEO_STATUS[video.status] || "待审核" };
+};
+
+const videoMatchesReviewFilter = (video) =>
+  state.reviewStatusFilter === "all" || videoDisplayStatus(video).key === state.reviewStatusFilter;
 
 const currentProject = () => state.projects.find((project) => project.id === state.currentProjectId) || null;
 const currentCanvas = () => currentProject()?.canvases.find((canvas) => canvas.id === state.currentCanvasId) || null;
@@ -510,6 +720,12 @@ const routeFromState = () => {
   }
   if (state.currentView === "home") {
     return "#/home";
+  }
+  if (state.currentView === "creator-center") {
+    return "#/creator-center";
+  }
+  if (state.currentView === "review-center") {
+    return "#/review-center";
   }
   return "#/projects";
 };
@@ -564,6 +780,20 @@ const restoreNavigationState = () => {
     return;
   }
 
+  if (window.location.hash === "#/creator-center") {
+    state.currentView = "creator-center";
+    state.currentProjectId = null;
+    state.currentCanvasId = null;
+    return;
+  }
+
+  if (window.location.hash === "#/review-center") {
+    state.currentView = "review-center";
+    state.currentProjectId = null;
+    state.currentCanvasId = null;
+    return;
+  }
+
   try {
     const saved = JSON.parse(localStorage.getItem(NAV_STATE_KEY) || "null");
     if (saved?.currentView === "canvas-detail" && saved.currentProjectId && saved.currentCanvasId) {
@@ -593,6 +823,18 @@ const restoreNavigationState = () => {
       state.currentCanvasId = null;
       return;
     }
+    if (saved?.currentView === "creator-center") {
+      state.currentView = "creator-center";
+      state.currentProjectId = null;
+      state.currentCanvasId = null;
+      return;
+    }
+    if (saved?.currentView === "review-center") {
+      state.currentView = "review-center";
+      state.currentProjectId = null;
+      state.currentCanvasId = null;
+      return;
+    }
   } catch {}
 
   state.currentView = "home";
@@ -614,8 +856,163 @@ const renderStyleCards = () => {
     .join("");
 };
 
+const sortedVideos = () =>
+  state.videos
+    .filter((video) => video.status === "published" && !video.isShelfOff)
+    .sort((a, b) => {
+    if (state.videoSortKey === "hot") return b.likes - a.likes || videoPublishedTimeValue(b) - videoPublishedTimeValue(a);
+    return videoPublishedTimeValue(b) - videoPublishedTimeValue(a);
+  });
+
+const renderHomeVideos = () => {
+  if (!homeVideoGrid) return;
+  document.querySelectorAll("[data-video-sort]").forEach((button) => {
+    button.classList.toggle("active", button.dataset.videoSort === state.videoSortKey);
+  });
+  homeVideoGrid.innerHTML = sortedVideos()
+    .map(
+      (video) => `
+        <button class="home-video-card" type="button" data-video-id="${video.id}" aria-label="预览 ${escapeHtml(video.title)}">
+          <div class="home-video-cover">
+            <img src="${video.cover}" alt="${escapeHtml(video.title)}" />
+            <span class="home-video-play">
+              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5.2 3.3v9.4L12 8 5.2 3.3Z" fill="currentColor"/></svg>
+            </span>
+            <span class="home-video-likes">
+              <img src="./assets/icons/heart.svg" alt="" />
+              ${formatLikeCount(video.likes)}
+            </span>
+          </div>
+          <div class="home-video-info">
+            <h3>${escapeHtml(video.title)}</h3>
+            <div class="home-video-meta">
+              <span class="home-video-user">
+                <img src="${video.avatar}" alt="" />
+                <span>${escapeHtml(video.userName)}</span>
+              </span>
+              <time class="home-video-time">${escapeHtml(videoPublishedTimeText(video))}</time>
+            </div>
+          </div>
+        </button>
+      `,
+    )
+    .join("");
+};
+
+const renderCreatorVideos = () => {
+  if (!creatorVideoList) return;
+  if (!state.videos.length) {
+    creatorVideoList.innerHTML = `<div class="creator-empty-state">暂无已上传视频</div>`;
+    return;
+  }
+  creatorVideoList.innerHTML = [...state.videos]
+    .sort((a, b) => b.uploadedAtMs - a.uploadedAtMs)
+    .map(
+      (video) => {
+        const displayStatus = videoDisplayStatus(video);
+        return `
+          <article class="creator-video-card" data-creator-video-id="${video.id}">
+          <button class="creator-video-preview-trigger" type="button" data-creator-video-preview="${video.id}" aria-label="预览 ${escapeHtml(video.title)}">
+            <div class="creator-video-cover">
+              <img src="${video.cover}" alt="${escapeHtml(video.title)}" />
+              <span class="creator-video-play">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5.2 3.3v9.4L12 8 5.2 3.3Z" fill="currentColor"/></svg>
+              </span>
+              <span class="video-status-badge creator-cover-status is-${displayStatus.key}">${displayStatus.label}</span>
+            </div>
+            <div class="creator-video-title">
+              <strong>${escapeHtml(video.title)}</strong>
+              ${video.videoFileName ? `<span>${escapeHtml(video.videoFileName)}</span>` : ""}
+            </div>
+          </button>
+            <div class="creator-video-card-meta">
+              <div class="creator-video-stat" aria-label="点赞数量">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 20s-7.5-4.3-7.5-10.2A4.2 4.2 0 0 1 12 7.2a4.2 4.2 0 0 1 7.5 2.6C19.5 15.7 12 20 12 20Z"/>
+                </svg>
+                <span>${formatLikeCount(video.likes)}</span>
+              </div>
+              <time class="creator-video-date">${escapeHtml(videoPublishedTimeText(video))}</time>
+            </div>
+          <div class="creator-video-card-menu menu-anchor">
+            <button class="creator-video-more" type="button" data-creator-video-menu="${video.id}" aria-expanded="${String(state.creatorVideoMenuId === video.id)}" aria-label="更多操作">
+                <img src="./assets/icons/more.svg" alt="" />
+              </button>
+              <div class="dropdown-menu creator-video-menu${state.creatorVideoMenuId === video.id ? " is-open" : ""}">
+                <button class="menu-item with-icon" type="button" data-creator-video-action="edit" data-video-id="${video.id}">
+                  <img src="./assets/icons/edit.svg" alt="" />
+                  <span>编辑</span>
+                </button>
+                <button class="menu-item with-icon" type="button" data-creator-video-action="delete" data-video-id="${video.id}">
+                  <img src="./assets/icons/trash.svg" alt="" />
+                  <span>删除</span>
+                </button>
+              </div>
+          </div>
+        </article>
+        `;
+      },
+    )
+    .join("");
+};
+
+const renderReviewVideos = () => {
+  if (!reviewVideoList) return;
+  if (reviewFilterSelect) reviewFilterSelect.value = state.reviewStatusFilter;
+  const filteredVideos = [...state.videos].filter(videoMatchesReviewFilter);
+  if (!filteredVideos.length) {
+    reviewVideoList.innerHTML = `<div class="creator-empty-state">暂无上传视频</div>`;
+    return;
+  }
+  reviewVideoList.innerHTML = `
+    <div class="review-video-table">
+      <div class="review-video-header">
+        <span>视频名称</span>
+        <span>点赞数量</span>
+        <span>发布时间</span>
+        <span>状态</span>
+        <span>操作</span>
+      </div>
+      ${filteredVideos
+        .sort((a, b) => b.uploadedAtMs - a.uploadedAtMs)
+        .map((video) => {
+          const displayStatus = videoDisplayStatus(video);
+          const shelfAction = video.isShelfOff ? "上架" : "下架";
+          const canShelf = video.status === "published";
+          const canReview = video.status === "pending";
+          const actionHtml = `
+            <div class="review-video-action-group">
+              <button class="review-video-action${canShelf ? "" : " is-disabled"}" type="button" data-review-action="shelf" data-video-id="${video.id}" ${canShelf ? "" : "disabled"}>${shelfAction}</button>
+              <button class="review-video-action${canReview ? "" : " is-disabled"}" type="button" data-review-action="review" data-video-id="${video.id}" ${canReview ? "" : "disabled"}>审核</button>
+            </div>
+          `;
+          return `
+            <article class="review-video-row">
+              <div class="review-video-main">
+                <button class="review-video-cover-button" type="button" data-review-video-preview="${video.id}" aria-label="预览 ${escapeHtml(video.title)}">
+                  <img src="${video.cover}" alt="${escapeHtml(video.title)}" />
+                </button>
+                <strong>${escapeHtml(video.title)}</strong>
+              </div>
+              <div class="review-video-likes">
+                <img src="./assets/icons/heart.svg" alt="" />
+                <span>${formatLikeCount(video.likes)}</span>
+              </div>
+              <time>${escapeHtml(videoPublishedTimeText(video))}</time>
+              <span class="video-status-badge is-${displayStatus.key}">${displayStatus.label}</span>
+              <div>${actionHtml}</div>
+            </article>
+          `;
+        })
+        .join("")}
+    </div>
+  `;
+};
+
 const syncHeader = () => {
   const inHomeView = state.currentView === "home";
+  const inCreatorCenter = state.currentView === "creator-center";
+  const inReviewCenter = state.currentView === "review-center";
   const inCanvasView = state.currentView === "canvases";
   const inCanvasDetail = state.currentView === "canvas-detail";
   const project = currentProject();
@@ -624,7 +1021,9 @@ const syncHeader = () => {
   pageSubtitle.textContent = inCanvasView ? "管理项目下的 AI画布创作" : "管理您的 AI影视创作";
   createLabel.textContent = inCanvasView ? "新建画布" : "创建新项目";
   homeView.classList.toggle("is-hidden", !inHomeView);
-  listView.classList.toggle("is-hidden", inHomeView || state.currentView === "canvas-detail");
+  creatorCenterView?.classList.toggle("is-hidden", !inCreatorCenter);
+  reviewCenterView?.classList.toggle("is-hidden", !inReviewCenter);
+  listView.classList.toggle("is-hidden", inHomeView || inCreatorCenter || inReviewCenter || state.currentView === "canvas-detail");
   listView.classList.toggle("canvas-list-mode", state.currentView === "canvases");
   detailView.classList.toggle("is-open", state.currentView === "canvas-detail");
   document.querySelector(".topbar")?.classList.toggle("is-hidden", inCanvasView || inCanvasDetail);
@@ -642,7 +1041,7 @@ const syncHeader = () => {
       (target !== "home" && target !== "projects" && false);
     item.classList.toggle("active", active);
   });
-  document.title = inHomeView ? "PhanthyMovie" : inCanvasDetail ? (currentCanvas()?.name || "PhanthyMovie 画布") : "PhanthyMovie 项目列表";
+  document.title = inHomeView ? "PhanthyMovie" : inCreatorCenter ? "创作主页" : inReviewCenter ? "审核中心" : inCanvasDetail ? (currentCanvas()?.name || "PhanthyMovie 画布") : "PhanthyMovie 项目列表";
 };
 
 const syncBatchBar = () => {
@@ -658,6 +1057,17 @@ const renderGrid = () => {
     if (homeProjectCount) {
       homeProjectCount.textContent = "所有生成的项目将自动保存至您的个人库中";
     }
+    renderHomeVideos();
+    return;
+  }
+  if (state.currentView === "creator-center") {
+    saveVideosState();
+    renderCreatorVideos();
+    return;
+  }
+  if (state.currentView === "review-center") {
+    saveVideosState();
+    renderReviewVideos();
     return;
   }
   if (state.currentView === "canvas-detail") {
@@ -1564,6 +1974,14 @@ const openModal = (el) => el.classList.add("is-open");
 const closeModal = (el) => {
   el.classList.remove("is-open");
   if (el === projectModeModal) state.projectModeTargetId = null;
+  if (el === videoPreviewModal) {
+    state.activeVideoId = null;
+    if (videoPreviewContent) videoPreviewContent.innerHTML = "";
+  }
+  if (el === publishVideoModal) resetPublishVideoDraft();
+  if (el === deleteModal && state.creatorVideoDeleteTargetId) state.creatorVideoDeleteTargetId = null;
+  if (el === deleteModal && state.shelfVideoTargetId) state.shelfVideoTargetId = null;
+  if (el === reviewVideoModal) state.reviewVideoTargetId = null;
 };
 
 const formatCountdownUnit = (value) => String(value).padStart(2, "0");
@@ -1598,6 +2016,37 @@ contactSupportTrigger?.addEventListener("click", () => {
   state.noticeOpen = false;
   syncHeader();
   openModal(contactSupportModal);
+});
+
+creatorCenterTrigger?.addEventListener("click", () => {
+  state.currentView = "creator-center";
+  state.currentProjectId = null;
+  state.currentCanvasId = null;
+  state.batchMode = false;
+  state.selectedIds.clear();
+  state.activeMenuId = null;
+  state.creatorVideoMenuId = null;
+  state.avatarOpen = false;
+  state.noticeOpen = false;
+  renderGrid();
+});
+
+reviewCenterTrigger?.addEventListener("click", () => {
+  state.currentView = "review-center";
+  state.currentProjectId = null;
+  state.currentCanvasId = null;
+  state.batchMode = false;
+  state.selectedIds.clear();
+  state.activeMenuId = null;
+  state.creatorVideoMenuId = null;
+  state.avatarOpen = false;
+  state.noticeOpen = false;
+  renderGrid();
+});
+
+reviewFilterSelect?.addEventListener("change", () => {
+  state.reviewStatusFilter = reviewFilterSelect.value;
+  renderGrid();
 });
 
 const openCreateModal = (mode, id = null) => {
@@ -1638,6 +2087,81 @@ const openDeleteModal = (ids) => {
 const openProjectModeModal = (projectId) => {
   state.projectModeTargetId = projectId;
   openModal(projectModeModal);
+};
+
+const openVideoPreview = (videoId) => {
+  const video = state.videos.find((item) => item.id === videoId);
+  if (!video || !videoPreviewContent) return;
+  state.activeVideoId = video.id;
+  videoPreviewContent.innerHTML = `
+    <div class="video-preview-frame">
+      ${
+        video.videoSrc
+          ? `<video src="${video.videoSrc}" poster="${video.cover}" controls autoplay muted playsinline></video>`
+          : `<img src="${video.cover}" alt="${escapeHtml(video.title)}" />
+             <div class="video-preview-fallback">
+               <span>
+                 <svg viewBox="0 0 16 16" aria-hidden="true" width="14" height="14"><path d="M5.2 3.3v9.4L12 8 5.2 3.3Z" fill="currentColor"/></svg>
+                 播放预览
+               </span>
+             </div>`
+      }
+    </div>
+    <div class="video-preview-detail">
+      <div class="video-preview-title-block">
+        <h3>${escapeHtml(video.title)}</h3>
+        <p>${escapeHtml(video.userName)} · ${escapeHtml(video.uploadedAt)}</p>
+      </div>
+      <span class="video-preview-stat">
+        <img src="./assets/icons/heart.svg" alt="" />
+        ${formatLikeCount(video.likes)}
+      </span>
+    </div>
+  `;
+  openModal(videoPreviewModal);
+};
+
+const resetPublishVideoDraft = () => {
+  state.publishVideoMode = "create";
+  state.publishVideoEditTargetId = null;
+  state.publishDraftCover = "";
+  state.publishDraftVideo = "";
+  state.publishDraftCoverName = "";
+  state.publishDraftVideoName = "";
+  if (publishVideoNameInput) publishVideoNameInput.value = "";
+  if (publishCoverInput) publishCoverInput.value = "";
+  if (publishVideoInput) publishVideoInput.value = "";
+  if (publishCoverPreview) {
+    publishCoverPreview.innerHTML = `<img src="./assets/icons/upload.svg" alt="" />`;
+  }
+  if (publishCoverName) publishCoverName.textContent = "支持图片格式";
+  if (publishVideoFileName) publishVideoFileName.textContent = "支持视频格式";
+  if (document.getElementById("publish-video-title")) document.getElementById("publish-video-title").textContent = "发布视频";
+  if (confirmPublishVideoTrigger) confirmPublishVideoTrigger.textContent = "发布";
+};
+
+const openPublishVideoModal = () => {
+  resetPublishVideoDraft();
+  openModal(publishVideoModal);
+};
+
+const openEditVideoModal = (videoId) => {
+  const video = state.videos.find((item) => item.id === videoId);
+  if (!video) return;
+  resetPublishVideoDraft();
+  state.publishVideoMode = "edit";
+  state.publishVideoEditTargetId = video.id;
+  state.publishDraftCover = video.cover;
+  state.publishDraftVideo = video.videoSrc || EXISTING_VIDEO_PLACEHOLDER;
+  state.publishDraftCoverName = "当前封面";
+  state.publishDraftVideoName = video.videoFileName || "当前视频";
+  if (document.getElementById("publish-video-title")) document.getElementById("publish-video-title").textContent = "编辑视频";
+  if (confirmPublishVideoTrigger) confirmPublishVideoTrigger.textContent = "保存";
+  if (publishVideoNameInput) publishVideoNameInput.value = video.title;
+  if (publishCoverPreview) publishCoverPreview.innerHTML = `<img src="${video.cover}" alt="" />`;
+  if (publishCoverName) publishCoverName.textContent = state.publishDraftCoverName;
+  if (publishVideoFileName) publishVideoFileName.textContent = state.publishDraftVideoName;
+  openModal(publishVideoModal);
 };
 
 const enterProjectMode = (projectId, mode) => {
@@ -1767,6 +2291,7 @@ topbarNav?.addEventListener("click", (event) => {
   state.batchMode = false;
   state.selectedIds.clear();
   state.activeMenuId = null;
+  state.creatorVideoMenuId = null;
   state.avatarOpen = false;
   state.noticeOpen = false;
   if (view === "home") {
@@ -1782,6 +2307,19 @@ topbarNav?.addEventListener("click", (event) => {
 });
 
 homeView?.addEventListener("click", (event) => {
+  const videoSort = event.target.closest("[data-video-sort]");
+  if (videoSort) {
+    state.videoSortKey = videoSort.dataset.videoSort;
+    renderHomeVideos();
+    return;
+  }
+
+  const videoCard = event.target.closest("[data-video-id]");
+  if (videoCard) {
+    openVideoPreview(videoCard.dataset.videoId);
+    return;
+  }
+
   const navTarget = event.target.closest("[data-nav-target]");
   if (navTarget) {
     if (navTarget.dataset.navTarget === "projects") {
@@ -1797,6 +2335,172 @@ homeView?.addEventListener("click", (event) => {
   if (homeAction.dataset.homeAction === "open-latest-canvas") {
     openCreateModal("project-create");
   }
+});
+
+creatorVideoList?.addEventListener("click", (event) => {
+  const menuTrigger = event.target.closest("[data-creator-video-menu]");
+  if (menuTrigger) {
+    const videoId = menuTrigger.dataset.creatorVideoMenu;
+    state.creatorVideoMenuId = state.creatorVideoMenuId === videoId ? null : videoId;
+    renderGrid();
+    return;
+  }
+
+  const previewTrigger = event.target.closest("[data-creator-video-preview]");
+  if (previewTrigger) {
+    state.creatorVideoMenuId = null;
+    openVideoPreview(previewTrigger.dataset.creatorVideoPreview);
+    renderGrid();
+    return;
+  }
+
+  const action = event.target.closest("[data-creator-video-action]");
+  if (!action) return;
+  const videoId = action.dataset.videoId;
+  const video = state.videos.find((item) => item.id === videoId);
+  if (!video) return;
+  state.creatorVideoMenuId = null;
+
+  if (action.dataset.creatorVideoAction === "edit") {
+    openEditVideoModal(videoId);
+    return;
+  }
+
+  if (action.dataset.creatorVideoAction === "delete") {
+    state.creatorVideoDeleteTargetId = videoId;
+    deleteMessage.textContent = "视频将被删除且无法找回，是否确认删除？";
+    openModal(deleteModal);
+    renderGrid();
+  }
+});
+
+reviewVideoList?.addEventListener("click", (event) => {
+  const previewTrigger = event.target.closest("[data-review-video-preview]");
+  if (previewTrigger) {
+    openVideoPreview(previewTrigger.dataset.reviewVideoPreview);
+    return;
+  }
+
+  const action = event.target.closest("[data-review-action]");
+  if (!action) return;
+  const videoId = action.dataset.videoId;
+  const video = state.videos.find((item) => item.id === videoId);
+  if (!video) return;
+
+  if (action.dataset.reviewAction === "review") {
+    state.reviewVideoTargetId = videoId;
+    if (reviewVideoName) reviewVideoName.textContent = `审核视频：${video.title}`;
+    openModal(reviewVideoModal);
+    return;
+  }
+
+  if (action.dataset.reviewAction === "shelf") {
+    state.shelfVideoTargetId = videoId;
+    deleteMessage.textContent = video.isShelfOff
+      ? "视频将重新上架并展示在创作中心首页，是否确认上架？"
+      : "视频将从创作中心首页下架，是否确认下架？";
+    openModal(deleteModal);
+  }
+});
+
+reviewPassTrigger?.addEventListener("click", () => {
+  const video = state.videos.find((item) => item.id === state.reviewVideoTargetId);
+  if (!video) return;
+  const now = new Date();
+  video.status = "published";
+  video.isShelfOff = false;
+  video.publishedAt = formatPublishTime(now);
+  video.publishedAtMs = now.getTime();
+  saveVideosState();
+  closeModal(reviewVideoModal);
+  renderGrid();
+});
+
+reviewFailTrigger?.addEventListener("click", () => {
+  const video = state.videos.find((item) => item.id === state.reviewVideoTargetId);
+  if (!video) return;
+  video.status = "failed";
+  video.isShelfOff = false;
+  saveVideosState();
+  closeModal(reviewVideoModal);
+  renderGrid();
+});
+
+publishVideoTrigger?.addEventListener("click", openPublishVideoModal);
+
+publishCoverTrigger?.addEventListener("click", () => publishCoverInput?.click());
+publishVideoFileTrigger?.addEventListener("click", () => publishVideoInput?.click());
+
+publishCoverInput?.addEventListener("change", async () => {
+  const file = publishCoverInput.files?.[0];
+  if (!file) return;
+  state.publishDraftCover = await readFileAsDataUrl(file);
+  state.publishDraftCoverName = file.name;
+  if (publishCoverPreview) {
+    publishCoverPreview.innerHTML = `<img src="${state.publishDraftCover}" alt="" />`;
+  }
+  if (publishCoverName) publishCoverName.textContent = file.name;
+});
+
+publishVideoInput?.addEventListener("change", () => {
+  const file = publishVideoInput.files?.[0];
+  if (!file) return;
+  state.publishDraftVideo = URL.createObjectURL(file);
+  state.publishDraftVideoName = file.name;
+  if (publishVideoFileName) publishVideoFileName.textContent = file.name;
+});
+
+confirmPublishVideoTrigger?.addEventListener("click", () => {
+  const title = publishVideoNameInput?.value.trim();
+  if (!title) {
+    window.alert("请设置视频名称");
+    return;
+  }
+  if (!state.publishDraftCover) {
+    window.alert("请上传视频封面");
+    return;
+  }
+  if (!state.publishDraftVideo) {
+    window.alert("请上传视频内容");
+    return;
+  }
+  if (state.publishVideoMode === "edit") {
+    const video = state.videos.find((item) => item.id === state.publishVideoEditTargetId);
+    if (!video) return;
+    video.title = title;
+    video.cover = state.publishDraftCover;
+    if (state.publishDraftVideo !== EXISTING_VIDEO_PLACEHOLDER) {
+      video.videoSrc = state.publishDraftVideo;
+    }
+    video.videoFileName = state.publishDraftVideoName;
+    saveVideosState();
+    closeModal(publishVideoModal);
+    renderGrid();
+    return;
+  }
+  const now = new Date();
+  state.videos.unshift(
+    normalizeVideo({
+      id: `v${Date.now()}`,
+      title,
+      uploadedAt: formatPublishTime(now),
+      uploadedAtMs: now.getTime(),
+      userName: "Sunny",
+      avatar: "./assets/images/avatar-sunny.jpg",
+      cover: state.publishDraftCover,
+      likes: 0,
+      status: "pending",
+      isShelfOff: false,
+      publishedAt: "",
+      publishedAtMs: null,
+      videoSrc: state.publishDraftVideo,
+      videoFileName: state.publishDraftVideoName,
+    }),
+  );
+  saveVideosState();
+  closeModal(publishVideoModal);
+  renderGrid();
+  openModal(publishSuccessModal);
 });
 
 grid.addEventListener("click", (event) => {
@@ -1915,6 +2619,25 @@ projectModeModal?.addEventListener("click", (event) => {
 });
 
 confirmDeleteTrigger.addEventListener("click", () => {
+  if (state.shelfVideoTargetId) {
+    const video = state.videos.find((item) => item.id === state.shelfVideoTargetId);
+    if (video) {
+      video.isShelfOff = !video.isShelfOff;
+      saveVideosState();
+    }
+    state.shelfVideoTargetId = null;
+    closeModal(deleteModal);
+    renderGrid();
+    return;
+  }
+  if (state.creatorVideoDeleteTargetId) {
+    state.videos = state.videos.filter((item) => item.id !== state.creatorVideoDeleteTargetId);
+    saveVideosState();
+    state.creatorVideoDeleteTargetId = null;
+    closeModal(deleteModal);
+    renderGrid();
+    return;
+  }
   removeItems(state.deleteTargetIds);
   closeModal(deleteModal);
   state.deleteTargetIds = [];
@@ -1929,6 +2652,20 @@ coverUploadInput.addEventListener("change", async () => {
   );
   state.uploadTarget = null;
   coverUploadInput.value = "";
+  renderGrid();
+});
+
+creatorCoverUploadInput?.addEventListener("change", async () => {
+  const file = creatorCoverUploadInput.files?.[0];
+  if (!file || !state.creatorCoverTargetId) return;
+  const dataUrl = await readFileAsDataUrl(file);
+  const video = state.videos.find((item) => item.id === state.creatorCoverTargetId);
+  if (video) {
+    video.cover = dataUrl;
+    saveVideosState();
+  }
+  state.creatorCoverTargetId = null;
+  creatorCoverUploadInput.value = "";
   renderGrid();
 });
 
@@ -2440,6 +3177,7 @@ document.addEventListener("click", (event) => {
 
   if (!event.target.closest(".menu-anchor")) {
     state.activeMenuId = null;
+    state.creatorVideoMenuId = null;
     sortMenu.classList.remove("is-open");
     sortTrigger.setAttribute("aria-expanded", "false");
   }

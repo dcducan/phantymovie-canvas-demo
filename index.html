@@ -30,8 +30,6 @@
           <button class="topbar-nav-item active" type="button" data-nav-target="home">创作中心</button>
           <button class="topbar-nav-item" type="button" data-nav-target="projects">项目管理</button>
           <button class="topbar-nav-item" type="button" data-nav-target="personal-assets">个人资产库</button>
-          <button class="topbar-nav-item" type="button" data-nav-target="team-assets">团队资产库</button>
-          <button class="topbar-nav-item" type="button" data-nav-target="team">团队中心</button>
           <button class="topbar-nav-item" type="button" data-nav-target="materials">素材广场</button>
         </nav>
 
@@ -93,6 +91,8 @@
             <button type="button">交易记录</button>
             <button type="button">我的消耗明细</button>
             <button type="button">AI水印设置</button>
+            <button type="button" id="creator-center-trigger">创作主页</button>
+            <button type="button" id="review-center-trigger">审核中心</button>
             <button type="button" id="contact-support-trigger">联系客服</button>
           </div>
 
@@ -176,10 +176,77 @@
           </article>
         </div>
 
+        <section class="home-video-section" aria-labelledby="home-video-title">
+          <div class="home-video-head">
+            <div>
+              <h2 id="home-video-title">平台作品展示</h2>
+            </div>
+            <div class="home-video-sort" role="group" aria-label="视频排序">
+              <button class="home-video-sort-button active" type="button" data-video-sort="latest">最新</button>
+              <button class="home-video-sort-button" type="button" data-video-sort="hot">最热</button>
+            </div>
+          </div>
+          <div class="home-video-grid" id="home-video-grid"></div>
+        </section>
+
         <div class="home-footnote">
           <img src="./assets/home/home-footnote.svg" alt="" />
           <span id="home-project-count">所有生成的项目将自动保存至您的个人库中</span>
         </div>
+      </section>
+
+      <section class="creator-center-view is-hidden" id="creator-center-view">
+        <div class="creator-center-head">
+          <div class="creator-profile">
+            <img src="./assets/images/avatar-sunny.jpg" alt="" />
+            <div>
+              <span>创作者</span>
+              <strong>Sunny</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="creator-tabs" role="tablist" aria-label="创作中心内容">
+          <button class="creator-tab active" type="button" role="tab" aria-selected="true">视频</button>
+        </div>
+
+        <div class="creator-video-actions">
+          <button class="pill create-pill creator-publish-button" type="button" id="publish-video-trigger">
+            <img src="./assets/icons/upload.svg" alt="" />
+            <span>发布视频</span>
+          </button>
+        </div>
+
+        <div class="creator-video-list" id="creator-video-list"></div>
+      </section>
+
+      <section class="review-center-view is-hidden" id="review-center-view">
+        <div class="creator-center-head">
+          <div class="creator-profile">
+            <img src="./assets/images/avatar-sunny.jpg" alt="" />
+            <div>
+              <span>审核中心</span>
+              <strong>Sunny</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="creator-tabs" role="tablist" aria-label="审核中心内容">
+          <button class="creator-tab active" type="button" role="tab" aria-selected="true">视频</button>
+        </div>
+
+        <label class="review-filter-select-wrap" aria-label="审核状态筛选">
+          <span>状态</span>
+          <select class="review-filter-select" id="review-filter-select">
+            <option value="all">全部</option>
+            <option value="pending">待审核</option>
+            <option value="failed">审核不通过</option>
+            <option value="published">已发布</option>
+            <option value="shelfOff">已下架</option>
+          </select>
+        </label>
+
+        <div class="review-video-list" id="review-video-list"></div>
       </section>
 
       <section class="content" id="list-view">
@@ -277,6 +344,9 @@
 
       <input id="cover-upload-input" type="file" accept="image/*" hidden />
       <input id="node-image-upload-input" type="file" accept="image/*" hidden />
+      <input id="creator-cover-upload-input" type="file" accept="image/*" hidden />
+      <input id="publish-cover-input" type="file" accept="image/*" hidden />
+      <input id="publish-video-input" type="file" accept="video/*" hidden />
 
       <div class="modal-backdrop" id="create-modal">
         <div class="modal-shell create-modal-shell" role="dialog" aria-modal="true" aria-labelledby="create-title">
@@ -463,6 +533,94 @@
             </div>
             <strong>扫码添加客服企微</strong>
             <p>请使用企业微信或微信扫码添加客服，获取账号、额度与创作流程支持。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-backdrop" id="video-preview-modal">
+        <div class="modal-shell video-preview-modal-shell" role="dialog" aria-modal="true" aria-labelledby="video-preview-title">
+          <div class="modal-header">
+            <h2 id="video-preview-title">视频预览</h2>
+            <button class="icon-close" type="button" data-close-modal="video-preview-modal" aria-label="关闭">
+              <img src="./assets/icons/close.svg" alt="" />
+            </button>
+          </div>
+          <div class="modal-body video-preview-modal-body" id="video-preview-content"></div>
+        </div>
+      </div>
+
+      <div class="modal-backdrop" id="publish-video-modal">
+        <div class="modal-shell publish-video-modal-shell" role="dialog" aria-modal="true" aria-labelledby="publish-video-title">
+          <div class="modal-header">
+            <h2 id="publish-video-title">发布视频</h2>
+            <button class="icon-close" type="button" data-close-modal="publish-video-modal" aria-label="关闭">
+              <img src="./assets/icons/close.svg" alt="" />
+            </button>
+          </div>
+          <div class="modal-body publish-video-modal-body">
+            <section class="form-section">
+              <div class="section-label">
+                <img src="./assets/icons/text.svg" alt="" />
+                <span>视频名称</span>
+              </div>
+              <input class="dark-input" id="publish-video-name-input" type="text" placeholder="输入视频名称..." />
+            </section>
+
+            <section class="publish-upload-grid">
+              <button class="publish-upload-card" type="button" id="publish-cover-trigger">
+                <span class="publish-upload-preview" id="publish-cover-preview">
+                  <img src="./assets/icons/upload.svg" alt="" />
+                </span>
+                <strong>上传封面</strong>
+                <em id="publish-cover-name">支持图片格式</em>
+              </button>
+              <button class="publish-upload-card" type="button" id="publish-video-file-trigger">
+                <span class="publish-upload-preview">
+                  <img src="./assets/icons/upload.svg" alt="" />
+                </span>
+                <strong>上传视频内容</strong>
+                <em id="publish-video-file-name">支持视频格式</em>
+              </button>
+            </section>
+          </div>
+          <div class="modal-footer">
+            <button class="pill ghost-footer-pill compact-footer-pill" type="button" data-close-modal="publish-video-modal">取消</button>
+            <button class="pill confirm-footer-pill compact-footer-pill" type="button" id="confirm-publish-video-trigger">发布</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-backdrop" id="publish-success-modal">
+        <div class="modal-shell delete-modal-shell" role="dialog" aria-modal="true" aria-labelledby="publish-success-title">
+          <div class="modal-header">
+            <h2 id="publish-success-title">提交成功</h2>
+            <button class="icon-close" type="button" data-close-modal="publish-success-modal" aria-label="关闭">
+              <img src="./assets/icons/close.svg" alt="" />
+            </button>
+          </div>
+          <div class="modal-body delete-modal-body">
+            <p>视频提交成功，已进入审核阶段，审核通过后将发布在创作中心首页</p>
+          </div>
+          <div class="modal-footer">
+            <button class="pill confirm-footer-pill compact-footer-pill" type="button" data-close-modal="publish-success-modal">知道了</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-backdrop" id="review-video-modal">
+        <div class="modal-shell delete-modal-shell" role="dialog" aria-modal="true" aria-labelledby="review-video-title">
+          <div class="modal-header">
+            <h2 id="review-video-title">审核视频</h2>
+            <button class="icon-close" type="button" data-close-modal="review-video-modal" aria-label="关闭">
+              <img src="./assets/icons/close.svg" alt="" />
+            </button>
+          </div>
+          <div class="modal-body review-video-modal-body">
+            <p id="review-video-name">请选择审核结果</p>
+            <div class="review-result-actions">
+              <button class="pill ghost-footer-pill compact-footer-pill" type="button" id="review-fail-trigger">审核不通过</button>
+              <button class="pill confirm-footer-pill compact-footer-pill" type="button" id="review-pass-trigger">审核通过</button>
+            </div>
           </div>
         </div>
       </div>
