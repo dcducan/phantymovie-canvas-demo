@@ -95,6 +95,10 @@ input::placeholder {
   margin-right: auto;
 }
 
+.topbar-nav.is-hidden {
+  display: none;
+}
+
 .topbar-nav-item {
   height: 28px;
   padding: 0;
@@ -115,6 +119,10 @@ input::placeholder {
 
 .topbar.is-hidden {
   display: none;
+}
+
+.topbar.is-canvas-detail .brand {
+  visibility: hidden;
 }
 
 .floating-layer {
@@ -2033,15 +2041,17 @@ input::placeholder {
 }
 
 .canvas-page-header {
+  position: fixed;
   top: 0;
-  left: 0;
-  right: 0;
+  left: 16px;
+  right: auto;
+  z-index: 1001;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   height: 48px;
-  padding: 0 18px 0 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 0;
+  border-bottom: 0;
   pointer-events: auto;
 }
 
@@ -3557,10 +3567,9 @@ input::placeholder {
 
 /* Canvas page overrides from Figma frames 1:12945 / 1:65200 */
 .canvas-page-header {
-  padding: 0 16px;
-  border-bottom-color: rgba(255, 255, 255, 0.1);
-  background: #050505;
-  backdrop-filter: blur(10px);
+  padding: 0;
+  background: transparent;
+  backdrop-filter: none;
 }
 
 .canvas-page-crumb {

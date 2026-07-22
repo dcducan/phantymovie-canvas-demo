@@ -1026,7 +1026,10 @@ const syncHeader = () => {
   listView.classList.toggle("is-hidden", inHomeView || inCreatorCenter || inReviewCenter || state.currentView === "canvas-detail");
   listView.classList.toggle("canvas-list-mode", state.currentView === "canvases");
   detailView.classList.toggle("is-open", state.currentView === "canvas-detail");
-  document.querySelector(".topbar")?.classList.toggle("is-hidden", inCanvasView || inCanvasDetail);
+  const topbar = document.querySelector(".topbar");
+  topbar?.classList.remove("is-hidden");
+  topbar?.classList.toggle("is-canvas-detail", inCanvasDetail);
+  topbarNav?.classList.toggle("is-hidden", inCanvasView || inCanvasDetail);
   sidebar.classList.toggle("is-visible", state.currentView === "canvases");
   sidebarProjectName.textContent = project?.name || "测试项目";
   sidebarRatioTag.textContent = project?.ratio || "16:9 横屏";
@@ -1133,10 +1136,6 @@ const renderCanvasDetail = () => {
   if (!project || !canvas) return;
   const hasNodes = canvas.nodes.length > 0;
   const headerBackIcon = hasNodes ? CANVAS_NODE_BACK : CANVAS_EMPTY_BACK;
-  const headerCreditIcon = hasNodes ? CANVAS_NODE_CREDIT : CANVAS_EMPTY_CREDIT;
-  const headerBellIcon = hasNodes ? CANVAS_NODE_BELL : CANVAS_EMPTY_BELL;
-  const headerAvatarBg = hasNodes ? CANVAS_NODE_AVATAR_BG : CANVAS_EMPTY_AVATAR_BG;
-  const headerAvatarImage = hasNodes ? CANVAS_NODE_AVATAR_IMAGE : CANVAS_EMPTY_AVATAR_IMAGE;
   const dockGridIcon = hasNodes ? CANVAS_NODE_DOCK_GRID : CANVAS_EMPTY_DOCK_GRID;
   const dockSceneIcon = hasNodes ? CANVAS_NODE_DOCK_SCENE : CANVAS_EMPTY_DOCK_SCENE;
   const dockPointerIcon = hasNodes ? CANVAS_NODE_DOCK_POINTER : CANVAS_EMPTY_DOCK_POINTER;
@@ -1551,13 +1550,6 @@ const renderCanvasDetail = () => {
           <span class="canvas-page-back"><img src="${headerBackIcon}" alt="" /></span>
           <span>${escapeHtml(canvas.name)}</span>
         </button>
-
-        <div class="canvas-page-header-right">
-          <button class="canvas-page-link" type="button">充值中心</button>
-          <span class="canvas-page-balance"><img src="${headerCreditIcon}" alt="" /><span>2000</span></span>
-          <button class="canvas-page-icon" type="button" aria-label="提醒"><img src="${headerBellIcon}" alt="" /></button>
-          <button class="canvas-page-avatar" type="button" aria-label="用户头像"><img class="canvas-page-avatar-bg" src="${headerAvatarBg}" alt="" /><img class="canvas-page-avatar-image" src="${headerAvatarImage}" alt="" /></button>
-        </div>
       </div>
 
       <div class="canvas-board" id="canvas-board">
