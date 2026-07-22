@@ -2159,7 +2159,7 @@ const openEditVideoModal = (videoId) => {
 const enterProjectMode = (projectId, mode) => {
   const project = state.projects.find((item) => item.id === projectId);
   if (!project) return;
-  if (mode === "infinite-canvas") {
+  if (mode === "infinite-canvas" || mode === "workflow") {
     state.currentView = "canvases";
     state.currentProjectId = project.id;
     state.currentCanvasId = null;
@@ -2271,7 +2271,7 @@ sidebar?.addEventListener("click", (event) => {
   const modeSwitch = event.target.closest("[data-mode-switch]");
   if (!modeSwitch || modeSwitch.disabled) return;
   const mode = modeSwitch.dataset.modeSwitch;
-  if (mode === "infinite-canvas") {
+  if (mode === "infinite-canvas" || mode === "workflow") {
     renderGrid();
   }
 });
