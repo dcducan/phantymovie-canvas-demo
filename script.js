@@ -407,6 +407,8 @@ const normalizeCanvas = (canvas, index = 0) => {
     canvas.viewport = { x: 0, y: 0, scale: 1 };
   }
 
+  canvas.shareAccess = canvas.shareAccess === "private" ? "private" : "public";
+
   canvas.connections = Array.isArray(canvas.connections) ? canvas.connections : [];
 
   if (!canvas.selectedNodeId && canvas.nodes.length) {
@@ -563,8 +565,10 @@ const homeView = document.getElementById("home-view");
 const creatorCenterView = document.getElementById("creator-center-view");
 const reviewCenterView = document.getElementById("review-center-view");
 const listView = document.getElementById("list-view");
+const workflowHomeView = document.getElementById("workflow-home-view");
 const detailView = document.getElementById("canvas-detail-view");
 const canvasStage = document.getElementById("canvas-stage");
+const brandHomeTrigger = document.getElementById("brand-home-trigger");
 const topbarNav = document.querySelector(".topbar-nav");
 const homeProjectCount = document.getElementById("home-project-count");
 const homeVideoGrid = document.getElementById("home-video-grid");
@@ -587,6 +591,14 @@ const sidebarBackTrigger = document.getElementById("sidebar-back-trigger");
 const sidebarProjectName = document.getElementById("sidebar-project-name");
 const sidebarRatioTag = document.getElementById("sidebar-ratio-tag");
 const sidebarStyleTag = document.getElementById("sidebar-style-tag");
+const workflowBackTrigger = document.getElementById("workflow-back-trigger");
+const workflowModeSwitchTrigger = document.getElementById("workflow-mode-switch-trigger");
+const workflowProjectName = document.getElementById("workflow-project-name");
+const workflowRatioTag = document.getElementById("workflow-ratio-tag");
+const workflowStyleTag = document.getElementById("workflow-style-tag");
+const workflowMainProjectName = document.getElementById("workflow-main-project-name");
+const workflowMainStyleTag = document.getElementById("workflow-main-style-tag");
+const workflowHistoryTrigger = document.getElementById("workflow-history-trigger");
 const createLabel = document.getElementById("create-label");
 const avatarTrigger = document.getElementById("avatar-trigger");
 const avatarPanel = document.getElementById("avatar-panel");
@@ -613,6 +625,17 @@ const reviewVideoModal = document.getElementById("review-video-modal");
 const reviewVideoName = document.getElementById("review-video-name");
 const reviewPassTrigger = document.getElementById("review-pass-trigger");
 const reviewFailTrigger = document.getElementById("review-fail-trigger");
+const canvasShareModal = document.getElementById("canvas-share-modal");
+const canvasShareLinkInput = document.getElementById("canvas-share-link-input");
+const copyCanvasShareTrigger = document.getElementById("copy-canvas-share-trigger");
+const shareCopyFeedback = document.getElementById("share-copy-feedback");
+const canvasShareAccessSwitch = document.getElementById("canvas-share-access-switch");
+const shareAccessTitle = document.getElementById("share-access-title");
+const shareAccessDescription = document.getElementById("share-access-description");
+const copyCanvasModal = document.getElementById("copy-canvas-modal");
+const copyCanvasProjectSelect = document.getElementById("copy-canvas-project-select");
+const copyCanvasNameInput = document.getElementById("copy-canvas-name-input");
+const confirmCopyCanvasTrigger = document.getElementById("confirm-copy-canvas-trigger");
 const publishVideoModal = document.getElementById("publish-video-modal");
 const publishVideoTrigger = document.getElementById("publish-video-trigger");
 const publishVideoNameInput = document.getElementById("publish-video-name-input");
@@ -679,6 +702,8 @@ const videoMatchesReviewFilter = (video) =>
 const currentProject = () => state.projects.find((project) => project.id === state.currentProjectId) || null;
 const currentCanvas = () => currentProject()?.canvases.find((canvas) => canvas.id === state.currentCanvasId) || null;
 const currentCanvasNodes = () => currentCanvas()?.nodes || [];
+const isCanvasDetailView = () => state.currentView === "canvas-detail" || state.currentView === "canvas-share";
+const isCanvasShareView = () => state.currentView === "canvas-share";
 const firstCanvasTarget = () => {
   for (const project of state.projects) {
     const canvas = project.canvases?.[0];
@@ -709,11 +734,17 @@ const currentMenuLabels = () =>
     : { edit: "重命名", delete: "删除", upload: "上传封面" };
 
 const routeFromState = () => {
+  if (state.currentView === "canvas-share" && state.currentProjectId && state.currentCanvasId) {
+    return `#/share/project/${state.currentProjectId}/canvas/${state.currentCanvasId}`;
+  }
   if (state.currentView === "canvas-detail" && state.currentProjectId && state.currentCanvasId) {
     return `#/project/${state.currentProjectId}/canvas/${state.currentCanvasId}`;
   }
   if (state.currentView === "canvases" && state.currentProjectId) {
     return `#/project/${state.currentProjectId}/canvases`;
+  }
+  if (state.currentView === "workflow-home" && state.currentProjectId) {
+    return `#/project/${state.currentProjectId}/workflow`;
   }
   if (state.currentView === "projects") {
     return "#/projects";
@@ -744,6 +775,17 @@ const persistNavigationState = () => {
 };
 
 const restoreNavigationState = () => {
+  const shareMatch = window.location.hash.match(/^#\/share\/project\/([^/]+)\/canvas\/([^/]+)$/);
+  if (shareMatch) {
+    const [, projectId, canvasId] = shareMatch;
+    if (state.projects.some((project) => project.id === projectId && project.canvases.some((canvas) => canvas.id === canvasId))) {
+      state.currentView = "canvas-share";
+      state.currentProjectId = projectId;
+      state.currentCanvasId = canvasId;
+      return;
+    }
+  }
+
   const match = window.location.hash.match(/^#\/project\/([^/]+)\/canvas\/([^/]+)$/);
   if (match) {
     const [, projectId, canvasId] = match;
@@ -760,6 +802,17 @@ const restoreNavigationState = () => {
     const [, projectId] = listMatch;
     if (state.projects.some((project) => project.id === projectId)) {
       state.currentView = "canvases";
+      state.currentProjectId = projectId;
+      state.currentCanvasId = null;
+      return;
+    }
+  }
+
+  const workflowMatch = window.location.hash.match(/^#\/project\/([^/]+)\/workflow$/);
+  if (workflowMatch) {
+    const [, projectId] = workflowMatch;
+    if (state.projects.some((project) => project.id === projectId)) {
+      state.currentView = "workflow-home";
       state.currentProjectId = projectId;
       state.currentCanvasId = null;
       return;
@@ -805,8 +858,23 @@ const restoreNavigationState = () => {
         return;
       }
     }
+    if (saved?.currentView === "canvas-share" && saved.currentProjectId && saved.currentCanvasId) {
+      const valid = state.projects.some((project) => project.id === saved.currentProjectId && project.canvases.some((canvas) => canvas.id === saved.currentCanvasId));
+      if (valid) {
+        state.currentView = "canvas-share";
+        state.currentProjectId = saved.currentProjectId;
+        state.currentCanvasId = saved.currentCanvasId;
+        return;
+      }
+    }
     if (saved?.currentView === "canvases" && saved.currentProjectId && state.projects.some((project) => project.id === saved.currentProjectId)) {
       state.currentView = "canvases";
+      state.currentProjectId = saved.currentProjectId;
+      state.currentCanvasId = null;
+      return;
+    }
+    if (saved?.currentView === "workflow-home" && saved.currentProjectId && state.projects.some((project) => project.id === saved.currentProjectId)) {
+      state.currentView = "workflow-home";
       state.currentProjectId = saved.currentProjectId;
       state.currentCanvasId = null;
       return;
@@ -1014,7 +1082,10 @@ const syncHeader = () => {
   const inCreatorCenter = state.currentView === "creator-center";
   const inReviewCenter = state.currentView === "review-center";
   const inCanvasView = state.currentView === "canvases";
+  const inWorkflowHome = state.currentView === "workflow-home";
   const inCanvasDetail = state.currentView === "canvas-detail";
+  const inCanvasShare = state.currentView === "canvas-share";
+  const inCanvasSurface = inCanvasDetail || inCanvasShare;
   const project = currentProject();
   backTrigger.classList.toggle("is-visible", inCanvasView);
   pageTitle.textContent = inCanvasView ? `${project?.name || ""} · 画布列表` : "我的项目";
@@ -1023,28 +1094,36 @@ const syncHeader = () => {
   homeView.classList.toggle("is-hidden", !inHomeView);
   creatorCenterView?.classList.toggle("is-hidden", !inCreatorCenter);
   reviewCenterView?.classList.toggle("is-hidden", !inReviewCenter);
-  listView.classList.toggle("is-hidden", inHomeView || inCreatorCenter || inReviewCenter || state.currentView === "canvas-detail");
+  workflowHomeView?.classList.toggle("is-hidden", !inWorkflowHome);
+  listView.classList.toggle("is-hidden", inHomeView || inCreatorCenter || inReviewCenter || inWorkflowHome || inCanvasSurface);
   listView.classList.toggle("canvas-list-mode", state.currentView === "canvases");
-  detailView.classList.toggle("is-open", state.currentView === "canvas-detail");
+  detailView.classList.toggle("is-open", inCanvasSurface);
+  detailView.classList.toggle("is-share-view", inCanvasShare);
   const topbar = document.querySelector(".topbar");
   topbar?.classList.remove("is-hidden");
   topbar?.classList.toggle("is-canvas-detail", inCanvasDetail);
-  topbarNav?.classList.toggle("is-hidden", inCanvasView || inCanvasDetail);
+  topbar?.classList.toggle("is-canvas-share", inCanvasShare);
+  topbarNav?.classList.toggle("is-hidden", inCanvasView || inWorkflowHome || inCanvasSurface);
   sidebar.classList.toggle("is-visible", state.currentView === "canvases");
   sidebarProjectName.textContent = project?.name || "测试项目";
   sidebarRatioTag.textContent = project?.ratio || "16:9 横屏";
   sidebarStyleTag.textContent = project?.style || "电影感";
+  if (workflowProjectName) workflowProjectName.textContent = project?.name || "测试项目";
+  if (workflowRatioTag) workflowRatioTag.textContent = project?.ratio || "16:9 横屏";
+  if (workflowStyleTag) workflowStyleTag.textContent = project?.style || "电影感";
+  if (workflowMainProjectName) workflowMainProjectName.textContent = project?.name || "test";
+  if (workflowMainStyleTag) workflowMainStyleTag.textContent = project?.style || "写实";
   avatarPanel.classList.toggle("is-open", state.avatarOpen);
   noticePanel.classList.toggle("is-open", state.noticeOpen);
   topbarNav?.querySelectorAll("[data-nav-target]").forEach((item) => {
     const target = item.dataset.navTarget;
     const active =
       (target === "home" && inHomeView) ||
-      (target === "projects" && (state.currentView === "projects" || state.currentView === "canvases")) ||
+      (target === "projects" && (state.currentView === "projects" || state.currentView === "canvases" || inWorkflowHome)) ||
       (target !== "home" && target !== "projects" && false);
     item.classList.toggle("active", active);
   });
-  document.title = inHomeView ? "PhanthyMovie" : inCreatorCenter ? "创作主页" : inReviewCenter ? "审核中心" : inCanvasDetail ? (currentCanvas()?.name || "PhanthyMovie 画布") : "PhanthyMovie 项目列表";
+  document.title = inHomeView ? "PhanthyMovie" : inCreatorCenter ? "创作主页" : inReviewCenter ? "审核中心" : inWorkflowHome ? "工作流首页" : inCanvasSurface ? (currentCanvas()?.name || "PhanthyMovie 画布") : "PhanthyMovie 项目列表";
 };
 
 const syncBatchBar = () => {
@@ -1073,7 +1152,10 @@ const renderGrid = () => {
     renderReviewVideos();
     return;
   }
-  if (state.currentView === "canvas-detail") {
+  if (state.currentView === "workflow-home") {
+    return;
+  }
+  if (isCanvasDetailView()) {
     renderCanvasDetail();
     return;
   }
@@ -1134,6 +1216,7 @@ const renderCanvasDetail = () => {
   const project = currentProject();
   const canvas = currentCanvas();
   if (!project || !canvas) return;
+  const shareView = isCanvasShareView();
   const hasNodes = canvas.nodes.length > 0;
   const headerBackIcon = hasNodes ? CANVAS_NODE_BACK : CANVAS_EMPTY_BACK;
   const dockGridIcon = hasNodes ? CANVAS_NODE_DOCK_GRID : CANVAS_EMPTY_DOCK_GRID;
@@ -1204,7 +1287,18 @@ const renderCanvasDetail = () => {
     .join("");
   const nodesMarkup = canvas.nodes
     .map((node) => {
-      const selected = node.id === canvas.selectedNodeId;
+      const selected = !shareView && node.id === canvas.selectedNodeId;
+      const nodeDragAttr = shareView ? "" : ' data-node-drag="true"';
+      const sideAnchors = shareView
+        ? ""
+        : `
+          <button class="canvas-node-side-anchor is-left" type="button" data-node-action="add-near" data-node-side="left" data-node-id="${node.id}">
+            <img src="${CANVAS_NODE_SIDE_ADD}" alt="" />
+          </button>
+          <button class="canvas-node-side-anchor is-right" type="button" data-node-action="add-near" data-node-side="right" data-node-id="${node.id}">
+            <img src="${CANVAS_NODE_SIDE_ADD}" alt="" />
+          </button>
+        `;
       if (node.type === "shot-group") {
         const columns = node.columns || 2;
         const shotsMarkup = (node.shots || [])
@@ -1222,8 +1316,8 @@ const renderCanvasDetail = () => {
           .join("");
         return `
           <article class="canvas-canvas-node canvas-shot-group-node${selected ? " is-selected" : ""}" data-node-id="${node.id}" style="left:${node.x}px; top:${node.y}px;">
-            <div class="canvas-shot-group-title" data-node-drag="true">${escapeHtml(node.name)}</div>
-            <div class="canvas-shot-group-panel" data-node-drag="true" style="--shot-columns:${columns};">
+            <div class="canvas-shot-group-title"${nodeDragAttr}>${escapeHtml(node.name)}</div>
+            <div class="canvas-shot-group-panel"${nodeDragAttr} style="--shot-columns:${columns};">
               ${shotsMarkup}
             </div>
           </article>
@@ -1244,7 +1338,7 @@ const renderCanvasDetail = () => {
               </div>
             ` : ""}
 
-            <div class="canvas-panorama-head" data-node-drag="true">
+            <div class="canvas-panorama-head"${nodeDragAttr}>
               <div class="canvas-node-title-meta">
                 <span class="canvas-node-title-icon" aria-hidden="true">${icon.image}</span>
                 <span>${escapeHtml(node.name)}</span>
@@ -1253,10 +1347,8 @@ const renderCanvasDetail = () => {
             </div>
 
             <div class="canvas-panorama-viewer-shell">
-              <button class="canvas-node-side-anchor is-left" type="button" data-node-action="add-near" data-node-side="left" data-node-id="${node.id}">
-                <img src="${CANVAS_NODE_SIDE_ADD}" alt="" />
-              </button>
-              <button class="canvas-panorama-viewer" type="button" data-node-id="${node.id}" data-node-drag="true" data-panorama-drag="true">
+              ${shareView ? "" : `<button class="canvas-node-side-anchor is-left" type="button" data-node-action="add-near" data-node-side="left" data-node-id="${node.id}"><img src="${CANVAS_NODE_SIDE_ADD}" alt="" /></button>`}
+              <button class="canvas-panorama-viewer" type="button" data-node-id="${node.id}"${shareView ? "" : ' data-node-drag="true" data-panorama-drag="true"'}>
                 <div class="canvas-panorama-strip" style="transform: translateX(${Number(node.panX || 0)}px);">
                   <img src="${escapeHtml(node.image)}" alt="${escapeHtml(node.name)}" />
                   <img src="${escapeHtml(node.image)}" alt="" aria-hidden="true" />
@@ -1269,9 +1361,7 @@ const renderCanvasDetail = () => {
                   <span class="canvas-panorama-minimap-line is-vertical"></span>
                 </div>
               </button>
-              <button class="canvas-node-side-anchor is-right" type="button" data-node-action="add-near" data-node-side="right" data-node-id="${node.id}">
-                <img src="${CANVAS_NODE_SIDE_ADD}" alt="" />
-              </button>
+              ${shareView ? "" : `<button class="canvas-node-side-anchor is-right" type="button" data-node-action="add-near" data-node-side="right" data-node-id="${node.id}"><img src="${CANVAS_NODE_SIDE_ADD}" alt="" /></button>`}
             </div>
 
             <div class="canvas-panorama-editor">
@@ -1291,7 +1381,7 @@ const renderCanvasDetail = () => {
                 <span class="canvas-panorama-scene-title">720全景</span>
                 <div
                   class="canvas-panorama-inline-editor"
-                  contenteditable="true"
+                  contenteditable="${shareView ? "false" : "true"}"
                   spellcheck="false"
                   data-node-field="editorText"
                   data-node-id="${node.id}"
@@ -1305,7 +1395,7 @@ const renderCanvasDetail = () => {
                 <div class="canvas-panorama-footer-right">
                   <div class="canvas-node-meta-chip"><span>${escapeHtml(node.outputCount)}</span></div>
                   <div class="canvas-node-like-chip"><img src="${CANVAS_NODE_LIKE}" alt="" /><span>${escapeHtml(node.likes)}</span></div>
-                  <button class="canvas-node-send-button" type="button" data-node-action="upload-image" data-node-id="${node.id}"><img src="${CANVAS_NODE_SEND}" alt="" /></button>
+                  ${shareView ? "" : `<button class="canvas-node-send-button" type="button" data-node-action="upload-image" data-node-id="${node.id}"><img src="${CANVAS_NODE_SEND}" alt="" /></button>`}
                 </div>
               </div>
             </div>
@@ -1315,21 +1405,16 @@ const renderCanvasDetail = () => {
       if (node.type === "text") {
         return `
           <article class="canvas-canvas-node canvas-text-node${selected ? " is-selected" : ""}" data-node-id="${node.id}" style="left:${node.x}px; top:${node.y}px;">
-            <div class="canvas-text-node-head" data-node-drag="true">
+            <div class="canvas-text-node-head"${nodeDragAttr}>
               <div class="canvas-node-title-meta">
                 <span class="canvas-node-title-icon" aria-hidden="true">${icon.image}</span>
                 <span>${escapeHtml(node.name)}</span>
               </div>
             </div>
-            <button class="canvas-node-side-anchor is-left" type="button" data-node-action="add-near" data-node-side="left" data-node-id="${node.id}">
-              <img src="${CANVAS_NODE_SIDE_ADD}" alt="" />
-            </button>
-            <button class="canvas-node-side-anchor is-right" type="button" data-node-action="add-near" data-node-side="right" data-node-id="${node.id}">
-              <img src="${CANVAS_NODE_SIDE_ADD}" alt="" />
-            </button>
+            ${sideAnchors}
             <div class="canvas-text-node-card">
               <div class="canvas-text-node-label">反推提示词</div>
-              <textarea class="canvas-text-node-editor" data-node-field="text" data-node-id="${node.id}" rows="8">${escapeHtml(node.text)}</textarea>
+              <textarea class="canvas-text-node-editor" data-node-field="text" data-node-id="${node.id}" rows="8"${shareView ? " readonly" : ""}>${escapeHtml(node.text)}</textarea>
             </div>
           </article>
         `;
@@ -1354,7 +1439,7 @@ const renderCanvasDetail = () => {
             </div>
           ` : ""}
 
-          <div class="canvas-node-titlebar" data-node-drag="true">
+          <div class="canvas-node-titlebar"${nodeDragAttr}>
             <div class="canvas-node-title-meta">
                 <span class="canvas-node-title-icon" aria-hidden="true">${icon.image}</span>
               <span>${escapeHtml(node.name)}</span>
@@ -1362,7 +1447,7 @@ const renderCanvasDetail = () => {
             <span class="canvas-node-resolution">${escapeHtml(node.resolution)}</span>
           </div>
 
-          <button class="canvas-node-image-frame${node.panoramaSource ? " is-shot" : ""}" type="button" data-node-id="${node.id}" data-node-drag="true">
+          <button class="canvas-node-image-frame${node.panoramaSource ? " is-shot" : ""}" type="button" data-node-id="${node.id}"${nodeDragAttr}>
             ${
               node.panoramaSource
                 ? renderPanoramaShotFrame(node.panoramaSource, node.panoramaOffset, "canvas-image-shot-frame")
@@ -1370,15 +1455,10 @@ const renderCanvasDetail = () => {
             }
           </button>
 
-          <button class="canvas-node-side-anchor is-left" type="button" data-node-action="add-near" data-node-side="left" data-node-id="${node.id}">
-            <img src="${CANVAS_NODE_SIDE_ADD}" alt="" />
-          </button>
-          <button class="canvas-node-side-anchor is-right" type="button" data-node-action="add-near" data-node-side="right" data-node-id="${node.id}">
-            <img src="${CANVAS_NODE_SIDE_ADD}" alt="" />
-          </button>
+          ${sideAnchors}
 
           <div class="canvas-node-prompt-card">
-            <textarea class="canvas-node-textarea" data-node-field="prompt" data-node-id="${node.id}" rows="3">${escapeHtml(node.prompt)}</textarea>
+            <textarea class="canvas-node-textarea" data-node-field="prompt" data-node-id="${node.id}" rows="3"${shareView ? " readonly" : ""}>${escapeHtml(node.prompt)}</textarea>
 
             <div class="canvas-node-footer-row">
               <div class="canvas-node-footer-left">
@@ -1387,9 +1467,9 @@ const renderCanvasDetail = () => {
                 <div class="canvas-node-meta-chip"><img src="${CANVAS_NODE_COUNT}" alt="" /><span>${escapeHtml(node.outputCount)}</span></div>
               </div>
               <div class="canvas-node-footer-right">
-                <button class="canvas-node-camera-button${node.cameraControl?.enabled ? " is-active" : ""}" type="button" data-node-action="open-camera-control" data-node-id="${node.id}" aria-label="摄像机控制">${icon.camera}</button>
+                ${shareView ? "" : `<button class="canvas-node-camera-button${node.cameraControl?.enabled ? " is-active" : ""}" type="button" data-node-action="open-camera-control" data-node-id="${node.id}" aria-label="摄像机控制">${icon.camera}</button>`}
                 <div class="canvas-node-like-chip"><img src="${CANVAS_NODE_LIKE}" alt="" /><span>${escapeHtml(node.likes)}</span></div>
-                <button class="canvas-node-send-button" type="button" data-node-action="upload-image" data-node-id="${node.id}"><img src="${CANVAS_NODE_SEND}" alt="" /></button>
+                ${shareView ? "" : `<button class="canvas-node-send-button" type="button" data-node-action="upload-image" data-node-id="${node.id}"><img src="${CANVAS_NODE_SEND}" alt="" /></button>`}
               </div>
             </div>
             ${
@@ -1546,10 +1626,32 @@ const renderCanvasDetail = () => {
   canvasStage.innerHTML = `
     <div class="canvas-editor-shell">
       <div class="canvas-page-header">
-        <button class="canvas-page-crumb" type="button" data-canvas-action="back-to-canvases">
-          <span class="canvas-page-back"><img src="${headerBackIcon}" alt="" /></span>
-          <span>${escapeHtml(canvas.name)}</span>
-        </button>
+        ${
+          shareView
+            ? `<button class="canvas-copy-entry" type="button" data-canvas-action="open-copy-canvas-modal">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="8" y="8" width="10" height="10" rx="2" />
+                  <path d="M6 16H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                </svg>
+                <span>复制画布</span>
+              </button>`
+            : `
+              <button class="canvas-page-crumb" type="button" data-canvas-action="back-to-canvases">
+                <span class="canvas-page-back"><img src="${headerBackIcon}" alt="" /></span>
+                <span>${escapeHtml(canvas.name)}</span>
+              </button>
+              <div class="canvas-page-header-right">
+                <button class="canvas-page-share" type="button" data-canvas-action="open-share-modal" aria-label="分享画布" title="分享画布">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M15 6.5 8.8 10.1M8.8 13.9 15 17.5" />
+                    <circle cx="6.5" cy="12" r="2.5" />
+                    <circle cx="17.5" cy="5" r="2.5" />
+                    <circle cx="17.5" cy="19" r="2.5" />
+                  </svg>
+                </button>
+              </div>
+            `
+        }
       </div>
 
       <div class="canvas-board" id="canvas-board">
@@ -1567,16 +1669,16 @@ const renderCanvasDetail = () => {
           </div>
         `}
 
-        <div class="canvas-left-tools">
+        ${shareView ? "" : `<div class="canvas-left-tools">
           <button class="canvas-left-tool is-primary" type="button" data-canvas-action="toggle-add-panel" aria-label="添加节点"><img src="${hasNodes ? CANVAS_NODE_LEFT_ADD : CANVAS_EMPTY_LEFT_ADD}" alt="" /></button>
           <button class="canvas-left-tool" type="button" aria-label="搜索"><img src="${hasNodes ? CANVAS_NODE_LEFT_SEARCH : CANVAS_EMPTY_LEFT_SEARCH}" alt="" /></button>
           <button class="canvas-left-tool" type="button" aria-label="视图"><img src="${hasNodes ? CANVAS_NODE_LEFT_GRID : CANVAS_EMPTY_LEFT_GRID}" alt="" /></button>
           <button class="canvas-left-tool" type="button" aria-label="历史"><img src="${hasNodes ? CANVAS_NODE_LEFT_CLOCK : CANVAS_EMPTY_LEFT_CLOCK}" alt="" /></button>
           <button class="canvas-left-tool" type="button" aria-label="删除"><img src="${hasNodes ? CANVAS_NODE_LEFT_DELETE : CANVAS_EMPTY_LEFT_DELETE}" alt="" /></button>
-        </div>
+        </div>`}
 
-        ${addPanelMarkup}
-        ${contextMenuMarkup}
+        ${shareView ? "" : addPanelMarkup}
+        ${shareView ? "" : contextMenuMarkup}
 
         <div class="canvas-bottom-dock">
           <button class="canvas-dock-button" type="button" aria-label="网格"><img src="${dockGridIcon}" alt="" /></button>
@@ -1966,6 +2068,7 @@ const openModal = (el) => el.classList.add("is-open");
 const closeModal = (el) => {
   el.classList.remove("is-open");
   if (el === projectModeModal) state.projectModeTargetId = null;
+  if (el === canvasShareModal && shareCopyFeedback) shareCopyFeedback.textContent = "";
   if (el === videoPreviewModal) {
     state.activeVideoId = null;
     if (videoPreviewContent) videoPreviewContent.innerHTML = "";
@@ -1977,6 +2080,80 @@ const closeModal = (el) => {
 };
 
 const formatCountdownUnit = (value) => String(value).padStart(2, "0");
+
+const currentCanvasShareLink = () => {
+  const project = currentProject();
+  const canvas = currentCanvas();
+  const route =
+    project && canvas
+      ? `#/share/project/${encodeURIComponent(project.id)}/canvas/${encodeURIComponent(canvas.id)}`
+      : window.location.hash || "#/projects";
+  return `${window.location.href.split("#")[0]}${route}`;
+};
+
+const syncShareAccessOptions = () => {
+  const access = currentCanvas()?.shareAccess || "public";
+  const isPublic = access === "public";
+  canvasShareAccessSwitch?.setAttribute("aria-checked", String(isPublic));
+  canvasShareAccessSwitch?.setAttribute("aria-label", isPublic ? "公开访问" : "仅自己可见");
+  if (shareAccessTitle) shareAccessTitle.textContent = isPublic ? "公开访问" : "仅自己可见";
+  if (shareAccessDescription) {
+    shareAccessDescription.textContent = isPublic
+      ? "获得链接的人可以查看当前画布以及后续操作内容"
+      : "关闭外部访问，仅保留本人查看";
+  }
+};
+
+const openCanvasShareModal = () => {
+  const canvas = currentCanvas();
+  if (!canvas || !canvasShareModal) return;
+  if (canvasShareLinkInput) canvasShareLinkInput.value = currentCanvasShareLink();
+  if (shareCopyFeedback) shareCopyFeedback.textContent = "";
+  syncShareAccessOptions();
+  openModal(canvasShareModal);
+};
+
+const enterCanvasSharePage = () => {
+  if (!currentCanvas()) return;
+  closeModal(canvasShareModal);
+  state.currentView = "canvas-share";
+  state.avatarOpen = false;
+  state.noticeOpen = false;
+  closeCanvasPopups();
+  renderGrid();
+};
+
+const openCopyCanvasModal = () => {
+  const canvas = currentCanvas();
+  if (!canvas || !copyCanvasModal || !copyCanvasProjectSelect || !copyCanvasNameInput) return;
+  copyCanvasProjectSelect.innerHTML = state.projects
+    .map((project) => `<option value="${escapeHtml(project.id)}"${project.id === state.currentProjectId ? " selected" : ""}>${escapeHtml(project.name)}</option>`)
+    .join("");
+  copyCanvasNameInput.value = `${canvas.name} 副本`;
+  openModal(copyCanvasModal);
+};
+
+const confirmCopyCanvas = () => {
+  const sourceCanvas = currentCanvas();
+  const targetProject = state.projects.find((project) => project.id === copyCanvasProjectSelect?.value);
+  if (!sourceCanvas || !targetProject) return;
+  const name = copyCanvasNameInput?.value.trim() || `${sourceCanvas.name} 副本`;
+  const copiedCanvas = normalizeCanvas({
+    ...structuredClone(sourceCanvas),
+    id: `c${Date.now()}`,
+    name,
+    timestamp: DEFAULT_TIMESTAMP,
+    shareAccess: "private",
+  });
+  targetProject.canvases.unshift(copiedCanvas);
+  saveProjectsState();
+  closeModal(copyCanvasModal);
+  state.currentView = "canvas-detail";
+  state.currentProjectId = targetProject.id;
+  state.currentCanvasId = copiedCanvas.id;
+  closeCanvasPopups();
+  renderGrid();
+};
 
 const updateActivityCountdown = () => {
   const remaining = Math.max(0, ACTIVITY_END_AT - Date.now());
@@ -2159,7 +2336,19 @@ const openEditVideoModal = (videoId) => {
 const enterProjectMode = (projectId, mode) => {
   const project = state.projects.find((item) => item.id === projectId);
   if (!project) return;
-  if (mode === "infinite-canvas" || mode === "workflow") {
+  if (mode === "workflow") {
+    state.currentView = "workflow-home";
+    state.currentProjectId = project.id;
+    state.currentCanvasId = null;
+    state.batchMode = false;
+    state.selectedIds.clear();
+    state.activeMenuId = null;
+    searchInput.value = "";
+    closeModal(projectModeModal);
+    renderGrid();
+    return;
+  }
+  if (mode === "infinite-canvas") {
     state.currentView = "canvases";
     state.currentProjectId = project.id;
     state.currentCanvasId = null;
@@ -2262,6 +2451,31 @@ sidebarBackTrigger.addEventListener("click", () => {
   renderGrid();
 });
 
+workflowBackTrigger?.addEventListener("click", () => {
+  state.currentView = "projects";
+  state.currentProjectId = null;
+  state.currentCanvasId = null;
+  state.batchMode = false;
+  state.selectedIds.clear();
+  state.activeMenuId = null;
+  renderGrid();
+});
+
+workflowModeSwitchTrigger?.addEventListener("click", () => {
+  if (state.currentProjectId) openProjectModeModal(state.currentProjectId);
+});
+
+workflowHistoryTrigger?.addEventListener("click", () => {
+  window.alert("暂无构建历史");
+});
+
+workflowHomeView?.addEventListener("click", (event) => {
+  const navItem = event.target.closest(".workflow-nav-item");
+  if (!navItem) return;
+  workflowHomeView.querySelectorAll(".workflow-nav-item").forEach((item) => item.classList.remove("active"));
+  navItem.classList.add("active");
+});
+
 sidebar?.addEventListener("click", (event) => {
   const openModeModal = event.target.closest("[data-open-mode-modal]");
   if (openModeModal) {
@@ -2295,6 +2509,21 @@ topbarNav?.addEventListener("click", (event) => {
     state.currentProjectId = null;
     state.currentCanvasId = null;
   }
+  renderGrid();
+});
+
+brandHomeTrigger?.addEventListener("click", () => {
+  document.querySelectorAll(".modal-backdrop.is-open").forEach((modal) => closeModal(modal));
+  closeCanvasPopups();
+  state.currentView = "home";
+  state.currentProjectId = null;
+  state.currentCanvasId = null;
+  state.batchMode = false;
+  state.selectedIds.clear();
+  state.activeMenuId = null;
+  state.creatorVideoMenuId = null;
+  state.avatarOpen = false;
+  state.noticeOpen = false;
   renderGrid();
 });
 
@@ -2789,16 +3018,29 @@ const pasteNode = (nodeId = null) => {
 };
 
 canvasStage.addEventListener("click", (event) => {
-  if (state.currentView !== "canvas-detail") return;
+  if (!isCanvasDetailView()) return;
+  const shareView = isCanvasShareView();
 
   const canvasAction = event.target.closest("[data-canvas-action]");
   if (canvasAction) {
     const action = canvasAction.dataset.canvasAction;
+    if (action === "open-copy-canvas-modal") {
+      event.preventDefault();
+      event.stopPropagation();
+      openCopyCanvasModal();
+      return;
+    }
     if (action === "back-to-canvases") {
       state.currentView = "canvases";
       state.currentCanvasId = null;
       closeCanvasPopups();
       renderGrid();
+    }
+    if (action === "open-share-modal") {
+      event.preventDefault();
+      event.stopPropagation();
+      openCanvasShareModal();
+      return;
     }
     if (action === "toggle-add-panel") {
       event.stopPropagation();
@@ -2872,6 +3114,8 @@ canvasStage.addEventListener("click", (event) => {
     if (action === "zoom-out") setCanvasZoom((currentCanvas()?.viewport.scale || 1) - 0.1);
     return;
   }
+
+  if (shareView) return;
 
   const contextAction = event.target.closest("[data-context-action]");
   if (contextAction) {
@@ -2972,7 +3216,7 @@ canvasStage.addEventListener("dblclick", (event) => {
 canvasStage.addEventListener(
   "wheel",
   (event) => {
-    if (state.currentView !== "canvas-detail") return;
+    if (!isCanvasDetailView()) return;
     if (!event.target.closest("#canvas-board")) return;
     event.preventDefault();
     const factor = Math.exp(-event.deltaY * 0.0012);
@@ -2982,7 +3226,8 @@ canvasStage.addEventListener(
 );
 
 canvasStage.addEventListener("pointerdown", (event) => {
-  if (state.currentView !== "canvas-detail") return;
+  if (!isCanvasDetailView()) return;
+  const shareView = isCanvasShareView();
   if (event.target.closest(".canvas-camera-popover")) {
     event.stopPropagation();
     return;
@@ -2999,13 +3244,15 @@ canvasStage.addEventListener("pointerdown", (event) => {
   if (canvasAction) {
     event.stopPropagation();
     event.preventDefault();
+    if (shareView) return;
     openCanvasAddPanel();
     return;
   }
+  if (shareView && event.target.closest("[data-node-id]")) return;
   if (event.target.closest("[data-node-action]")) return;
 
   const dragHandle = event.target.closest("[data-node-drag]");
-  if (dragHandle) {
+  if (dragHandle && !shareView) {
     const nodeEl = dragHandle.closest("[data-node-id]");
     const node = findNodeById(nodeEl?.dataset.nodeId);
     const canvas = currentCanvas();
@@ -3043,7 +3290,7 @@ canvasStage.addEventListener("pointerdown", (event) => {
 });
 
 document.addEventListener("pointermove", (event) => {
-  if (state.currentView !== "canvas-detail" || canvasRuntime.pointerId !== event.pointerId) return;
+  if (!isCanvasDetailView() || canvasRuntime.pointerId !== event.pointerId) return;
   const canvas = currentCanvas();
   if (!canvas) return;
 
@@ -3123,6 +3370,18 @@ document.querySelectorAll("[data-close-modal]").forEach((button) => {
     const modal = document.getElementById(button.dataset.closeModal);
     if (modal) closeModal(modal);
   });
+});
+
+copyCanvasShareTrigger?.addEventListener("click", enterCanvasSharePage);
+
+confirmCopyCanvasTrigger?.addEventListener("click", confirmCopyCanvas);
+
+canvasShareAccessSwitch?.addEventListener("click", () => {
+  const canvas = currentCanvas();
+  if (!canvas) return;
+  canvas.shareAccess = canvas.shareAccess === "public" ? "private" : "public";
+  saveProjectsState();
+  syncShareAccessOptions();
 });
 
 document.querySelectorAll(".ratio-card").forEach((button) => {
