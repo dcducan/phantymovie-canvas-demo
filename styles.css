@@ -2393,6 +2393,7 @@ input::placeholder {
 .canvas-bottom-left,
 .canvas-left-tools,
 .canvas-add-panel,
+.canvas-template-panel,
 .canvas-context-menu {
   position: absolute;
   z-index: 3;
@@ -2416,6 +2417,7 @@ input::placeholder {
 .canvas-left-tools,
 .canvas-bottom-dock,
 .canvas-add-panel,
+.canvas-template-panel,
 .canvas-context-menu,
 .canvas-floating-toolbar {
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -4170,7 +4172,7 @@ input::placeholder {
   left: 48px;
   transform: translateY(-50%);
   width: 60px;
-  height: 220px;
+  height: 268px;
   padding: 12px;
   display: flex;
   flex-direction: column;
@@ -4210,6 +4212,258 @@ input::placeholder {
   padding: 17px;
   border-radius: 20px;
   z-index: 6;
+}
+
+.canvas-template-panel {
+  top: 50%;
+  left: 120px;
+  z-index: 6;
+  width: 430px;
+  max-height: min(620px, calc(100vh - 96px));
+  padding: 18px;
+  overflow: hidden;
+  border-radius: 20px;
+  transform: translateY(-50%);
+}
+
+.canvas-template-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  color: rgba(255, 255, 255, 0.96);
+}
+
+.canvas-template-panel-header strong {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.canvas-template-close {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.canvas-template-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  padding: 4px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.canvas-template-tabs button {
+  height: 32px;
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 13px;
+}
+
+.canvas-template-tabs button.is-active {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+}
+
+.canvas-template-search {
+  display: grid;
+  grid-template-columns: 16px 1fr;
+  align-items: center;
+  gap: 8px;
+  height: 34px;
+  margin-top: 12px;
+  padding: 0 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.48);
+}
+
+.canvas-template-search svg {
+  width: 15px;
+  height: 15px;
+}
+
+.canvas-template-search input {
+  min-width: 0;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 13px;
+  outline: none;
+}
+
+.canvas-template-search input::placeholder {
+  color: rgba(255, 255, 255, 0.42);
+}
+
+.canvas-template-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-content: start;
+  gap: 12px;
+  height: min(430px, calc(100vh - 230px));
+  margin-top: 14px;
+  overflow: auto;
+  padding-right: 6px;
+}
+
+.canvas-template-card {
+  position: relative;
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  padding: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.canvas-template-cover {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  height: auto;
+  border-radius: 0;
+  object-fit: cover;
+}
+
+.canvas-template-copy {
+  min-width: 0;
+  padding: 0 7px 9px;
+}
+
+.canvas-template-copy strong {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: rgba(255, 255, 255, 0.94);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.canvas-template-actions {
+  position: absolute;
+  inset: 0 0 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px;
+  background: rgba(8, 10, 12, 0.58);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 160ms ease;
+}
+
+.canvas-template-card:hover .canvas-template-actions,
+.canvas-template-card:focus-within .canvas-template-actions {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.canvas-template-actions button {
+  height: 26px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: rgba(189, 238, 255, 0.92);
+  color: #0f1418;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.canvas-template-actions button.is-danger {
+  background: rgba(22, 24, 26, 0.86);
+  color: #ffb4b4;
+}
+
+.canvas-template-empty {
+  grid-column: 1 / -1;
+  padding: 36px 0;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 14px;
+  text-align: center;
+}
+
+.canvas-template-modal-panel {
+  display: flex;
+  flex-direction: column;
+  width: 560px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.canvas-template-form {
+  display: grid;
+  gap: 20px;
+  padding: 24px 28px 22px;
+}
+
+.canvas-template-field,
+.canvas-template-cover-field {
+  display: grid;
+  gap: 10px;
+  color: rgba(255, 255, 255, 0.74);
+  font-size: 14px;
+}
+
+.canvas-template-field input {
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  outline: none;
+}
+
+.canvas-template-cover-upload {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 108px;
+  padding: 12px;
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.78);
+  text-align: left;
+}
+
+.canvas-template-cover-upload img {
+  width: 140px;
+  height: 84px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.canvas-template-modal-panel .canvas-action-modal-header {
+  height: 76px;
+}
+
+.canvas-template-modal-panel .canvas-action-modal-header strong {
+  font-size: 22px;
+}
+
+.canvas-template-modal-panel .canvas-action-modal-footer {
+  position: static;
+  justify-content: flex-end;
+  padding: 0 28px 24px;
+}
+
+.canvas-template-modal-panel .canvas-action-modal-button {
+  min-width: 104px;
+  height: 44px;
+  padding: 0 20px;
+  font-size: 15px;
 }
 
 .canvas-add-panel-header {

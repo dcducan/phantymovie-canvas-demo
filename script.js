@@ -96,6 +96,8 @@ const icon = {
     '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6.5 5.5 8 3.833h4L13.5 5.5H16A1.5 1.5 0 0 1 17.5 7v8A1.5 1.5 0 0 1 16 16.5H4A1.5 1.5 0 0 1 2.5 15V7A1.5 1.5 0 0 1 4 5.5h2.5ZM10 8a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   grid2:
     '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 3h6.25v6.25H3V3Zm7.75 0H17v6.25h-6.25V3ZM3 10.75h6.25V17H3v-6.25Zm7.75 0H17V17h-6.25v-6.25Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>',
+  layoutBoard:
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 9h8M12 15h8M12 4v16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   grid3:
     '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 3h4.167v4.167H3V3Zm5.417 0h4.166v4.167H8.417V3Zm5.416 0H18v4.167h-4.167V3ZM3 8.417h4.167v4.166H3V8.417Zm5.417 0h4.166v4.166H8.417V8.417Zm5.416 0H18v4.166h-4.167V8.417ZM3 13.833h4.167V18H3v-4.167Zm5.417 0h4.166V18H8.417v-4.167Zm5.416 0H18V18h-4.167v-4.167Z" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/></svg>',
   refresh:
@@ -371,6 +373,54 @@ const createTextNode = ({
   y,
 });
 
+const officialCanvasTemplates = [
+  {
+    id: "official-character-board",
+    type: "official",
+    name: "角色定妆画布",
+    masterTitle: "角色定妆母版",
+    cover: "./assets/images/canvas-character.jpg",
+    nodes: [
+      createImageNode({
+        name: "角色主视觉",
+        image: "./assets/images/canvas-character.jpg",
+        prompt: "角色三视图、表情、服装细节，统一电影感写实光线。",
+        x: 0,
+        y: 0,
+      }),
+      createTextNode({
+        name: "角色设定说明",
+        text: "记录角色身份、性格、服装、道具与镜头注意事项。",
+        x: 720,
+        y: 34,
+      }),
+    ],
+  },
+  {
+    id: "official-scene-board",
+    type: "official",
+    name: "场景探索画布",
+    masterTitle: "场景探索母版",
+    cover: "./assets/images/canvas-ink-landscape.jpg",
+    nodes: [
+      createImageNode({
+        name: "场景氛围图",
+        image: "./assets/images/canvas-ink-landscape.jpg",
+        prompt: "建立场景空间、天气、时代风格与主色调。",
+        x: 0,
+        y: 0,
+      }),
+      createImageNode({
+        name: "分镜参考图",
+        image: "./assets/images/canvas-chase-sequence.jpg",
+        prompt: "补充关键镜头构图与运动方向。",
+        x: 720,
+        y: 0,
+      }),
+    ],
+  },
+];
+
 const hydrateCanvasNode = (node, nodeIndex = 0) => {
   if (node?.type === "panorama") {
     return createPanoramaPlayerNode({
@@ -420,6 +470,7 @@ const normalizeCanvas = (canvas, index = 0) => {
 
 const normalizeProject = (project) => {
   project.canvases = (project.canvases || []).map((canvas, index) => normalizeCanvas(canvas, index));
+  project.canvasTemplates = Array.isArray(project.canvasTemplates) ? project.canvasTemplates : [];
   return project;
 };
 
@@ -521,6 +572,15 @@ const state = {
   uploadNodeTarget: null,
   canvasClipboard: null,
   canvasAddPanelOpen: false,
+  canvasTemplatePanelOpen: false,
+  canvasTemplateType: "official",
+  canvasTemplateSearch: "",
+  canvasTemplateDraftNodeId: null,
+  canvasTemplateDraftTitle: "",
+  canvasTemplateDraftCover: "",
+  canvasTemplateDeleteTargetId: null,
+  canvasTemplateActionGuardUntil: 0,
+  canvasContextActionGuardUntil: 0,
   canvasAddPanelGuardUntil: 0,
   canvasDraftName: "",
   canvasContextMenu: null,
@@ -1546,6 +1606,8 @@ const renderCanvasDetail = () => {
     : "";
   const washConfirmNode = state.washConfirmNodeId ? findNodeById(state.washConfirmNodeId) : null;
   const reversePromptNode = state.reversePromptConfirmNodeId ? findNodeById(state.reversePromptConfirmNodeId) : null;
+  const templateDraftNode = state.canvasTemplateDraftNodeId ? findNodeById(state.canvasTemplateDraftNodeId) : null;
+  const templateDeleteTarget = state.canvasTemplateDeleteTargetId ? currentProject()?.canvasTemplates?.find((template) => template.id === state.canvasTemplateDeleteTargetId) : null;
   const actionModalMarkup = reversePromptNode
     ? `
       <div class="canvas-action-modal">
@@ -1584,18 +1646,123 @@ const renderCanvasDetail = () => {
         </div>
       </div>
     `
+    : templateDraftNode
+    ? `
+      <div class="canvas-action-modal">
+        <button class="canvas-action-modal-backdrop" type="button" data-canvas-action="close-create-template" aria-label="关闭添加模板弹窗"></button>
+        <div class="canvas-action-modal-panel canvas-template-modal-panel" role="dialog" aria-modal="true" aria-labelledby="create-template-title">
+          <div class="canvas-action-modal-header">
+            <strong id="create-template-title">添加为模板</strong>
+            <button class="canvas-action-modal-close" type="button" data-canvas-action="close-create-template" aria-label="关闭添加模板弹窗">✕</button>
+          </div>
+          <div class="canvas-template-form">
+            <label class="canvas-template-field">
+              <span>模板标题</span>
+              <input type="text" value="${escapeHtml(state.canvasTemplateDraftTitle)}" data-template-title-input placeholder="输入模板标题" />
+            </label>
+            <label class="canvas-template-cover-field">
+              <span>模板封面</span>
+              <input type="file" accept="image/*" data-template-cover-input hidden />
+              <button class="canvas-template-cover-upload" type="button" data-canvas-action="pick-template-cover">
+                <img src="${escapeHtml(state.canvasTemplateDraftCover || getNodeTemplateCover(templateDraftNode))}" alt="" />
+                <span>上传模板封面</span>
+              </button>
+            </label>
+          </div>
+          <div class="canvas-action-modal-footer">
+            <button class="canvas-action-modal-button is-ghost" type="button" data-canvas-action="close-create-template">取消</button>
+            <button class="canvas-action-modal-button is-primary" type="button" data-canvas-action="confirm-create-template">完成添加</button>
+          </div>
+        </div>
+      </div>
+    `
+    : templateDeleteTarget
+    ? `
+      <div class="canvas-action-modal">
+        <button class="canvas-action-modal-backdrop" type="button" data-canvas-action="close-template-delete" aria-label="关闭删除模板弹窗"></button>
+        <div class="canvas-action-modal-panel" role="dialog" aria-modal="true" aria-labelledby="delete-template-title">
+          <div class="canvas-action-modal-header">
+            <strong id="delete-template-title">删除模板</strong>
+            <button class="canvas-action-modal-close" type="button" data-canvas-action="close-template-delete" aria-label="关闭删除模板弹窗">✕</button>
+          </div>
+          <div class="canvas-action-modal-body">
+            <p>自定义模板「${escapeHtml(templateDeleteTarget.name)}」删除后无法恢复，是否确认删除？</p>
+          </div>
+          <div class="canvas-action-modal-footer">
+            <button class="canvas-action-modal-button is-ghost" type="button" data-canvas-action="close-template-delete">取消</button>
+            <button class="canvas-action-modal-button is-primary" type="button" data-canvas-action="confirm-delete-template">确认删除</button>
+          </div>
+        </div>
+      </div>
+    `
     : "";
 
   const contextMenuMarkup = state.canvasContextMenu
     ? `
       <div class="canvas-context-menu" style="left:${state.canvasContextMenu.x}px; top:${state.canvasContextMenu.y}px;">
         <button class="canvas-context-item" type="button" data-context-action="save-asset" data-node-id="${state.canvasContextMenu.nodeId}">保存到资产库</button>
+        <button class="canvas-context-item" type="button" data-context-action="create-template" data-node-id="${state.canvasContextMenu.nodeId}">添加为模板</button>
         <div class="canvas-context-divider"></div>
         <button class="canvas-context-item" type="button" data-context-action="duplicate" data-node-id="${state.canvasContextMenu.nodeId}">创建副本</button>
         <button class="canvas-context-item" type="button" data-context-action="copy" data-node-id="${state.canvasContextMenu.nodeId}">复制</button>
         <button class="canvas-context-item" type="button" data-context-action="paste" data-node-id="${state.canvasContextMenu.nodeId}">粘贴</button>
         <div class="canvas-context-divider"></div>
         <button class="canvas-context-item danger" type="button" data-context-action="delete" data-node-id="${state.canvasContextMenu.nodeId}">删除</button>
+      </div>
+    `
+    : "";
+
+  const templateSearchValue = state.canvasTemplateSearch.trim().toLowerCase();
+  const templateItems = currentTemplateList().filter((template) => {
+    if (!templateSearchValue) return true;
+    return [template.name, template.masterTitle].some((value) => String(value || "").toLowerCase().includes(templateSearchValue));
+  });
+  const templateEmptyText = state.canvasTemplateSearch.trim()
+    ? "未找到匹配模板"
+    : state.canvasTemplateType === "custom"
+      ? "暂无自定义模板"
+      : "暂无官方模板";
+  const templatePanelMarkup = state.canvasTemplatePanelOpen
+    ? `
+      <div class="canvas-template-panel">
+        <div class="canvas-template-panel-header">
+          <strong>模板库</strong>
+          <button class="canvas-add-close canvas-template-close" type="button" data-canvas-action="close-template-panel">✕</button>
+        </div>
+        <div class="canvas-template-tabs" role="tablist" aria-label="模板类型">
+          <button class="${state.canvasTemplateType === "official" ? "is-active" : ""}" type="button" data-canvas-action="switch-template-type" data-template-type="official">官方模板</button>
+          <button class="${state.canvasTemplateType === "custom" ? "is-active" : ""}" type="button" data-canvas-action="switch-template-type" data-template-type="custom">自定义模板</button>
+        </div>
+        <label class="canvas-template-search" aria-label="搜索模板">
+          <span>${icon.search}</span>
+          <input type="search" value="${escapeHtml(state.canvasTemplateSearch)}" data-template-search-input placeholder="搜索模板" />
+        </label>
+        <div class="canvas-template-list">
+          ${
+            templateItems.length
+              ? templateItems
+                  .map(
+                    (template) => `
+                      <article class="canvas-template-card">
+                        <img class="canvas-template-cover" src="${escapeHtml(template.cover || DEFAULT_COVER)}" alt="" />
+                        <div class="canvas-template-copy">
+                          <strong>${escapeHtml(template.name)}</strong>
+                        </div>
+                        <div class="canvas-template-actions">
+                          <button type="button" data-canvas-action="add-template-to-canvas" data-template-id="${template.id}">添加至画布</button>
+                          ${
+                            template.type === "custom"
+                              ? `<button class="is-danger" type="button" data-canvas-action="delete-template" data-template-id="${template.id}">删除</button>`
+                              : ""
+                          }
+                        </div>
+                      </article>
+                    `,
+                  )
+                  .join("")
+              : `<div class="canvas-template-empty">${templateEmptyText}</div>`
+          }
+        </div>
       </div>
     `
     : "";
@@ -1672,12 +1839,14 @@ const renderCanvasDetail = () => {
         ${shareView ? "" : `<div class="canvas-left-tools">
           <button class="canvas-left-tool is-primary" type="button" data-canvas-action="toggle-add-panel" aria-label="添加节点"><img src="${hasNodes ? CANVAS_NODE_LEFT_ADD : CANVAS_EMPTY_LEFT_ADD}" alt="" /></button>
           <button class="canvas-left-tool" type="button" aria-label="搜索"><img src="${hasNodes ? CANVAS_NODE_LEFT_SEARCH : CANVAS_EMPTY_LEFT_SEARCH}" alt="" /></button>
+          <button class="canvas-left-tool" type="button" data-canvas-action="toggle-template-panel" aria-label="模板库" title="模板库">${icon.layoutBoard}</button>
           <button class="canvas-left-tool" type="button" aria-label="视图"><img src="${hasNodes ? CANVAS_NODE_LEFT_GRID : CANVAS_EMPTY_LEFT_GRID}" alt="" /></button>
           <button class="canvas-left-tool" type="button" aria-label="历史"><img src="${hasNodes ? CANVAS_NODE_LEFT_CLOCK : CANVAS_EMPTY_LEFT_CLOCK}" alt="" /></button>
           <button class="canvas-left-tool" type="button" aria-label="删除"><img src="${hasNodes ? CANVAS_NODE_LEFT_DELETE : CANVAS_EMPTY_LEFT_DELETE}" alt="" /></button>
         </div>`}
 
         ${shareView ? "" : addPanelMarkup}
+        ${shareView ? "" : templatePanelMarkup}
         ${shareView ? "" : contextMenuMarkup}
 
         <div class="canvas-bottom-dock">
@@ -1704,6 +1873,20 @@ const renderCanvasDetail = () => {
       event.preventDefault();
     };
   }
+  const templatePanelTrigger = canvasStage.querySelector('[data-canvas-action="toggle-template-panel"]');
+  if (templatePanelTrigger) {
+    templatePanelTrigger.onclick = (event) => {
+      event.stopPropagation();
+      event.preventDefault();
+      if (Date.now() < state.canvasAddPanelGuardUntil) return;
+      toggleCanvasTemplatePanel();
+    };
+    templatePanelTrigger.onpointerdown = (event) => {
+      event.stopPropagation();
+      event.preventDefault();
+      toggleCanvasTemplatePanel();
+    };
+  }
   canvasStage.querySelectorAll('[data-canvas-action="create-image-node"]').forEach((trigger) => {
     trigger.onclick = (event) => {
       event.stopPropagation();
@@ -1713,6 +1896,111 @@ const renderCanvasDetail = () => {
     trigger.onpointerdown = (event) => {
       event.stopPropagation();
       event.preventDefault();
+    };
+  });
+  const templateTitleInput = canvasStage.querySelector("[data-template-title-input]");
+  if (templateTitleInput) {
+    templateTitleInput.addEventListener("input", (event) => {
+      state.canvasTemplateDraftTitle = event.target.value;
+    });
+  }
+  const templateCoverInput = canvasStage.querySelector("[data-template-cover-input]");
+  if (templateCoverInput) {
+    templateCoverInput.addEventListener("change", async () => {
+      const file = templateCoverInput.files?.[0];
+      if (!file) return;
+      state.canvasTemplateDraftCover = await readFileAsDataUrl(file);
+      renderCanvasDetail();
+    });
+  }
+  const templateSearchInput = canvasStage.querySelector("[data-template-search-input]");
+  if (templateSearchInput) {
+    templateSearchInput.addEventListener("input", (event) => {
+      state.canvasTemplateSearch = event.target.value;
+      renderCanvasDetail();
+      const nextInput = canvasStage.querySelector("[data-template-search-input]");
+      if (nextInput) {
+        nextInput.focus();
+        nextInput.setSelectionRange(nextInput.value.length, nextInput.value.length);
+      }
+    });
+    templateSearchInput.onpointerdown = (event) => {
+      event.stopPropagation();
+    };
+  }
+  canvasStage.querySelectorAll('[data-canvas-action="switch-template-type"]').forEach((trigger) => {
+    const switchTemplateType = () => {
+      state.canvasTemplateType = trigger.dataset.templateType === "custom" ? "custom" : "official";
+      renderCanvasDetail();
+    };
+    trigger.onclick = (event) => {
+      event.stopPropagation();
+      event.preventDefault();
+      if (Date.now() < state.canvasTemplateActionGuardUntil) return;
+      switchTemplateType();
+    };
+    trigger.onpointerdown = (event) => {
+      event.stopPropagation();
+      event.preventDefault();
+      state.canvasTemplateActionGuardUntil = Date.now() + 250;
+      switchTemplateType();
+    };
+  });
+  canvasStage.querySelectorAll('[data-canvas-action="add-template-to-canvas"]').forEach((trigger) => {
+    const addTemplate = () => addCanvasTemplateToCanvas(trigger.dataset.templateId);
+    trigger.onclick = (event) => {
+      event.stopPropagation();
+      event.preventDefault();
+      if (Date.now() < state.canvasTemplateActionGuardUntil) return;
+      addTemplate();
+    };
+    trigger.onpointerdown = (event) => {
+      event.stopPropagation();
+      event.preventDefault();
+      state.canvasTemplateActionGuardUntil = Date.now() + 250;
+      addTemplate();
+    };
+  });
+  canvasStage.querySelectorAll('[data-canvas-action="delete-template"]').forEach((trigger) => {
+    const deleteTemplate = () => openTemplateDeleteConfirm(trigger.dataset.templateId);
+    trigger.onclick = (event) => {
+      event.stopPropagation();
+      event.preventDefault();
+      if (Date.now() < state.canvasTemplateActionGuardUntil) return;
+      deleteTemplate();
+    };
+    trigger.onpointerdown = (event) => {
+      event.stopPropagation();
+      event.preventDefault();
+      state.canvasTemplateActionGuardUntil = Date.now() + 250;
+      deleteTemplate();
+    };
+  });
+  canvasStage.querySelectorAll("[data-context-action]").forEach((trigger) => {
+    const runContextAction = () => {
+      const nodeId = trigger.dataset.nodeId;
+      const action = trigger.dataset.contextAction;
+      if (action === "save-asset") {
+        state.canvasContextMenu = null;
+        renderCanvasDetail();
+      }
+      if (action === "create-template") openCreateTemplateModal(nodeId);
+      if (action === "duplicate") duplicateNode(nodeId);
+      if (action === "copy") copyNode(nodeId);
+      if (action === "paste") pasteNode(nodeId);
+      if (action === "delete") deleteNode(nodeId);
+    };
+    trigger.onclick = (event) => {
+      event.stopPropagation();
+      event.preventDefault();
+      if (Date.now() < state.canvasContextActionGuardUntil) return;
+      runContextAction();
+    };
+    trigger.onpointerdown = (event) => {
+      event.stopPropagation();
+      event.preventDefault();
+      state.canvasContextActionGuardUntil = Date.now() + 250;
+      runContextAction();
     };
   });
   syncCanvasTransform();
@@ -1729,8 +2017,26 @@ const syncCanvasTransform = () => {
 
 const findNodeById = (nodeId) => currentCanvasNodes().find((node) => node.id === nodeId) || null;
 
+const currentTemplateList = () => {
+  const project = currentProject();
+  return state.canvasTemplateType === "custom" ? project?.canvasTemplates || [] : officialCanvasTemplates;
+};
+
+const findCanvasTemplate = (templateId) => {
+  const project = currentProject();
+  return officialCanvasTemplates.find((template) => template.id === templateId) || project?.canvasTemplates?.find((template) => template.id === templateId) || null;
+};
+
+const getNodeTemplateCover = (node) => {
+  if (!node) return DEFAULT_COVER;
+  if (node.type === "image" || node.type === "panorama") return node.image || DEFAULT_COVER;
+  if (node.type === "shot-group") return node.shots?.[0]?.source || DEFAULT_COVER;
+  return DEFAULT_COVER;
+};
+
 const closeCanvasPopups = () => {
   state.canvasAddPanelOpen = false;
+  state.canvasTemplatePanelOpen = false;
   state.canvasContextMenu = null;
   state.washConfirmNodeId = null;
   state.reversePromptConfirmNodeId = null;
@@ -1738,6 +2044,7 @@ const closeCanvasPopups = () => {
 
 const openCanvasAddPanel = () => {
   state.canvasAddPanelOpen = true;
+  state.canvasTemplatePanelOpen = false;
   state.canvasContextMenu = null;
   state.canvasAddPanelGuardUntil = Date.now() + 250;
   renderCanvasDetail();
@@ -1745,6 +2052,15 @@ const openCanvasAddPanel = () => {
 
 const toggleCanvasAddPanel = () => {
   state.canvasAddPanelOpen = !state.canvasAddPanelOpen;
+  state.canvasTemplatePanelOpen = false;
+  state.canvasContextMenu = null;
+  state.canvasAddPanelGuardUntil = Date.now() + 250;
+  renderCanvasDetail();
+};
+
+const toggleCanvasTemplatePanel = () => {
+  state.canvasTemplatePanelOpen = !state.canvasTemplatePanelOpen;
+  state.canvasAddPanelOpen = false;
   state.canvasContextMenu = null;
   state.canvasAddPanelGuardUntil = Date.now() + 250;
   renderCanvasDetail();
@@ -1766,6 +2082,99 @@ const createNodeAtViewportCenter = (image = null, offset = { x: 0, y: 0 }) => {
   canvas.selectedNodeId = node.id;
   state.canvasDraftName = "";
   closeCanvasPopups();
+  saveProjectsState();
+  renderCanvasDetail();
+};
+
+const openCreateTemplateModal = (nodeId) => {
+  const node = findNodeById(nodeId);
+  if (!node) return;
+  state.canvasTemplateDraftNodeId = nodeId;
+  state.canvasTemplateDraftTitle = `${node.name || "未命名节点"}模板`;
+  state.canvasTemplateDraftCover = getNodeTemplateCover(node);
+  state.canvasContextMenu = null;
+  renderCanvasDetail();
+};
+
+const closeCreateTemplateModal = () => {
+  state.canvasTemplateDraftNodeId = null;
+  state.canvasTemplateDraftTitle = "";
+  state.canvasTemplateDraftCover = "";
+  renderCanvasDetail();
+};
+
+const confirmCreateTemplate = () => {
+  const project = currentProject();
+  const node = findNodeById(state.canvasTemplateDraftNodeId);
+  if (!project || !node) return;
+  const title = state.canvasTemplateDraftTitle.trim() || `${node.name || "未命名节点"}模板`;
+  const savedNode = hydrateCanvasNode({
+    ...structuredClone(node),
+    id: undefined,
+    x: 0,
+    y: 0,
+  });
+  project.canvasTemplates = project.canvasTemplates || [];
+  project.canvasTemplates.unshift({
+    id: `tpl${Date.now()}${Math.floor(Math.random() * 1000)}`,
+    type: "custom",
+    name: title,
+    masterTitle: node.name || title,
+    cover: state.canvasTemplateDraftCover || getNodeTemplateCover(node),
+    nodes: [savedNode],
+  });
+  state.canvasTemplateType = "custom";
+  state.canvasTemplatePanelOpen = true;
+  state.canvasTemplateDraftNodeId = null;
+  state.canvasTemplateDraftTitle = "";
+  state.canvasTemplateDraftCover = "";
+  saveProjectsState();
+  renderCanvasDetail();
+};
+
+const addCanvasTemplateToCanvas = (templateId) => {
+  const canvas = currentCanvas();
+  const board = document.getElementById("canvas-board");
+  const template = findCanvasTemplate(templateId);
+  if (!canvas || !board || !template) return;
+  const centerX = (board.clientWidth / 2 - canvas.viewport.x) / canvas.viewport.scale;
+  const centerY = (board.clientHeight / 2 - canvas.viewport.y) / canvas.viewport.scale;
+  const sourceNodes = template.nodes?.length ? template.nodes : [createImageNode({ name: template.name, image: template.cover })];
+  const minX = Math.min(...sourceNodes.map((node) => Number(node.x) || 0));
+  const minY = Math.min(...sourceNodes.map((node) => Number(node.y) || 0));
+  const createdNodes = sourceNodes.map((node, index) =>
+    hydrateCanvasNode({
+      ...structuredClone(node),
+      id: undefined,
+      name: node.name || `${template.name}-${index + 1}`,
+      x: centerX + (Number(node.x) || 0) - minX - 260,
+      y: centerY + (Number(node.y) || 0) - minY - 180,
+    }),
+  );
+  canvas.nodes.push(...createdNodes);
+  canvas.selectedNodeId = createdNodes[0]?.id || canvas.selectedNodeId;
+  state.canvasTemplatePanelOpen = false;
+  saveProjectsState();
+  renderCanvasDetail();
+};
+
+const openTemplateDeleteConfirm = (templateId) => {
+  const template = currentProject()?.canvasTemplates?.find((item) => item.id === templateId);
+  if (!template) return;
+  state.canvasTemplateDeleteTargetId = templateId;
+  renderCanvasDetail();
+};
+
+const closeTemplateDeleteConfirm = () => {
+  state.canvasTemplateDeleteTargetId = null;
+  renderCanvasDetail();
+};
+
+const confirmDeleteCanvasTemplate = () => {
+  const project = currentProject();
+  if (!project || !state.canvasTemplateDeleteTargetId) return;
+  project.canvasTemplates = (project.canvasTemplates || []).filter((template) => template.id !== state.canvasTemplateDeleteTargetId);
+  state.canvasTemplateDeleteTargetId = null;
   saveProjectsState();
   renderCanvasDetail();
 };
@@ -3047,9 +3456,58 @@ canvasStage.addEventListener("click", (event) => {
       if (Date.now() < state.canvasAddPanelGuardUntil) return;
       toggleCanvasAddPanel();
     }
+    if (action === "toggle-template-panel") {
+      event.stopPropagation();
+      if (Date.now() < state.canvasAddPanelGuardUntil) return;
+      toggleCanvasTemplatePanel();
+    }
     if (action === "close-add-panel") {
       state.canvasAddPanelOpen = false;
       renderCanvasDetail();
+    }
+    if (action === "close-template-panel") {
+      state.canvasTemplatePanelOpen = false;
+      renderCanvasDetail();
+    }
+    if (action === "switch-template-type") {
+      state.canvasTemplateType = canvasAction.dataset.templateType === "custom" ? "custom" : "official";
+      renderCanvasDetail();
+    }
+    if (action === "add-template-to-canvas") {
+      addCanvasTemplateToCanvas(canvasAction.dataset.templateId);
+    }
+    if (action === "delete-template") {
+      openTemplateDeleteConfirm(canvasAction.dataset.templateId);
+    }
+    if (action === "pick-template-cover") {
+      event.preventDefault();
+      event.stopPropagation();
+      canvasStage.querySelector("[data-template-cover-input]")?.click();
+      return;
+    }
+    if (action === "close-create-template") {
+      event.preventDefault();
+      event.stopPropagation();
+      closeCreateTemplateModal();
+      return;
+    }
+    if (action === "confirm-create-template") {
+      event.preventDefault();
+      event.stopPropagation();
+      confirmCreateTemplate();
+      return;
+    }
+    if (action === "close-template-delete") {
+      event.preventDefault();
+      event.stopPropagation();
+      closeTemplateDeleteConfirm();
+      return;
+    }
+    if (action === "confirm-delete-template") {
+      event.preventDefault();
+      event.stopPropagation();
+      confirmDeleteCanvasTemplate();
+      return;
     }
     if (action === "create-node") createNodeAtViewportCenter();
     if (action === "create-image-node") createNodeAtViewportCenter(CANVAS_NODE_PREVIEW);
@@ -3125,6 +3583,7 @@ canvasStage.addEventListener("click", (event) => {
       state.canvasContextMenu = null;
       renderCanvasDetail();
     }
+    if (action === "create-template") openCreateTemplateModal(nodeId);
     if (action === "duplicate") duplicateNode(nodeId);
     if (action === "copy") copyNode(nodeId);
     if (action === "paste") pasteNode(nodeId);
@@ -3240,6 +3699,10 @@ canvasStage.addEventListener("pointerdown", (event) => {
     event.stopPropagation();
     return;
   }
+  if (event.target.closest(".canvas-add-panel, .canvas-template-panel, .canvas-context-menu, .canvas-bottom-dock")) {
+    event.stopPropagation();
+    return;
+  }
   const canvasAction = event.target.closest('[data-canvas-action="toggle-add-panel"]');
   if (canvasAction) {
     event.stopPropagation();
@@ -3343,6 +3806,7 @@ canvasStage.addEventListener("contextmenu", (event) => {
     y: event.clientY - rect.top,
   };
   state.canvasAddPanelOpen = false;
+  state.canvasTemplatePanelOpen = false;
   renderCanvasDetail();
 });
 
@@ -3412,6 +3876,10 @@ document.addEventListener("click", (event) => {
       state.canvasAddPanelOpen = false;
       shouldRenderCanvas = true;
     }
+    if (!event.target.closest(".canvas-template-panel") && !event.target.closest('[data-canvas-action="toggle-template-panel"]') && state.canvasTemplatePanelOpen) {
+      state.canvasTemplatePanelOpen = false;
+      shouldRenderCanvas = true;
+    }
     if (shouldRenderCanvas) {
       renderGrid();
     }
@@ -3453,7 +3921,13 @@ document.addEventListener("keydown", (event) => {
       renderCanvasDetail();
       return;
     }
-    if (state.canvasAddPanelOpen || state.canvasContextMenu) {
+    if (state.canvasTemplateDraftNodeId || state.canvasTemplateDeleteTargetId) {
+      state.canvasTemplateDraftNodeId = null;
+      state.canvasTemplateDeleteTargetId = null;
+      renderCanvasDetail();
+      return;
+    }
+    if (state.canvasAddPanelOpen || state.canvasTemplatePanelOpen || state.canvasContextMenu) {
       closeCanvasPopups();
       renderGrid();
     }
