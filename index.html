@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PhanthyMovie 项目列表</title>
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./styles.css?v=timeline-v19" />
   </head>
   <body>
     <main class="page-shell">
@@ -127,6 +127,41 @@
       </div>
 
       <section class="home-view" id="home-view">
+        <section class="home-promo-banner" aria-label="创作活动推荐">
+          <button class="home-promo-card is-active" type="button" data-promo-card aria-expanded="true">
+            <img src="./assets/images/canvas-chase-sequence.jpg" alt="" />
+            <span class="home-promo-tab">创作计划</span>
+            <div class="home-promo-copy">
+              <span class="home-promo-kicker">平台创作计划</span>
+              <h2>短剧创作加速季</h2>
+              <p>上传剧本即可进入 AI 拆镜、角色设定、分镜生成流程，新作品通过审核后可展示在创作中心首页。</p>
+              <span class="home-promo-cta" data-home-action="open-latest-canvas">立即创作</span>
+            </div>
+          </button>
+
+          <button class="home-promo-card" type="button" data-promo-card aria-expanded="false">
+            <img src="./assets/images/style-cinematic.jpg" alt="" />
+            <span class="home-promo-tab">工作流</span>
+            <div class="home-promo-copy">
+              <span class="home-promo-kicker">效率升级</span>
+              <h2>剧本到分镜，一站完成</h2>
+              <p>自动识别角色、拆解场景和镜头，让系列化内容生产更稳定。</p>
+              <span class="home-promo-cta">查看能力</span>
+            </div>
+          </button>
+
+          <button class="home-promo-card" type="button" data-promo-card aria-expanded="false">
+            <img src="./assets/images/project-neon-tokyo.jpg" alt="" />
+            <span class="home-promo-tab">灵感广场</span>
+            <div class="home-promo-copy">
+              <span class="home-promo-kicker">精选作品</span>
+              <h2>平台优质作品持续更新</h2>
+              <p>发现热门题材、视觉风格和叙事节奏，为下一支作品补充灵感。</p>
+              <span class="home-promo-cta">浏览作品</span>
+            </div>
+          </button>
+        </section>
+
         <div class="home-heading">
           <h1>开启您的创作旅程</h1>
           <p>选择一种方式开始生成您的 AI 影视</p>
@@ -363,128 +398,254 @@
           </section>
 
           <nav class="workflow-nav" aria-label="工作流菜单">
-            <button class="workflow-nav-item active" type="button">
+            <button class="workflow-nav-item" type="button" title="快捷创作">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1v-9.5Z" />
               </svg>
-              <span>主控制台</span>
+              <span>快捷创作</span>
             </button>
-            <button class="workflow-nav-item" type="button">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M7 4h10a2 2 0 0 1 2 2v12c0 1.1-2.7 2-6 2s-6-.9-6-2V6a2 2 0 0 1 2-2Z" />
-                <path d="M7 8c0 1.1 2.7 2 6 2s6-.9 6-2M7 13c0 1.1 2.7 2 6 2s6-.9 6-2" />
-              </svg>
-              <span>我的项目</span>
-            </button>
-            <button class="workflow-nav-item" type="button">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z" />
-              </svg>
-              <span>资产库</span>
-            </button>
-            <button class="workflow-nav-item" type="button">
+            <button class="workflow-nav-item" type="button" title="剧本分析">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M4 5h4v14H4zM10 5h4v14h-4zM16 5h4v14h-4zM2.8 9h18.4M2.8 15h18.4" />
               </svg>
-              <span>剧本拆解</span>
+              <span>剧本分析</span>
             </button>
-            <button class="workflow-nav-item" type="button">
+            <button class="workflow-nav-item" type="button" title="项目资产库">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z" />
+              </svg>
+              <span>项目资产库</span>
+            </button>
+            <button class="workflow-nav-item active" type="button" title="拍摄台">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M4 6h16v12H4z" />
                 <path d="m10 9 5 3-5 3V9Z" />
               </svg>
               <span>拍摄台</span>
             </button>
-            <button class="workflow-nav-item" type="button">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M5 5h14v14H5z" />
-                <path d="m8 5 2 4M13 5l2 4M18 5l2 4M5 9h14" />
-              </svg>
-              <span>视频工坊</span>
-            </button>
-            <button class="workflow-nav-item" type="button">
+            <button class="workflow-nav-item" type="button" title="模型对话广场">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M10 3h4M12 3v6l-6 10h12L12 9" />
               </svg>
-              <span>试验台</span>
+              <span>模型对话广场</span>
             </button>
           </nav>
+          <button class="workflow-sidebar-toggle" type="button" data-workflow-action="toggle-sidebar" aria-label="收起工作流导航">
+            <svg viewBox="0 0 16 16" aria-hidden="true">
+              <path d="M10 3.5 5.5 8l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
         </aside>
 
-        <main class="workflow-home-main">
-          <div class="workflow-home-head">
+        <main class="workflow-home-main workflow-studio-main">
+          <div class="workflow-studio-head">
             <div>
-              <h1>主控制台</h1>
-              <p>一键生成</p>
-              <div class="workflow-home-meta">
-                <span id="workflow-main-project-name">test</span>
-                <span id="workflow-main-style-tag">写实</span>
+              <div class="workflow-stage-tabs" aria-label="拍摄台任务">
+                <button class="active" type="button">关键帧生成</button>
+                <button type="button">关键帧视频生成</button>
+                <button type="button">生成视频片段</button>
+                <button type="button">配音补齐</button>
               </div>
             </div>
-            <button class="workflow-history-button" type="button" id="workflow-history-trigger">构建历史</button>
           </div>
 
-          <section class="workflow-step-grid" aria-label="工作流步骤">
-            <article class="workflow-step-card">
-              <span class="workflow-step-index">第一步</span>
-              <div class="workflow-step-icon">
-                <svg viewBox="0 0 28 28" aria-hidden="true">
-                  <path d="M8 3.5h12v21H8z" />
-                  <path d="M12 8h5M12 12h5M12 16h3M20 3.5v21" />
-                </svg>
+          <section class="workflow-studio-grid" aria-label="关键帧生成工作台">
+            <aside class="workflow-script-panel">
+              <div class="workflow-panel-title">
+                <strong>集 · 场</strong>
+                <span>当前剧本</span>
               </div>
-              <h2>剧本构建</h2>
-              <p>上传剧本 → 拆解集/场/镜 → 提取角色、服装、场景、道具清单。纯文字，不出图。</p>
-            </article>
+              <div class="workflow-script-selectors">
+                <label aria-label="选择集">
+                  <select id="workflow-episode-select">
+                    <option>第 1 集 · 雨夜终局</option>
+                    <option>第 2 集 · 旧案回声</option>
+                  </select>
+                </label>
+                <label aria-label="选择场">
+                  <select id="workflow-scene-select">
+                    <option>第 1 场 · 废弃仓库 · 4 镜</option>
+                    <option>第 2 场 · 医院走廊 · 3 镜</option>
+                    <option>第 3 场 · 码头追逐 · 5 镜</option>
+                  </select>
+                </label>
+              </div>
+              <article class="workflow-script-card" id="workflow-script-card">
+                <h2>第 1 集 · 第 1 场</h2>
+                <p>夜雨倾盆，废弃仓库里只有冷白色顶灯闪烁。李柏压低枪口，缓慢穿过积水地面。远处传来金属门被推开的声音，罗根从阴影里走出。</p>
+                <p>李柏没有回头，只听见同伴在耳机里急促提醒：“目标不止一个，二层还有人。”</p>
+              </article>
+            </aside>
+            <button class="workflow-panel-resizer" type="button" data-resize-panel="script" aria-label="调整集场宽度"></button>
 
-            <article class="workflow-step-card">
-              <span class="workflow-step-index">第二步</span>
-              <div class="workflow-step-icon">
-                <svg viewBox="0 0 28 28" aria-hidden="true">
-                  <path d="m11.5 4 1.3 3.6 3.7 1.4-3.7 1.4-1.3 3.6-1.4-3.6L6.5 9l3.6-1.4L11.5 4ZM19 12l.9 2.4 2.6.9-2.6 1-.9 2.7-1-2.7-2.5-1 2.5-.9.9-2.4ZM8 17.5l.6 1.6 1.7.6-1.7.7L8 22l-.7-1.6-1.6-.7 1.6-.6.7-1.6Z" />
-                </svg>
+            <section class="workflow-shot-panel">
+              <div class="workflow-panel-title">
+                <strong>分镜表</strong>
+                <span id="workflow-shot-summary">第 1 集 · 第 1 场 · 共 4 镜</span>
               </div>
-              <h2>素材草图</h2>
-              <p>为每个角色/服装/场景/道具各出一张参考草图，核对AI描述是否符合预期。</p>
-            </article>
+              <div class="workflow-shot-table" id="workflow-shot-table">
+                <button type="button">
+                  <span class="workflow-shot-index">镜 1</span>
+                  <strong>3s</strong>
+                  <p>仓库全景，雨声与脚步声建立空间。远景，24mm镜头，f/4，轻微俯拍，废弃仓库屋顶漏雨，冷白顶灯闪烁，地面积水反射人物剪影，整体压暗。</p>
+                </button>
+                <button class="active" type="button">
+                  <span class="workflow-shot-index">镜 2</span>
+                  <strong>3s</strong>
+                  <p>雨滴打在金属枪管上的滴答声，李棺沉重而克制的呼吸声 · 特写，85mm镜头，f/1.8，慢推，黑色手枪枪口稳稳对准前方且李棺绷直的手臂入画，枪管金属表面附着细密水珠并反射冷光，侧逆光勾勒枪身轮廓，色温4000K冷白，高明暗对比，冷峻幽暗色调 · 特写</p>
+                </button>
+                <button type="button">
+                  <span class="workflow-shot-index">镜 3</span>
+                  <strong>2s</strong>
+                  <p>手枪扳机特写，指尖悬停未扣下，水珠沿护圈滑落。微距镜头，浅景深，冷白反光切过指节，背景只保留模糊人影。</p>
+                </button>
+                <button type="button">
+                  <span class="workflow-shot-index">镜 4</span>
+                  <strong>2s</strong>
+                  <p>李棺眼神极近特写，听见二层金属响动后瞳孔轻微收缩。侧逆光压出脸部轮廓，雨声和呼吸声被放大。</p>
+                </button>
+              </div>
+              <div class="workflow-generation-card">
+                <div class="workflow-generate-controls">
+                  <button class="workflow-primary-button" type="button" data-workflow-action="open-generate-modal" data-generate-mode="shot">生成当前镜</button>
+                  <button class="workflow-secondary-button" type="button" data-workflow-action="open-generate-modal" data-generate-mode="scene">整场多宫格</button>
+                </div>
+              </div>
+            </section>
+            <button class="workflow-panel-resizer" type="button" data-resize-panel="shot" aria-label="调整分镜表宽度"></button>
 
-            <article class="workflow-step-card">
-              <span class="workflow-step-index">第三步</span>
-              <div class="workflow-step-icon">
-                <svg viewBox="0 0 28 28" aria-hidden="true">
-                  <path d="M5 6h18v13H5z" />
-                  <path d="M9 15.5 13 12l3 2.4 4-5.4M8 22h12M14 19v3" />
-                </svg>
+            <section class="workflow-keyframe-panel">
+              <div class="workflow-panel-title">
+                <strong>关键帧结果</strong>
+                <span>可拖入底部时间线</span>
               </div>
-              <h2>融合草图</h2>
-              <p>在开启画布创作之旅，用画布模式进行剧本拆解、文字生图、图片生视频、音频生视频，更直观的创作方式。</p>
-            </article>
-
-            <article class="workflow-step-card">
-              <span class="workflow-step-index">第四步</span>
-              <div class="workflow-step-icon">
-                <svg viewBox="0 0 28 28" aria-hidden="true">
-                  <path d="M8 5v18M14 5v18M20 5v18" />
-                  <path d="M6 9h4M12 15h4M18 11h4" />
-                  <circle cx="8" cy="9" r="2" />
-                  <circle cx="14" cy="15" r="2" />
-                  <circle cx="20" cy="11" r="2" />
-                </svg>
+              <div class="workflow-keyframe-grid" id="workflow-keyframe-grid">
+                <div class="workflow-keyframe-control-row">
+                  <label>
+                    <select data-workflow-action="filter-keyframes" aria-label="筛选关键帧结果">
+                      <option value="all" selected>全部</option>
+                      <option value="shot-0">镜 1</option>
+                      <option value="shot-1">镜 2</option>
+                      <option value="shot-2">镜 3</option>
+                      <option value="shot-3">镜 4</option>
+                      <option value="scene">整场</option>
+                    </select>
+                  </label>
+                  <div>
+                    <button type="button" data-workflow-action="upload-keyframe">上传</button>
+                    <button type="button" data-workflow-action="compose-keyframes">拼图</button>
+                    <button type="button" data-workflow-action="clear-keyframes">清空</button>
+                  </div>
+                </div>
+                <article class="workflow-keyframe-card" draggable="true" data-workflow-frame-index="0">
+                  <img src="./assets/images/canvas-chase-sequence.jpg" alt="" />
+                  <div class="workflow-keyframe-info"><span>第 1 集 · 第 1 场 · 镜 2</span></div>
+                  <footer>
+                    <button type="button" data-workflow-action="delete-keyframe" data-workflow-frame-index="0">删除</button>
+                    <button type="button" data-workflow-action="edit-frame" data-workflow-frame-index="0" data-generate-mode="shot">编辑</button>
+                  </footer>
+                </article>
+                <article class="workflow-keyframe-card" draggable="true" data-workflow-frame-index="1">
+                  <img src="./assets/images/project-neon-tokyo.jpg" alt="" />
+                  <div class="workflow-keyframe-info"><span>第 1 集 · 第 1 场 · 镜 2</span></div>
+                  <footer>
+                    <button type="button" data-workflow-action="delete-keyframe" data-workflow-frame-index="1">删除</button>
+                    <button type="button" data-workflow-action="edit-frame" data-workflow-frame-index="1" data-generate-mode="shot">编辑</button>
+                  </footer>
+                </article>
+                <article class="workflow-keyframe-card" draggable="true" data-workflow-frame-index="2">
+                  <img src="./assets/images/style-cinematic.jpg" alt="" />
+                  <div class="workflow-keyframe-info"><span>第 1 集 · 第 1 场 · 镜 2</span></div>
+                  <footer>
+                    <button type="button" data-workflow-action="delete-keyframe" data-workflow-frame-index="2">删除</button>
+                    <button type="button" data-workflow-action="edit-frame" data-workflow-frame-index="2" data-generate-mode="shot">编辑</button>
+                  </footer>
+                </article>
+                <article class="workflow-keyframe-card is-grid" draggable="true" data-workflow-frame-index="3">
+                  <img src="./assets/images/canvas-node-preview.png" alt="" />
+                  <div class="workflow-keyframe-info"><span>第 1 集 · 第 1 场 · 整场多宫格</span></div>
+                  <footer>
+                    <button type="button" data-workflow-action="delete-keyframe" data-workflow-frame-index="3">删除</button>
+                    <button type="button" data-workflow-action="edit-frame" data-workflow-frame-index="3" data-generate-mode="scene">编辑</button>
+                  </footer>
+                </article>
               </div>
-              <h2>视频生成准备</h2>
-              <p>自动匹配镜头素材，批量生成视频提示词和关键帧，为后续视频生成做好准备。</p>
-            </article>
+            </section>
           </section>
 
-          <section class="workflow-records" aria-labelledby="workflow-records-title">
-            <h2 id="workflow-records-title">脚本生成记录 <span>0</span></h2>
-            <p>暂无生成记录</p>
+          <section class="workflow-timeline-panel is-expanded" aria-label="时间线">
+            <div class="workflow-timeline-head">
+              <div>
+                <strong>时间线</strong>
+                <span>00:00 / 00:36</span>
+              </div>
+              <div class="workflow-timeline-head-actions">
+                <div class="workflow-timeline-action-group is-left">
+                  <button class="workflow-timeline-preview-button" type="button" data-workflow-action="open-timeline-preview">预览</button>
+                  <button type="button" data-workflow-action="export-timeline">导出</button>
+                  <button type="button" data-workflow-action="trim-selected-at-playhead">裁剪</button>
+                </div>
+                <div class="workflow-timeline-action-group is-right">
+                  <button type="button" data-workflow-action="toggle-track" data-track="keyframe">关键帧线</button>
+                  <button type="button" data-workflow-action="toggle-track" data-track="video">视频线</button>
+                  <button type="button" data-workflow-action="toggle-track" data-track="audio">音频线</button>
+                  <button type="button" data-workflow-action="toggle-timeline">收起</button>
+                </div>
+              </div>
+            </div>
+            <div class="workflow-timeline">
+              <div class="workflow-time-ruler"><span>00:00</span><span>00:06</span><span>00:12</span><span>00:18</span><span>00:24</span><span>00:30</span><span>00:36</span></div>
+              <div class="workflow-playhead" style="left:36%;" aria-hidden="true"></div>
+              <div class="workflow-track" data-track-row="keyframe">
+                <strong>关键帧线</strong>
+                <div class="workflow-track-lane">
+                  <span class="workflow-clip workflow-keyframe-clip" draggable="true" data-clip-kind="keyframe" style="left:3%; width:18%;">
+                    <img src="./assets/images/canvas-chase-sequence.jpg" alt="" />
+                    <em>KF#1</em>
+                    <i class="clip-resize is-left" data-resize-edge="left"></i>
+                    <i class="clip-resize is-right" data-resize-edge="right"></i>
+                  </span>
+                  <span class="workflow-clip workflow-keyframe-clip" draggable="true" data-clip-kind="keyframe" style="left:23%; width:20%;">
+                    <img src="./assets/images/project-neon-tokyo.jpg" alt="" />
+                    <em>KF#2</em>
+                    <i class="clip-resize is-left" data-resize-edge="left"></i>
+                    <i class="clip-resize is-right" data-resize-edge="right"></i>
+                  </span>
+                  <span class="workflow-clip workflow-keyframe-clip" draggable="true" data-clip-kind="keyframe" style="left:46%; width:16%;">
+                    <img src="./assets/images/style-cinematic.jpg" alt="" />
+                    <em>KF#3</em>
+                    <i class="clip-resize is-left" data-resize-edge="left"></i>
+                    <i class="clip-resize is-right" data-resize-edge="right"></i>
+                  </span>
+                </div>
+              </div>
+              <div class="workflow-track is-video" data-track-row="video">
+                <strong>视频线</strong>
+                <div class="workflow-track-lane">
+                  <span class="workflow-clip workflow-video-clip" draggable="true" data-clip-kind="video" style="left:3%; width:59%;">
+                    <img src="./assets/images/project-neon-tokyo.jpg" alt="" />
+                    <img src="./assets/images/canvas-chase-sequence.jpg" alt="" />
+                    <img src="./assets/images/style-cinematic.jpg" alt="" />
+                    <em>视频片段 01</em>
+                    <i class="clip-resize is-left" data-resize-edge="left"></i>
+                    <i class="clip-resize is-right" data-resize-edge="right"></i>
+                  </span>
+                </div>
+              </div>
+              <div class="workflow-track is-audio" data-track-row="audio">
+                <strong>音频线</strong>
+                <div class="workflow-track-lane">
+                  <span class="workflow-clip workflow-audio-clip" draggable="true" data-clip-kind="audio" style="left:6%; width:54%;">
+                    <b style="height:18%;"></b><b style="height:64%;"></b><b style="height:38%;"></b><b style="height:82%;"></b><b style="height:45%;"></b><b style="height:70%;"></b><b style="height:28%;"></b><b style="height:58%;"></b><b style="height:90%;"></b><b style="height:36%;"></b><b style="height:76%;"></b><b style="height:44%;"></b><b style="height:62%;"></b><b style="height:24%;"></b>
+                    <em>配音 01</em>
+                    <i class="clip-resize is-left" data-resize-edge="left"></i>
+                    <i class="clip-resize is-right" data-resize-edge="right"></i>
+                  </span>
+                </div>
+              </div>
+            </div>
           </section>
-
-          <footer class="workflow-status-bar">
-            <span>后端状态:</span>
-            <strong><i aria-hidden="true"></i> 已连接</strong>
-          </footer>
+          <div id="workflow-generate-modal-root"></div>
         </main>
       </section>
 
@@ -844,6 +1005,6 @@
       </div>
     </main>
 
-    <script src="./script.js"></script>
+    <script src="./script.js?v=timeline-v19"></script>
   </body>
 </html>
