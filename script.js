@@ -699,10 +699,15 @@ const state = {
   workflowEditVersionIndex: 0,
   workflowEditTool: null,
   workflowEditGeneratedVersions: [],
+  workflowEditFinalizedVersionKey: "original",
+  workflowEditDeletedVersionKeys: [],
+  workflowEditDeleteVersionKey: null,
   workflowEditCostConfirmTool: null,
   workflowEditSaveMenuOpen: false,
   workflowKeyframeFilter: "all",
+  workflowRenamingFrameIndex: null,
   workflowDeleteFrameIndex: null,
+  workflowClearConfirmOpen: false,
   workflowPreviewModalOpen: false,
   workflowClipContextMenu: null,
   workflowReferenceModalOpen: false,
@@ -1025,6 +1030,37 @@ const currentWorkflowStudioSelection = () => {
   return { episode, scene, shot };
 };
 
+const workflowKeyframeDefaultName = (episode, scene, frame, assignedShotIndex = 0) =>
+  `${episode.title.split(" · ")[0]} · ${scene.title.split(" · ")[0]} · ${frame.grid ? "整场多宫格" : (scene.shots[assignedShotIndex]?.no || scene.shots[0]?.no || "镜 1")}`;
+
+const workflowKeyframeDisplayName = (episode, scene, frame, assignedShotIndex = 0) =>
+  frame.name || workflowKeyframeDefaultName(episode, scene, frame, assignedShotIndex);
+
+const renderWorkflowTimelineKeyframeClips = (episode, scene) => {
+  let nonGridOrdinal = -1;
+  const positions = [
+    { left: 3, width: 18 },
+    { left: 23, width: 20 },
+    { left: 46, width: 16 },
+  ];
+  return scene.keyframes
+    .map((frame) => ({
+      frame,
+      assignedShotIndex: frame.grid ? null : (Number.isInteger(frame.assignedShotIndex) ? frame.assignedShotIndex : ((nonGridOrdinal += 1) % scene.shots.length)),
+    }))
+    .filter(({ frame }) => !frame.grid && !frame.pending)
+    .slice(0, positions.length)
+    .map(({ frame, assignedShotIndex }, index) => `
+      <span class="workflow-clip workflow-keyframe-clip" draggable="true" data-clip-kind="keyframe" style="left:${positions[index].left}%; width:${positions[index].width}%">
+        <img src="${escapeHtml(frame.image)}" alt="" />
+        <em>${escapeHtml(workflowKeyframeDisplayName(episode, scene, frame, assignedShotIndex))}</em>
+        <i class="clip-resize is-left" data-resize-edge="left"></i>
+        <i class="clip-resize is-right" data-resize-edge="right"></i>
+      </span>
+    `)
+    .join("");
+};
+
 const renderWorkflowReferenceModal = () => {
   if (!state.workflowReferenceModalOpen) return "";
   const activeSource = state.workflowReferenceSource || "local";
@@ -1175,7 +1211,7 @@ const renderWorkflowGenerateModal = () => {
           <div>
             <span class="workflow-generate-cost"><img src="${CANVAS_NODE_CREDIT}" alt="" />42</span>
             <button class="workflow-secondary-button" type="button" data-workflow-action="close-generate-modal">取消</button>
-            <button class="workflow-primary-button" type="button" data-workflow-action="close-generate-modal">生成</button>
+            <button class="workflow-primary-button" type="button" data-workflow-action="generate-keyframe">生成</button>
           </div>
         </footer>
       </section>
@@ -1269,16 +1305,18 @@ const renderWorkflowEditModal = () => {
     ? `统一角色造型、统一光线方向、保留每个镜头的景别变化，输出可用于视频生成的连续分镜。`
     : `${shot.script}\n\n保持角色外貌、服装和场景连续性，强化镜头叙事重点。`;
   const editVersions = [
-    { label: "原图", image: frame.image, original: true },
-    { label: "洗图结果 1", image: frame.image },
-    { label: "洗图结果 2", image: frame.image },
-    ...state.workflowEditGeneratedVersions,
-  ];
+    { key: "original", label: "原图 1", image: frame.originalImage || frame.image, original: true },
+    { key: "wash-1", label: "洗图结果 1", image: frame.image },
+    { key: "wash-2", label: "洗图结果 2", image: frame.image },
+    ...state.workflowEditGeneratedVersions.map((version, index) => ({ ...version, key: `generated-${index}` })),
+  ]
+    .filter((version) => !state.workflowEditDeletedVersionKeys.includes(version.key))
+    .map((version) => ({ ...version, finalized: version.key === state.workflowEditFinalizedVersionKey }));
   const selectedVersionIndex = Math.min(state.workflowEditVersionIndex, editVersions.length - 1);
   const selectedVersion = editVersions[selectedVersionIndex];
-  const previewActions = selectedVersion.original
+  const previewActions = selectedVersion.finalized
     ? [["下载", "download"]]
-    : [["下载", "download"], ["添加到关键帧结果", "add-keyframe"], ["删除", "delete-version"]];
+    : [["下载", "download"], ["添加到关键帧结果", "add-keyframe"], ["删除", "delete-version"], ...(!selectedVersion.pending ? [["定稿", "finalize-edit-version"]] : [])];
   const editTools = [
     ["改图", "rectangle", "redraw"],
     ["拆图", "borderInner", "split"],
@@ -1303,11 +1341,11 @@ const renderWorkflowEditModal = () => {
   if (isSplitTool) {
     return `
       <div class="workflow-edit-modal">
-        <button class="workflow-edit-backdrop" type="button" data-workflow-action="close-edit-modal" aria-label="关闭拆图编辑器"></button>
+        <button class="workflow-edit-backdrop" type="button" data-workflow-action="close-split-editor" aria-label="关闭拆图编辑器"></button>
         <section class="workflow-edit-dialog workflow-split-dialog" role="dialog" aria-modal="true" aria-labelledby="workflow-split-title">
           <header class="workflow-split-topbar">
             <strong id="workflow-split-title">拆图编辑器（1x1）</strong>
-            <button class="workflow-edit-close" type="button" data-workflow-action="close-edit-modal" aria-label="关闭">✕</button>
+            <button class="workflow-edit-close" type="button" data-workflow-action="close-split-editor" aria-label="关闭">✕</button>
           </header>
           <div class="workflow-split-toolbar">
             <button class="active is-remove" type="button"><span></span>删除区域</button>
@@ -1337,6 +1375,32 @@ const renderWorkflowEditModal = () => {
               <button class="workflow-primary-button" type="button">导出结果</button>
             </div>
           </footer>
+        </section>
+      </div>
+    `;
+  }
+
+  if (state.workflowEditTool === "crop") {
+    return `
+      <div class="workflow-edit-modal workflow-crop-modal">
+        <button class="workflow-edit-backdrop" type="button" data-workflow-action="close-crop-editor" aria-label="关闭剪裁编辑器"></button>
+        <section class="workflow-crop-dialog" role="dialog" aria-modal="true" aria-label="剪裁图片">
+          <div class="workflow-crop-toolbar">
+            <button class="workflow-crop-close" type="button" data-workflow-action="close-crop-editor" aria-label="关闭">✕</button>
+            <span></span>
+            <button class="workflow-crop-ratio" type="button">▦ 原图比例⌄</button>
+            <span></span>
+            <label class="workflow-crop-zoom" aria-label="缩放">
+              <b>⊕</b>
+              <input type="range" min="50" max="150" value="100" />
+            </label>
+            <span></span>
+            <button class="workflow-crop-confirm" type="button" data-workflow-action="close-crop-editor">确认</button>
+          </div>
+          <div class="workflow-crop-canvas">
+            <img src="${escapeHtml(selectedVersion.image)}" alt="" />
+            <div class="workflow-crop-frame" aria-hidden="true"><b class="is-v-one"></b><b class="is-v-two"></b><b class="is-h-one"></b><b class="is-h-two"></b><i></i><i></i><i></i><i></i></div>
+          </div>
         </section>
       </div>
     `;
@@ -1437,6 +1501,7 @@ const renderWorkflowEditModal = () => {
                       : `<img src="${escapeHtml(version.image)}" alt="" />`}
                     <span>${escapeHtml(version.label)}</span>
                     ${version.pending ? "<i>生成中</i>" : ""}
+                    ${version.finalized ? "<i class=\"workflow-edit-finalized-tag\">已定稿</i>" : ""}
                   </button>
                 `)
                 .join("")}
@@ -1447,26 +1512,26 @@ const renderWorkflowEditModal = () => {
                   <button type="button" data-workflow-action="toggle-edit-save-menu">保存到</button>
                   ${state.workflowEditSaveMenuOpen ? `
                     <div>
-                      <button type="button" data-workflow-action="save-edit-version-to" data-save-target="project">到项目资产库</button>
-                      <button type="button" data-workflow-action="save-edit-version-to" data-save-target="team">到团队资产库</button>
-                      <button type="button" data-workflow-action="save-edit-version-to" data-save-target="market">到素材广场</button>
+                      <button type="button" data-workflow-action="save-edit-version-to" data-save-target="project">项目资产库</button>
+                      <button type="button" data-workflow-action="save-edit-version-to" data-save-target="team">团队资产库</button>
+                      <button type="button" data-workflow-action="save-edit-version-to" data-save-target="market">素材广场</button>
                     </div>
                   ` : ""}
                 </div>
                 ${previewActions
-                  .map(([label, actionKey]) => `<button type="button" data-workflow-action="${actionKey}">${label}</button>`)
+                  .map(([label, actionKey]) => `<button type="button" data-workflow-action="${actionKey}" data-workflow-version-key="${escapeHtml(selectedVersion.key)}" data-workflow-version-image="${escapeHtml(selectedVersion.image || "")}">${label}</button>`)
                   .join("")}
               </div>
               ${selectedVersion.pending
                 ? `<div class="workflow-edit-preview-pending">${workflowEditIcon.imageGeneration}<span>生成中</span></div>`
                 : `<img src="${escapeHtml(selectedVersion.image)}" alt="" />`}
+              ${selectedVersion.finalized ? "<span class=\"workflow-edit-preview-finalized-tag\">已定稿</span>" : ""}
             </figure>
           </div>
           <aside class="workflow-edit-side">
             <section class="workflow-edit-params">
               <header>
                 <strong>图片参数</strong>
-                <span>基于当前关键帧二次修改</span>
               </header>
               <dl>
                 <div><dt>模型</dt><dd>phan nano Image 3</dd></div>
@@ -1558,8 +1623,55 @@ const renderWorkflowKeyframeDeleteConfirmModal = () => {
   `;
 };
 
+const renderWorkflowKeyframeClearConfirmModal = () => {
+  if (!state.workflowClearConfirmOpen) return "";
+  return `
+    <div class="modal-backdrop is-open workflow-keyframe-delete-modal">
+      <div class="modal-shell delete-modal-shell" role="dialog" aria-modal="true" aria-labelledby="workflow-keyframe-clear-title">
+        <div class="modal-header">
+          <h2 id="workflow-keyframe-clear-title">确认清空</h2>
+          <button class="icon-close" type="button" data-workflow-action="close-keyframe-clear" aria-label="关闭">
+            <img src="./assets/icons/close.svg" alt="" />
+          </button>
+        </div>
+        <div class="modal-body delete-modal-body">
+          <p>当前场的全部关键帧结果将被清空且无法找回，是否确认清空？</p>
+        </div>
+        <div class="modal-footer">
+          <button class="pill ghost-footer-pill compact-footer-pill" type="button" data-workflow-action="close-keyframe-clear">取消</button>
+          <button class="pill confirm-footer-pill compact-footer-pill" type="button" data-workflow-action="confirm-keyframe-clear">确认</button>
+        </div>
+      </div>
+    </div>
+  `;
+};
+
+const renderWorkflowEditVersionDeleteConfirmModal = () => {
+  if (!state.workflowEditDeleteVersionKey) return "";
+  return `
+    <div class="modal-backdrop is-open workflow-keyframe-delete-modal">
+      <div class="modal-shell delete-modal-shell" role="dialog" aria-modal="true" aria-labelledby="workflow-edit-version-delete-title">
+        <div class="modal-header">
+          <h2 id="workflow-edit-version-delete-title">确认删除</h2>
+          <button class="icon-close" type="button" data-workflow-action="close-edit-version-delete" aria-label="关闭">
+            <img src="./assets/icons/close.svg" alt="" />
+          </button>
+        </div>
+        <div class="modal-body delete-modal-body">
+          <p>该图片将被删除且无法找回，是否确认删除？</p>
+        </div>
+        <div class="modal-footer">
+          <button class="pill ghost-footer-pill compact-footer-pill" type="button" data-workflow-action="close-edit-version-delete">取消</button>
+          <button class="pill confirm-footer-pill compact-footer-pill" type="button" data-workflow-action="confirm-edit-version-delete">确认</button>
+        </div>
+      </div>
+    </div>
+  `;
+};
+
 const renderWorkflowTimelinePreviewModal = () => {
   if (!state.workflowPreviewModalOpen) return "";
+  const { episode, scene } = currentWorkflowStudioSelection();
   return `
     <div class="workflow-generate-modal workflow-timeline-preview-modal">
       <button class="workflow-generate-backdrop" type="button" data-workflow-action="close-timeline-preview" aria-label="关闭时间线预览"></button>
@@ -1619,24 +1731,7 @@ const renderWorkflowTimelinePreviewModal = () => {
               <div class="workflow-track" data-track-row="keyframe">
                 <strong>关键帧线</strong>
                 <div class="workflow-track-lane">
-                  <span class="workflow-clip workflow-keyframe-clip" draggable="true" data-clip-kind="keyframe" style="left:3%; width:18%;">
-                    <img src="./assets/images/canvas-chase-sequence.jpg" alt="" />
-                    <em>KF#1</em>
-                    <i class="clip-resize is-left" data-resize-edge="left"></i>
-                    <i class="clip-resize is-right" data-resize-edge="right"></i>
-                  </span>
-                  <span class="workflow-clip workflow-keyframe-clip" draggable="true" data-clip-kind="keyframe" style="left:23%; width:20%;">
-                    <img src="./assets/images/project-neon-tokyo.jpg" alt="" />
-                    <em>KF#2</em>
-                    <i class="clip-resize is-left" data-resize-edge="left"></i>
-                    <i class="clip-resize is-right" data-resize-edge="right"></i>
-                  </span>
-                  <span class="workflow-clip workflow-keyframe-clip" draggable="true" data-clip-kind="keyframe" style="left:46%; width:16%;">
-                    <img src="./assets/images/style-cinematic.jpg" alt="" />
-                    <em>KF#3</em>
-                    <i class="clip-resize is-left" data-resize-edge="left"></i>
-                    <i class="clip-resize is-right" data-resize-edge="right"></i>
-                  </span>
+                  ${renderWorkflowTimelineKeyframeClips(episode, scene)}
                 </div>
               </div>
               <div class="workflow-track is-video" data-track-row="video">
@@ -1684,7 +1779,7 @@ const renderWorkflowStudio = () => {
   if (!workflowEpisodeSelect || !workflowSceneSelect || !workflowScriptCard || !workflowShotTable || !workflowShotSummary || !workflowKeyframeGrid) return;
   workflowHomeView?.classList.toggle(
     "is-workflow-modal-open",
-    Boolean(state.workflowGenerateMode || state.workflowPreviewFrameIndex !== null || state.workflowDetailFrameIndex !== null || state.workflowEditFrameIndex !== null || state.workflowDeleteFrameIndex !== null || state.workflowPreviewModalOpen || state.workflowReferenceModalOpen),
+    Boolean(state.workflowGenerateMode || state.workflowPreviewFrameIndex !== null || state.workflowDetailFrameIndex !== null || state.workflowEditFrameIndex !== null || state.workflowDeleteFrameIndex !== null || state.workflowClearConfirmOpen || state.workflowEditDeleteVersionKey || state.workflowPreviewModalOpen || state.workflowReferenceModalOpen),
   );
   const episodeIndex = Math.min(state.workflowEpisodeIndex, workflowStudioData.length - 1);
   const episode = workflowStudioData[episodeIndex];
@@ -1741,7 +1836,7 @@ const renderWorkflowStudio = () => {
   const keyedWorkflowFrames = scene.keyframes.map((frame, index) => ({
     frame,
     index,
-    assignedShotIndex: frame.grid ? null : ((workflowNonGridFrameOrdinal += 1) % scene.shots.length),
+    assignedShotIndex: frame.grid ? null : (Number.isInteger(frame.assignedShotIndex) ? frame.assignedShotIndex : ((workflowNonGridFrameOrdinal += 1) % scene.shots.length)),
   }));
   const visibleKeyframes = keyedWorkflowFrames
     .filter(({ frame, assignedShotIndex }) => {
@@ -1772,12 +1867,17 @@ const renderWorkflowStudio = () => {
     <div class="workflow-keyframe-list">
       ${visibleKeyframes.length ? visibleKeyframes
     .map(({ frame, index, assignedShotIndex }) => `
-      <article class="workflow-keyframe-card${frame.grid ? " is-grid" : ""}" draggable="true" data-workflow-frame-index="${index}">
-        <img src="${escapeHtml(frame.image)}" alt="" />
+      <article class="workflow-keyframe-card${frame.grid ? " is-grid" : ""}${frame.pending ? " is-pending" : ""}" draggable="${frame.pending ? "false" : "true"}" data-workflow-frame-index="${index}">
+        ${frame.pending
+          ? `<div class="workflow-keyframe-pending">${workflowEditIcon.imageGeneration}<strong>生成中</strong></div>`
+          : `<img src="${escapeHtml(frame.image)}" alt="" />`}
+        <span class="workflow-keyframe-count">${frame.resultCount ?? 1} 张</span>
         <div class="workflow-keyframe-info">
-          <span>${escapeHtml(episode.title.split(" · ")[0])} · ${escapeHtml(scene.title.split(" · ")[0])} · ${frame.grid ? "整场多宫格" : escapeHtml(scene.shots[assignedShotIndex]?.no || selectedShot.no)}</span>
+          ${state.workflowRenamingFrameIndex === index
+            ? `<input class="workflow-keyframe-name-input" type="text" value="${escapeHtml(workflowKeyframeDisplayName(episode, scene, frame, assignedShotIndex))}" data-workflow-keyframe-name-input data-workflow-frame-index="${index}" aria-label="关键帧名称" />`
+            : `<span class="workflow-keyframe-name" title="双击重命名" data-workflow-frame-index="${index}">${escapeHtml(workflowKeyframeDisplayName(episode, scene, frame, assignedShotIndex))}</span>`}
         </div>
-        <footer>
+        <footer${frame.pending ? ' class="is-hidden"' : ""}>
           <button type="button" data-workflow-action="delete-keyframe" data-workflow-frame-index="${index}">删除</button>
           <button type="button" data-workflow-action="edit-frame" data-workflow-frame-index="${index}" data-generate-mode="${frame.grid ? "scene" : "shot"}">编辑</button>
         </footer>
@@ -1786,7 +1886,13 @@ const renderWorkflowStudio = () => {
     .join("") : `<p class="workflow-keyframe-empty">暂无关键帧结果</p>`}
     </div>
   `;
-  if (workflowGenerateModalRoot) workflowGenerateModalRoot.innerHTML = `${renderWorkflowGenerateModal()}${renderWorkflowFrameModal()}${renderWorkflowEditModal()}${renderWorkflowEditCostConfirmModal()}${renderWorkflowKeyframeDeleteConfirmModal()}${renderWorkflowTimelinePreviewModal()}${renderWorkflowReferenceModal()}${renderWorkflowClipContextMenu()}`;
+  const timelineNames = keyedWorkflowFrames.filter(({ frame }) => !frame.grid && !frame.pending);
+  workflowHomeView?.querySelectorAll(".workflow-timeline-panel:not(.workflow-timeline-preview-editor) .workflow-keyframe-clip").forEach((clip, index) => {
+    const item = timelineNames[index];
+    const label = clip.querySelector("em");
+    if (item && label) label.textContent = workflowKeyframeDisplayName(episode, scene, item.frame, item.assignedShotIndex);
+  });
+  if (workflowGenerateModalRoot) workflowGenerateModalRoot.innerHTML = `${renderWorkflowGenerateModal()}${renderWorkflowFrameModal()}${renderWorkflowEditModal()}${renderWorkflowEditCostConfirmModal()}${renderWorkflowKeyframeDeleteConfirmModal()}${renderWorkflowKeyframeClearConfirmModal()}${renderWorkflowEditVersionDeleteConfirmModal()}${renderWorkflowTimelinePreviewModal()}${renderWorkflowReferenceModal()}${renderWorkflowClipContextMenu()}`;
 };
 
 const currentItems = () => {
@@ -4016,9 +4122,14 @@ const handleWorkflowAction = (workflowAction, event) => {
     event.stopPropagation();
     if (action === "edit-frame") {
       state.workflowEditFrameIndex = Number(workflowAction.dataset.workflowFrameIndex || 0);
+      const { scene } = currentWorkflowStudioSelection();
+      const frame = scene.keyframes[state.workflowEditFrameIndex];
       state.workflowEditVersionIndex = 0;
       state.workflowEditTool = null;
       state.workflowEditGeneratedVersions = [];
+      state.workflowEditFinalizedVersionKey = frame?.finalizedVersionKey || "original";
+      state.workflowEditDeletedVersionKeys = [];
+      state.workflowEditDeleteVersionKey = null;
       state.workflowGenerateMode = null;
       state.workflowPreviewFrameIndex = null;
       state.workflowDetailFrameIndex = null;
@@ -4070,8 +4181,22 @@ const handleWorkflowAction = (workflowAction, event) => {
   if (action === "clear-keyframes") {
     event.preventDefault();
     event.stopPropagation();
+    state.workflowClearConfirmOpen = true;
+    renderWorkflowStudio();
+    return true;
+  }
+  if (action === "close-keyframe-clear") {
+    event.preventDefault();
+    event.stopPropagation();
+    state.workflowClearConfirmOpen = false;
+    renderWorkflowStudio();
+    return true;
+  }
+  if (action === "confirm-keyframe-clear") {
+    event.preventDefault();
+    event.stopPropagation();
     currentWorkflowStudioSelection().scene.keyframes = [];
-    state.workflowDeleteFrameIndex = null;
+    state.workflowClearConfirmOpen = false;
     renderWorkflowStudio();
     return true;
   }
@@ -4083,6 +4208,8 @@ const handleWorkflowAction = (workflowAction, event) => {
   if (action === "upload-keyframe") {
     event.preventDefault();
     event.stopPropagation();
+    state.workflowReferenceModalOpen = true;
+    renderWorkflowStudio();
     return true;
   }
   if (action === "toggle-timeline") {
@@ -4171,6 +4298,37 @@ const handleWorkflowAction = (workflowAction, event) => {
     renderWorkflowStudio();
     return true;
   }
+  if (action === "generate-keyframe") {
+    event.preventDefault();
+    event.stopPropagation();
+    const { scene, shot } = currentWorkflowStudioSelection();
+    const isSceneMode = state.workflowGenerateMode === "scene";
+    const pendingId = `pending-${Date.now()}`;
+    const pendingFrame = {
+      id: pendingId,
+      title: isSceneMode ? "整场多宫格" : `KF#${scene.keyframes.length + 1}`,
+      meta: isSceneMode ? `${scene.shots.length} 镜 · 生成中` : `${shot.duration} · 生成中`,
+      image: "",
+      grid: isSceneMode,
+      pending: true,
+      resultCount: 1,
+      assignedShotIndex: isSceneMode ? null : state.workflowShotIndex,
+    };
+    scene.keyframes.push(pendingFrame);
+    state.workflowGenerateMode = null;
+    state.workflowReferenceModalOpen = false;
+    renderWorkflowStudio();
+    window.setTimeout(() => {
+      const targetFrame = scene.keyframes.find((frame) => frame.id === pendingId);
+      if (!targetFrame) return;
+      const generatedImage = isSceneMode ? "./assets/images/canvas-node-preview.png" : "./assets/images/canvas-chase-sequence.jpg";
+      targetFrame.image = generatedImage;
+      targetFrame.pending = false;
+      targetFrame.meta = isSceneMode ? `${scene.shots.length} 镜 · 1 张` : `${shot.duration}`;
+      renderWorkflowStudio();
+    }, 1200);
+    return true;
+  }
   if (action === "open-reference-modal") {
     event.preventDefault();
     event.stopPropagation();
@@ -4214,6 +4372,9 @@ const handleWorkflowAction = (workflowAction, event) => {
     state.workflowEditVersionIndex = 0;
     state.workflowEditTool = null;
     state.workflowEditGeneratedVersions = [];
+    state.workflowEditFinalizedVersionKey = "original";
+    state.workflowEditDeletedVersionKeys = [];
+    state.workflowEditDeleteVersionKey = null;
     state.workflowEditCostConfirmTool = null;
     state.workflowEditSaveMenuOpen = false;
     state.workflowReferenceModalOpen = false;
@@ -4221,6 +4382,13 @@ const handleWorkflowAction = (workflowAction, event) => {
     return true;
   }
   if (action === "close-split-editor") {
+    event.preventDefault();
+    event.stopPropagation();
+    state.workflowEditTool = null;
+    renderWorkflowStudio();
+    return true;
+  }
+  if (action === "close-crop-editor") {
     event.preventDefault();
     event.stopPropagation();
     state.workflowEditTool = null;
@@ -4239,6 +4407,21 @@ const handleWorkflowAction = (workflowAction, event) => {
     event.stopPropagation();
     state.workflowEditVersionIndex = Number(workflowAction.dataset.workflowEditVersionIndex || 0);
     state.workflowEditSaveMenuOpen = false;
+    renderWorkflowStudio();
+    return true;
+  }
+  if (action === "finalize-edit-version") {
+    event.preventDefault();
+    event.stopPropagation();
+    const { scene } = currentWorkflowStudioSelection();
+    const frame = scene.keyframes[state.workflowEditFrameIndex];
+    const versionKey = workflowAction.dataset.workflowVersionKey;
+    if (frame && versionKey) {
+      frame.originalImage ||= frame.image;
+      frame.image = workflowAction.dataset.workflowVersionImage || frame.image;
+      frame.finalizedVersionKey = versionKey;
+      state.workflowEditFinalizedVersionKey = versionKey;
+    }
     renderWorkflowStudio();
     return true;
   }
@@ -4284,12 +4467,27 @@ const handleWorkflowAction = (workflowAction, event) => {
   if (action === "delete-version") {
     event.preventDefault();
     event.stopPropagation();
-    const generatedIndex = state.workflowEditVersionIndex - 3;
-    if (generatedIndex >= 0) {
-      state.workflowEditGeneratedVersions.splice(generatedIndex, 1);
-      state.workflowEditVersionIndex = Math.min(1, 2 + state.workflowEditGeneratedVersions.length);
-      renderWorkflowStudio();
+    state.workflowEditDeleteVersionKey = workflowAction.dataset.workflowVersionKey || null;
+    renderWorkflowStudio();
+    return true;
+  }
+  if (action === "close-edit-version-delete") {
+    event.preventDefault();
+    event.stopPropagation();
+    state.workflowEditDeleteVersionKey = null;
+    renderWorkflowStudio();
+    return true;
+  }
+  if (action === "confirm-edit-version-delete") {
+    event.preventDefault();
+    event.stopPropagation();
+    const versionKey = state.workflowEditDeleteVersionKey;
+    if (versionKey && versionKey !== "original" && !state.workflowEditDeletedVersionKeys.includes(versionKey)) {
+      state.workflowEditDeletedVersionKeys.push(versionKey);
     }
+    state.workflowEditDeleteVersionKey = null;
+    state.workflowEditVersionIndex = 0;
+    renderWorkflowStudio();
     return true;
   }
   if (action === "toggle-edit-save-menu") {
@@ -4348,7 +4546,8 @@ workflowHomeView?.addEventListener("click", (event) => {
   }
 
   const frameCard = event.target.closest(".workflow-keyframe-card");
-  if (frameCard && !event.target.closest("button")) {
+  if (event.target.closest(".workflow-keyframe-name")) return;
+  if (frameCard && !frameCard.classList.contains("is-pending") && !event.target.closest("button")) {
     state.workflowPreviewFrameIndex = Number(frameCard.dataset.workflowFrameIndex || 0);
     state.workflowDetailFrameIndex = null;
     renderWorkflowStudio();
@@ -4366,6 +4565,51 @@ workflowHomeView?.addEventListener("click", (event) => {
   if (!navItem) return;
   workflowHomeView.querySelectorAll(".workflow-nav-item").forEach((item) => item.classList.remove("active"));
   navItem.classList.add("active");
+});
+
+workflowHomeView?.addEventListener("dblclick", (event) => {
+  const name = event.target.closest(".workflow-keyframe-name");
+  if (!name) return;
+  event.preventDefault();
+  event.stopPropagation();
+  state.workflowRenamingFrameIndex = Number(name.dataset.workflowFrameIndex || 0);
+  renderWorkflowStudio();
+  window.requestAnimationFrame(() => {
+    const input = workflowHomeView.querySelector("[data-workflow-keyframe-name-input]");
+    input?.focus();
+    input?.select();
+  });
+});
+
+const saveWorkflowKeyframeName = (input) => {
+  const frameIndex = Number(input.dataset.workflowFrameIndex || 0);
+  const { scene } = currentWorkflowStudioSelection();
+  const frame = scene.keyframes[frameIndex];
+  if (!frame) return;
+  const nextName = input.value.trim();
+  if (nextName) frame.name = nextName;
+  else delete frame.name;
+  state.workflowRenamingFrameIndex = null;
+  renderWorkflowStudio();
+};
+
+workflowHomeView?.addEventListener("keydown", (event) => {
+  const input = event.target.closest("[data-workflow-keyframe-name-input]");
+  if (!input) return;
+  if (event.key === "Enter") {
+    event.preventDefault();
+    saveWorkflowKeyframeName(input);
+  }
+  if (event.key === "Escape") {
+    event.preventDefault();
+    state.workflowRenamingFrameIndex = null;
+    renderWorkflowStudio();
+  }
+});
+
+workflowHomeView?.addEventListener("focusout", (event) => {
+  const input = event.target.closest("[data-workflow-keyframe-name-input]");
+  if (input) saveWorkflowKeyframeName(input);
 });
 
 workflowHomeView?.addEventListener("contextmenu", (event) => {
