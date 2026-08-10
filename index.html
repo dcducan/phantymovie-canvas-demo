@@ -441,14 +441,14 @@
           <div class="workflow-studio-head">
             <div>
               <div class="workflow-stage-tabs" aria-label="拍摄台任务">
-                <button class="active" type="button">关键帧生成</button>
-                <button type="button">视频制作</button>
-                <button type="button">配音配乐</button>
+                <button class="active" type="button" data-workflow-stage="keyframe">关键帧生成</button>
+                <button type="button" data-workflow-stage="video">视频制作</button>
+                <button type="button" data-workflow-stage="audio">配音配乐</button>
               </div>
             </div>
           </div>
 
-          <section class="workflow-studio-grid" aria-label="关键帧生成工作台">
+          <section class="workflow-studio-grid" id="workflow-studio-grid" aria-label="关键帧生成工作台">
             <aside class="workflow-script-panel">
               <div class="workflow-panel-title">
                 <strong>集 · 场</strong>
@@ -515,8 +515,8 @@
 
             <section class="workflow-keyframe-panel">
               <div class="workflow-panel-title">
-                <strong>关键帧结果</strong>
-                <span>可拖入底部时间线</span>
+                <strong id="workflow-result-title">关键帧结果</strong>
+                <span id="workflow-result-subtitle">可拖入底部时间线</span>
               </div>
               <div class="workflow-keyframe-grid" id="workflow-keyframe-grid">
                 <div class="workflow-keyframe-control-row">
@@ -616,6 +616,7 @@
                     <i class="clip-resize is-left" data-resize-edge="left"></i>
                     <i class="clip-resize is-right" data-resize-edge="right"></i>
                   </span>
+                  <button class="workflow-track-upload" type="button" data-workflow-action="upload-timeline-media" data-timeline-track="keyframe" aria-label="上传关键帧" title="上传关键帧">＋</button>
                 </div>
               </div>
               <div class="workflow-track is-video" data-track-row="video">
@@ -629,6 +630,7 @@
                     <i class="clip-resize is-left" data-resize-edge="left"></i>
                     <i class="clip-resize is-right" data-resize-edge="right"></i>
                   </span>
+                  <button class="workflow-track-upload" type="button" data-workflow-action="upload-timeline-media" data-timeline-track="video" aria-label="上传视频" title="上传视频">＋</button>
                 </div>
               </div>
               <div class="workflow-track is-audio" data-track-row="audio">
@@ -640,6 +642,7 @@
                     <i class="clip-resize is-left" data-resize-edge="left"></i>
                     <i class="clip-resize is-right" data-resize-edge="right"></i>
                   </span>
+                  <button class="workflow-track-upload" type="button" data-workflow-action="upload-timeline-media" data-timeline-track="audio" aria-label="上传音频" title="上传音频">＋</button>
                 </div>
               </div>
             </div>
