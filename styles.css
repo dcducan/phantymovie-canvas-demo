@@ -1768,6 +1768,13 @@ input::placeholder {
   padding-top: 2px;
 }
 
+.workflow-recycle-nav {
+  position: absolute;
+  right: 0;
+  bottom: 64px;
+  left: 0;
+}
+
 .workflow-nav-item {
   display: flex;
   align-items: center;
@@ -1813,6 +1820,412 @@ input::placeholder {
   min-width: 0;
   padding: 68px 32px 0;
 }
+
+.workflow-studio-main.is-hidden,
+.workflow-recycle-main.is-hidden {
+  display: none;
+}
+
+.workflow-recycle-main {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  min-width: 0;
+  height: calc(100vh - 48px);
+  padding: 30px 32px 60px;
+  overflow: auto;
+  background: #111516;
+}
+
+.workflow-recycle-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  max-width: 1440px;
+  margin: 0 auto 25px;
+}
+
+.workflow-recycle-header h1 {
+  margin: 0 0 8px;
+  color: #fff;
+  font-size: 25px;
+  line-height: 1.2;
+}
+
+.workflow-recycle-header p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.42);
+  font-size: 13px;
+}
+
+.workflow-recycle-total {
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 11px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.035);
+  color: rgba(255, 255, 255, 0.48);
+  font-size: 12px;
+}
+
+.workflow-recycle-tabs {
+  display: flex;
+  max-width: 1440px;
+  height: 42px;
+  margin: 0 auto 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.workflow-recycle-tabs button {
+  position: relative;
+  min-width: 90px;
+  padding: 0 18px;
+  color: rgba(255, 255, 255, 0.46);
+  font-size: 14px;
+}
+
+.workflow-recycle-tabs button.active {
+  color: #fff;
+}
+
+.workflow-recycle-tabs button.active::after {
+  content: "";
+  position: absolute;
+  right: 17px;
+  bottom: -1px;
+  left: 17px;
+  height: 2px;
+  background: var(--accent);
+}
+
+.workflow-recycle-tabs span {
+  display: inline-grid;
+  min-width: 20px;
+  height: 18px;
+  margin-left: 5px;
+  padding: 0 5px;
+  place-items: center;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.07);
+  font-size: 11px;
+}
+
+.workflow-recycle-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 18px;
+  max-width: 1440px;
+  margin: 0 auto 20px;
+}
+
+.workflow-recycle-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.workflow-recycle-dropdown {
+  position: relative;
+}
+
+.workflow-recycle-menu-trigger {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 30px;
+  padding: 0 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  background: rgba(12, 13, 14, 0.92);
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.workflow-recycle-menu-trigger svg {
+  width: 12px;
+  height: 12px;
+  flex: 0 0 auto;
+}
+
+.workflow-recycle-menu-trigger svg:last-child {
+  color: rgba(255, 255, 255, 0.56);
+}
+
+.workflow-recycle-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 50;
+  display: none;
+  min-width: 118px;
+  padding: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  background: #202224;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.32);
+}
+
+.workflow-recycle-dropdown.is-open .workflow-recycle-menu {
+  display: block;
+}
+
+.workflow-recycle-menu button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  width: 100%;
+  min-height: 28px;
+  padding: 0 8px;
+  border-radius: 4px;
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 12px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.workflow-recycle-menu button:hover {
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.workflow-recycle-menu i {
+  color: var(--accent);
+  font-size: 11px;
+  font-style: normal;
+}
+
+.workflow-recycle-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(210px, 1fr));
+  gap: 16px;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.workflow-recycle-card {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.075);
+  border-radius: 10px;
+  background: #191d1e;
+  transition: border-color 160ms ease, transform 160ms ease;
+}
+
+.workflow-recycle-card:hover {
+  transform: translateY(-2px);
+}
+
+.workflow-recycle-cover {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: #090b0c;
+}
+
+.workflow-recycle-cover > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 220ms ease;
+}
+
+.workflow-recycle-audio-cover,
+.workflow-recycle-audio-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  height: 100%;
+  background:
+    linear-gradient(135deg, rgba(0, 216, 220, 0.13), transparent 42%),
+    #0b0f10;
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.workflow-recycle-audio-cover svg,
+.workflow-recycle-audio-preview svg {
+  width: 36px;
+  height: 36px;
+  color: var(--accent);
+}
+
+.workflow-recycle-audio-cover span,
+.workflow-recycle-audio-preview span {
+  color: rgba(255, 255, 255, 0.38);
+  font-size: 11px;
+  letter-spacing: 0;
+}
+
+.workflow-recycle-card:hover .workflow-recycle-cover > img {
+  transform: scale(1.025);
+}
+
+.workflow-recycle-play,
+.workflow-recycle-zoom {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 50%;
+  background: rgba(7, 9, 10, 0.62);
+  color: #fff;
+  opacity: 0;
+  transform: translate(-50%, -45%);
+  transition: opacity 160ms ease, transform 160ms ease;
+  backdrop-filter: blur(5px);
+}
+
+.workflow-recycle-cover:hover .workflow-recycle-play,
+.workflow-recycle-cover:hover .workflow-recycle-zoom {
+  opacity: 1;
+  transform: translate(-50%, -50%);
+}
+
+.workflow-recycle-play svg,
+.workflow-recycle-zoom svg { width: 18px; height: 18px; }
+
+.workflow-recycle-cover em {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  padding: 3px 6px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  font-size: 10px;
+  font-style: normal;
+}
+
+.workflow-recycle-source-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 8px;
+  border: 1px solid rgba(0, 216, 220, 0.32);
+  border-radius: 4px;
+  background: rgba(4, 16, 17, 0.72);
+  color: rgba(0, 216, 220, 0.96);
+  font-size: 11px;
+  backdrop-filter: blur(6px);
+}
+
+.workflow-recycle-card-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 44px;
+  padding: 8px 10px 8px 14px;
+}
+
+.workflow-recycle-card-body time {
+  color: rgba(255,255,255,.34);
+  font-size: 11px;
+}
+
+.workflow-recycle-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+
+.workflow-recycle-card-actions button {
+  display: grid;
+  width: 26px;
+  height: 26px;
+  place-items: center;
+  border-radius: 5px;
+  color: rgba(255, 255, 255, 0.52);
+}
+
+.workflow-recycle-card-actions button:hover {
+  background: rgba(255,255,255,.055);
+  color: #fff;
+}
+
+.workflow-recycle-card-actions button.danger:hover {
+  background: rgba(255, 82, 82, .08);
+  color: #ff8d8d;
+}
+
+.workflow-recycle-card-actions img {
+  width: 14px;
+  height: 14px;
+  opacity: .68;
+}
+
+.workflow-recycle-card-actions button:hover img {
+  opacity: .96;
+}
+
+.workflow-recycle-empty { display: flex; min-height: 340px; align-items: center; justify-content: center; flex-direction: column; color: rgba(255,255,255,.24); }
+.workflow-recycle-empty svg { width: 34px; height: 34px; margin-bottom: 14px; }
+.workflow-recycle-empty strong { color: rgba(255,255,255,.55); font-size: 14px; }
+.workflow-recycle-empty span { margin-top: 6px; font-size: 12px; }
+
+.workflow-recycle-modal { position: fixed; inset: 48px 0 0; z-index: 6000; display: grid; place-items: center; padding: 28px; }
+.workflow-recycle-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.72); backdrop-filter: blur(5px); }
+.workflow-recycle-preview { position: relative; width: min(920px, 86vw); overflow: hidden; border: 1px solid rgba(255,255,255,.12); border-radius: 12px; background: #171a1b; box-shadow: 0 30px 90px rgba(0,0,0,.55); }
+.workflow-recycle-preview > header { display: flex; height: 62px; padding: 0 18px; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,.07); }
+.workflow-recycle-preview > header strong { font-size: 14px; }
+.workflow-recycle-preview > header button { width: 32px; height: 32px; color: rgba(255,255,255,.5); }
+.workflow-recycle-preview-stage { position: relative; display: grid; height: min(58vh, 560px); place-items: center; background: #080a0b; }
+.workflow-recycle-preview-stage img { width: 100%; height: 100%; object-fit: contain; }
+.workflow-recycle-player { display: grid; grid-template-columns: 36px 1fr auto 120px; gap: 12px; height: 54px; padding: 0 18px; align-items: center; border-top: 1px solid rgba(255,255,255,.07); }
+.workflow-recycle-player button svg { width: 19px; height: 19px; }
+.workflow-recycle-player time { color: rgba(255,255,255,.5); font-size: 11px; }
+.workflow-recycle-player input { accent-color: var(--accent); }
+.workflow-recycle-volume { display: flex; align-items: center; gap: 7px; color: rgba(255,255,255,.48); font-size: 13px; }
+.workflow-recycle-volume input { width: 92px; }
+.workflow-recycle-preview > footer { display: flex; height: 52px; padding: 0 18px; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255,255,255,.07); color: rgba(255,255,255,.34); font-size: 11px; }
+.workflow-recycle-preview-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.workflow-recycle-preview-actions button {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border-radius: 5px;
+  background: rgba(255,255,255,.07);
+}
+
+.workflow-recycle-preview-actions button:hover {
+  background: rgba(255,255,255,.11);
+}
+
+.workflow-recycle-preview-actions button.danger:hover {
+  background: rgba(255, 82, 82, .1);
+}
+
+.workflow-recycle-preview-actions img {
+  width: 14px;
+  height: 14px;
+  opacity: .76;
+}
+
+@media (max-width: 1180px) { .workflow-recycle-grid { grid-template-columns: repeat(3, minmax(200px, 1fr)); } }
+@media (max-width: 900px) { .workflow-recycle-grid { grid-template-columns: repeat(2, minmax(190px, 1fr)); } .workflow-recycle-toolbar { align-items: stretch; flex-direction: column; } }
 
 .workflow-studio-main {
   display: flex;

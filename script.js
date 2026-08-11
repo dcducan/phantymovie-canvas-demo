@@ -652,6 +652,45 @@ const saveVideosState = () => {
   localStorage.setItem(VIDEOS_STATE_KEY, JSON.stringify(state.videos));
 };
 
+const WORKFLOW_RECYCLE_KEY = "phanty-movie-workflow-recycle-v1";
+const WORKFLOW_RECYCLE_SOURCES = ["模型对话广场", "拍摄台", "项目资产库"];
+const normalizeWorkflowRecycleSource = (source = "") => {
+  if (WORKFLOW_RECYCLE_SOURCES.includes(source)) return source;
+  if (["项目资产库", "本地上传"].includes(source)) return "项目资产库";
+  if (["模型对话广场"].includes(source)) return "模型对话广场";
+  return "拍摄台";
+};
+const normalizeWorkflowRecycleItem = (item) => ({
+  ...item,
+  source: normalizeWorkflowRecycleSource(item.source),
+  createdAt: item.createdAt || item.deletedAt,
+  createdAtMs: item.createdAtMs || item.deletedAtMs || Date.now(),
+});
+const workflowRecycleSeed = [
+  { id: "history-img-1", type: "image", name: "雨夜仓库 · 关键帧 03", source: "拍摄台", createdAt: "2026-08-10 14:32:00", createdAtMs: 1786343520000, image: "./assets/images/canvas-chase-sequence.jpg" },
+  { id: "history-img-2", type: "image", name: "东京街口 · 氛围参考", source: "项目资产库", createdAt: "2026-08-09 18:06:00", createdAtMs: 1786279560000, image: "./assets/images/project-neon-tokyo.jpg" },
+  { id: "history-img-3", type: "image", name: "角色定妆 · 李柏", source: "模型对话广场", createdAt: "2026-08-08 09:45:00", createdAtMs: 1786153500000, image: "./assets/images/canvas-character.jpg" },
+  { id: "history-video-1", type: "video", name: "仓库对峙 · 镜头 02", source: "拍摄台", createdAt: "2026-08-10 11:18:00", createdAtMs: 1786331880000, duration: "00:18", image: "./assets/images/style-cinematic.jpg" },
+  { id: "history-video-2", type: "video", name: "雨夜追车 · 合成预览", source: "项目资产库", createdAt: "2026-08-07 16:20:00", createdAtMs: 1786090800000, duration: "00:36", image: "./assets/images/project-neon-tokyo.jpg" },
+  { id: "history-audio-1", type: "audio", name: "雨夜环境声", source: "拍摄台", createdAt: "2026-08-10 10:12:00", createdAtMs: 1786327920000, duration: "00:24", image: "./assets/images/canvas-node-preview.png" },
+  { id: "history-audio-2", type: "audio", name: "紧张鼓点", source: "模型对话广场", createdAt: "2026-08-09 15:28:00", createdAtMs: 1786270080000, duration: "00:30", image: "./assets/images/default-cover.jpg" },
+];
+const loadWorkflowRecycle = () => {
+  try {
+    const saved = JSON.parse(localStorage.getItem(WORKFLOW_RECYCLE_KEY) || "null");
+    if (Array.isArray(saved)) {
+      const items = saved.map(normalizeWorkflowRecycleItem);
+      const existingIds = new Set(items.map((item) => item.id));
+      workflowRecycleSeed.forEach((item) => {
+        if (!existingIds.has(item.id)) items.push(normalizeWorkflowRecycleItem(structuredClone(item)));
+      });
+      return items;
+    }
+  } catch {}
+  return structuredClone(workflowRecycleSeed).map(normalizeWorkflowRecycleItem);
+};
+const saveWorkflowRecycle = () => localStorage.setItem(WORKFLOW_RECYCLE_KEY, JSON.stringify(state.workflowRecycleItems));
+
 const state = {
   projects: loadProjectsState(),
   videos: loadVideosState(),
@@ -719,6 +758,16 @@ const state = {
   workflowSceneKeyframePickerAnchor: null,
   workflowSceneKeyframePickerShotFilter: "all",
   workflowStage: "keyframe",
+  workflowPage: "studio",
+  workflowRecycleItems: loadWorkflowRecycle(),
+  workflowRecycleTab: "image",
+  workflowRecycleFilter: "all",
+  workflowRecycleSort: "date-desc",
+  workflowRecycleOpenMenu: null,
+  workflowRecyclePreviewId: null,
+  workflowRecyclePlaying: false,
+  workflowRecycleProgress: 18,
+  workflowRecycleVolume: 72,
   workflowResultView: "keyframes",
   workflowVideoShotIndex: "",
   workflowVideoDraftPrompt: "",
@@ -772,6 +821,9 @@ const creatorCenterView = document.getElementById("creator-center-view");
 const reviewCenterView = document.getElementById("review-center-view");
 const listView = document.getElementById("list-view");
 const workflowHomeView = document.getElementById("workflow-home-view");
+const workflowStudioMain = workflowHomeView?.querySelector(".workflow-studio-main");
+const workflowRecycleMain = document.getElementById("workflow-recycle-main");
+const workflowRecycleContent = document.getElementById("workflow-recycle-content");
 const detailView = document.getElementById("canvas-detail-view");
 const canvasStage = document.getElementById("canvas-stage");
 const brandHomeTrigger = document.getElementById("brand-home-trigger");
@@ -2006,7 +2058,7 @@ const renderWorkflowVideoDeleteConfirmModal = () => {
           </button>
         </div>
         <div class="modal-body delete-modal-body">
-          <p>是否确认删除，删除内容可在回收站找回</p>
+          <p>是否确认删除？生成记录仍可在生成历史查看</p>
         </div>
         <div class="modal-footer">
           <button class="pill ghost-footer-pill compact-footer-pill" type="button" data-workflow-action="close-video-delete">取消</button>
@@ -2261,6 +2313,121 @@ const renderWorkflowSceneKeyframePickerModal = (episodeArg = null, sceneArg = nu
       </section>
   `;
 };
+
+const workflowRecycleVisibleItems = () => {
+  return state.workflowRecycleItems
+    .filter((item) => item.type === state.workflowRecycleTab)
+    .filter((item) => state.workflowRecycleFilter === "all" || item.source === state.workflowRecycleFilter)
+    .sort((a, b) => {
+      if (state.workflowRecycleSort === "date-asc") return a.createdAtMs - b.createdAtMs;
+      return b.createdAtMs - a.createdAtMs;
+    });
+};
+
+const workflowRecycleSortOptions = [
+  { value: "date-asc", label: "时间正序" },
+  { value: "date-desc", label: "时间倒序" },
+];
+
+const workflowRecycleFilterOptions = [
+  { value: "all", label: "全部来源" },
+  ...WORKFLOW_RECYCLE_SOURCES.map((source) => ({ value: source, label: source })),
+];
+
+const workflowRecycleMenuIcon = (kind) =>
+  kind === "sort"
+    ? '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 3.2h8M2 6h5.8M2 8.8h3.6" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>'
+    : '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 3h8L6.7 6.8v2.7L5.3 10V6.8L2 3Z" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg>';
+
+const renderWorkflowRecycleDropdown = (kind, label, options, currentValue) => `
+  <div class="workflow-recycle-dropdown ${state.workflowRecycleOpenMenu === kind ? "is-open" : ""}">
+    <button class="workflow-recycle-menu-trigger" type="button" data-recycle-action="toggle-menu" data-recycle-menu="${kind}" aria-expanded="${state.workflowRecycleOpenMenu === kind ? "true" : "false"}">
+      ${workflowRecycleMenuIcon(kind)}
+      <span>${escapeHtml(label)}</span>
+      <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M4.2 2.8 7.8 6 4.2 9.2" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="workflow-recycle-menu">
+      ${options.map((option) => `
+        <button type="button" data-recycle-action="set-${kind}" data-recycle-value="${escapeHtml(option.value)}">
+          <span>${escapeHtml(option.label)}</span>
+          ${option.value === currentValue ? '<i>✓</i>' : ""}
+        </button>
+      `).join("")}
+    </div>
+  </div>
+`;
+
+const workflowRecycleTimeText = (progress, duration = "00:18") => {
+  const durationParts = duration.split(":").map(Number);
+  const totalSeconds = (durationParts[0] || 0) * 60 + (durationParts[1] || 18);
+  const currentSeconds = Math.round(totalSeconds * Number(progress || 0) / 100);
+  return `${String(Math.floor(currentSeconds / 60)).padStart(2, "0")}:${String(currentSeconds % 60).padStart(2, "0")}`;
+};
+
+const workflowRecycleCreatedAtText = (item) => {
+  const date = new Date(item.createdAtMs || Date.parse(item.createdAt || ""));
+  if (Number.isNaN(date.getTime())) return item.createdAt || "--";
+  const pad = (value) => String(value).padStart(2, "0");
+  return `${date.getFullYear()}年${pad(date.getMonth() + 1)}月${pad(date.getDate())} 日 ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+};
+
+const renderWorkflowRecycle = () => {
+  if (!workflowRecycleContent) return;
+  saveWorkflowRecycle();
+  const items = workflowRecycleVisibleItems();
+  const imageCount = state.workflowRecycleItems.filter((item) => item.type === "image").length;
+  const videoCount = state.workflowRecycleItems.filter((item) => item.type === "video").length;
+  const audioCount = state.workflowRecycleItems.filter((item) => item.type === "audio").length;
+  const preview = state.workflowRecycleItems.find((item) => item.id === state.workflowRecyclePreviewId);
+  const activeFilter = workflowRecycleFilterOptions.find((item) => item.value === state.workflowRecycleFilter)?.label || "全部来源";
+  const activeSort = workflowRecycleSortOptions.find((item) => item.value === state.workflowRecycleSort)?.label || "时间倒序";
+  workflowRecycleContent.innerHTML = `
+    <header class="workflow-recycle-header">
+      <div><h1>生成历史</h1></div>
+      <span class="workflow-recycle-total">共 ${state.workflowRecycleItems.length} 项</span>
+    </header>
+    <div class="workflow-recycle-tabs" role="tablist">
+      <button class="${state.workflowRecycleTab === "image" ? "active" : ""}" type="button" data-recycle-action="tab" data-recycle-tab="image">图片 <span>${imageCount}</span></button>
+      <button class="${state.workflowRecycleTab === "video" ? "active" : ""}" type="button" data-recycle-action="tab" data-recycle-tab="video">视频 <span>${videoCount}</span></button>
+      <button class="${state.workflowRecycleTab === "audio" ? "active" : ""}" type="button" data-recycle-action="tab" data-recycle-tab="audio">音频 <span>${audioCount}</span></button>
+    </div>
+    <div class="workflow-recycle-toolbar">
+      <div class="workflow-recycle-controls">
+        ${renderWorkflowRecycleDropdown("sort", activeSort, workflowRecycleSortOptions, state.workflowRecycleSort)}
+        ${renderWorkflowRecycleDropdown("filter", activeFilter, workflowRecycleFilterOptions, state.workflowRecycleFilter)}
+      </div>
+    </div>
+    ${items.length ? `<section class="workflow-recycle-grid">${items.map((item) => `
+      <article class="workflow-recycle-card">
+        <button class="workflow-recycle-cover is-${item.type}" type="button" data-recycle-action="preview" data-recycle-id="${item.id}" aria-label="预览${item.type === "image" ? "图片" : item.type === "video" ? "视频" : "音频"}">
+          ${item.type === "audio" ? `<div class="workflow-recycle-audio-cover">${icon.audio}<span>Audio</span></div>` : `<img src="${escapeHtml(item.image)}" alt="" />`}
+          <span class="workflow-recycle-source-badge">${escapeHtml(item.source)}</span>
+          ${item.type === "video" || item.type === "audio" ? `<span class="workflow-recycle-play">${workflowPlayerIcon.play}</span><em>${item.duration || "00:18"}</em>` : `<span class="workflow-recycle-zoom">${icon.expand}</span>`}
+        </button>
+        <div class="workflow-recycle-card-body">
+          <time>创建于 ${escapeHtml(workflowRecycleCreatedAtText(item))}</time>
+          <div class="workflow-recycle-card-actions">
+            <button type="button" data-recycle-action="download" data-recycle-id="${item.id}" aria-label="下载" title="下载"><img src="./assets/icons/download.svg" alt="" /></button>
+          </div>
+        </div>
+      </article>`).join("")}</section>` : `<div class="workflow-recycle-empty">${icon.clock}<strong>暂无${state.workflowRecycleTab === "image" ? "图片" : state.workflowRecycleTab === "video" ? "视频" : "音频"}生成历史</strong></div>`}
+    ${preview ? `<div class="workflow-recycle-modal"><button class="workflow-recycle-backdrop" type="button" data-recycle-action="close-preview" aria-label="关闭预览"></button><section class="workflow-recycle-preview" role="dialog" aria-modal="true"><header><strong>预览</strong><button type="button" data-recycle-action="close-preview" aria-label="关闭">✕</button></header><div class="workflow-recycle-preview-stage">${preview.type === "audio" ? `<div class="workflow-recycle-audio-preview">${icon.audio}<span>音频预览</span></div>` : `<img src="${escapeHtml(preview.image)}" alt="" />`}</div>${preview.type === "video" || preview.type === "audio" ? `<div class="workflow-recycle-player"><button type="button" data-recycle-action="toggle-play" aria-label="${state.workflowRecyclePlaying ? "暂停" : "播放"}">${state.workflowRecyclePlaying ? workflowPlayerIcon.pause : workflowPlayerIcon.play}</button><input class="workflow-recycle-progress" type="range" min="0" max="100" value="${state.workflowRecycleProgress}" data-recycle-progress aria-label="进度" /><time data-recycle-time>${workflowRecycleTimeText(state.workflowRecycleProgress, preview.duration)} / ${preview.duration || "00:18"}</time><label class="workflow-recycle-volume">♬<input type="range" min="0" max="100" value="${state.workflowRecycleVolume}" data-recycle-volume aria-label="音量" /></label></div>` : ""}<footer><span>创建于 ${escapeHtml(workflowRecycleCreatedAtText(preview))}</span><div class="workflow-recycle-preview-actions"><button type="button" data-recycle-action="download" data-recycle-id="${preview.id}" aria-label="下载" title="下载"><img src="./assets/icons/download.svg" alt="" /></button></div></footer></section></div>` : ""}
+  `;
+};
+
+const addWorkflowRecycleItem = (item) => {
+  const now = new Date();
+  state.workflowRecycleItems.unshift({
+    id: `history-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+    createdAt: `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")} ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}`,
+    createdAtMs: now.getTime(),
+    ...item,
+    source: normalizeWorkflowRecycleSource(item.source || "拍摄台"),
+  });
+  saveWorkflowRecycle();
+};
+
+const addWorkflowHistoryItem = addWorkflowRecycleItem;
 
 const renderWorkflowStudio = () => {
   if (!workflowEpisodeSelect || !workflowSceneSelect || !workflowScriptCard || !workflowShotTable || !workflowShotSummary || !workflowKeyframeGrid) return;
@@ -2848,7 +3015,14 @@ const renderGrid = () => {
     return;
   }
   if (state.currentView === "workflow-home") {
-    renderWorkflowStudio();
+    const inRecycle = state.workflowPage === "recycle";
+    workflowStudioMain?.classList.toggle("is-hidden", inRecycle);
+    workflowRecycleMain?.classList.toggle("is-hidden", !inRecycle);
+    workflowHomeView?.querySelectorAll(".workflow-nav-item").forEach((item) => {
+      item.classList.toggle("active", inRecycle ? item.dataset.workflowPage === "recycle" : item.title === "拍摄台");
+    });
+    if (inRecycle) renderWorkflowRecycle();
+    else renderWorkflowStudio();
     return;
   }
   if (isCanvasDetailView()) {
@@ -5476,8 +5650,94 @@ workflowHomeView?.addEventListener("click", (event) => {
 
   const navItem = event.target.closest(".workflow-nav-item");
   if (!navItem) return;
-  workflowHomeView.querySelectorAll(".workflow-nav-item").forEach((item) => item.classList.remove("active"));
-  navItem.classList.add("active");
+  state.workflowPage = navItem.dataset.workflowPage === "recycle" ? "recycle" : "studio";
+  renderGrid();
+});
+
+let workflowRecyclePlaybackTimer = null;
+const stopWorkflowRecyclePlayback = () => {
+  if (workflowRecyclePlaybackTimer) window.clearInterval(workflowRecyclePlaybackTimer);
+  workflowRecyclePlaybackTimer = null;
+  state.workflowRecyclePlaying = false;
+};
+
+workflowRecycleContent?.addEventListener("click", (event) => {
+  const actionButton = event.target.closest("[data-recycle-action]");
+  if (!actionButton) {
+    if (state.workflowRecycleOpenMenu) {
+      state.workflowRecycleOpenMenu = null;
+      renderWorkflowRecycle();
+    }
+    return;
+  }
+  const action = actionButton.dataset.recycleAction;
+  const id = actionButton.dataset.recycleId;
+  if (action === "tab") {
+    state.workflowRecycleTab = actionButton.dataset.recycleTab || "image";
+    state.workflowRecycleFilter = "all";
+    state.workflowRecycleOpenMenu = null;
+    renderWorkflowRecycle();
+  } else if (action === "toggle-menu") {
+    const menu = actionButton.dataset.recycleMenu || "";
+    state.workflowRecycleOpenMenu = state.workflowRecycleOpenMenu === menu ? null : menu;
+    renderWorkflowRecycle();
+  } else if (action === "set-filter") {
+    state.workflowRecycleFilter = actionButton.dataset.recycleValue || "all";
+    state.workflowRecycleOpenMenu = null;
+    renderWorkflowRecycle();
+  } else if (action === "set-sort") {
+    state.workflowRecycleSort = actionButton.dataset.recycleValue || "date-desc";
+    state.workflowRecycleOpenMenu = null;
+    renderWorkflowRecycle();
+  } else if (action === "preview") {
+    state.workflowRecyclePreviewId = id;
+    state.workflowRecycleProgress = 18;
+    state.workflowRecycleOpenMenu = null;
+    stopWorkflowRecyclePlayback();
+    renderWorkflowRecycle();
+  } else if (action === "close-preview") {
+    stopWorkflowRecyclePlayback();
+    state.workflowRecyclePreviewId = null;
+    renderWorkflowRecycle();
+  } else if (action === "download") {
+    const item = state.workflowRecycleItems.find((candidate) => candidate.id === id);
+    if (item) {
+      const link = document.createElement("a");
+      link.href = item.image;
+      link.download = `${item.name}.${item.type === "video" ? "mp4" : item.type === "audio" ? "mp3" : "jpg"}`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }
+  } else if (action === "toggle-play") {
+    state.workflowRecyclePlaying = !state.workflowRecyclePlaying;
+    actionButton.innerHTML = state.workflowRecyclePlaying ? workflowPlayerIcon.pause : workflowPlayerIcon.play;
+    actionButton.setAttribute("aria-label", state.workflowRecyclePlaying ? "暂停" : "播放");
+    if (!state.workflowRecyclePlaying) {
+      stopWorkflowRecyclePlayback();
+      return;
+    }
+    workflowRecyclePlaybackTimer = window.setInterval(() => {
+      state.workflowRecycleProgress = Math.min(100, state.workflowRecycleProgress + 1);
+      const range = workflowRecycleContent.querySelector("[data-recycle-progress]");
+      if (range) range.value = state.workflowRecycleProgress;
+      const time = workflowRecycleContent.querySelector("[data-recycle-time]");
+      const preview = state.workflowRecycleItems.find((item) => item.id === state.workflowRecyclePreviewId);
+      if (time && preview) time.textContent = `${workflowRecycleTimeText(state.workflowRecycleProgress, preview.duration)} / ${preview.duration || "00:18"}`;
+      if (state.workflowRecycleProgress >= 100) {
+        state.workflowRecycleProgress = 0;
+        if (range) range.value = 0;
+      }
+    }, 180);
+  }
+});
+
+workflowRecycleContent?.addEventListener("input", (event) => {
+  if (event.target.matches("[data-recycle-progress]")) {
+    state.workflowRecycleProgress = Number(event.target.value || 0);
+  } else if (event.target.matches("[data-recycle-volume]")) {
+    state.workflowRecycleVolume = Number(event.target.value || 0);
+  }
 });
 
 workflowHomeView?.addEventListener("dblclick", (event) => {
