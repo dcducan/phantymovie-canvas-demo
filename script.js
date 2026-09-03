@@ -49,6 +49,7 @@ const CANVAS_NODE_TOOLBAR_FULLSCREEN = "./assets/icons/fullscreen.svg";
 const CANVAS_NODE_TOOLBAR_MULTI = "./assets/icons/multi-angle.svg";
 const CANVAS_NODE_TOOLBAR_LIGHT = "./assets/icons/light.svg";
 const CANVAS_NODE_TOOLBAR_GRID = "./assets/icons/grid.svg";
+const CANVAS_NODE_TOOLBAR_TOOLBOX = "./assets/icons/toolbox.svg";
 const CANVAS_NODE_TOOLBAR_ERASE_MASK = "./assets/icons/eraser.svg";
 const CANVAS_NODE_TOOLBAR_ERASE = "./assets/icons/eraser.svg";
 const CANVAS_NODE_TOOLBAR_SLICE = "./assets/icons/slice.svg";
@@ -84,6 +85,8 @@ const icon = {
     '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3.333h10M5.333 3.333v-2h5.334v2M4.333 3.333V13a1.667 1.667 0 0 0 1.667 1.667h4A1.667 1.667 0 0 0 11.667 13V3.333M6.667 6.667V11M9.333 6.667V11" fill="none" stroke="currentColor" stroke-width="1.333" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   image:
     '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 4.5A1.5 1.5 0 0 0 2.5 6v8A1.5 1.5 0 0 0 4 15.5h12a1.5 1.5 0 0 0 1.5-1.5V6A1.5 1.5 0 0 0 16 4.5H4Zm0-1.5h12A3 3 0 0 1 19 6v8a3 3 0 0 1-3 3H4a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3Zm1.9 8.9 1.9-2.2a1 1 0 0 1 1.5 0l1.5 1.8 1.2-1.3a1 1 0 0 1 1.5.1L16 13H4l1.9-2.1ZM6.5 7.2a1.3 1.3 0 1 1 0 2.6 1.3 1.3 0 0 1 0-2.6Z" fill="currentColor"/></svg>',
+  video:
+    '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3.2 6.2A1.7 1.7 0 0 1 4.9 4.5h7.2a1.7 1.7 0 0 1 1.7 1.7v1.45l2.95-1.9v8.5l-2.95-1.9v1.45a1.7 1.7 0 0 1-1.7 1.7H4.9a1.7 1.7 0 0 1-1.7-1.7V6.2Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M7.2 8.1v3.8l3.1-1.9-3.1-1.9Z" fill="currentColor"/></svg>',
   audio:
     '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 8.25v3.5M7 5.5v9M10 3.5v13M13 6.5v7M16 8.75v2.5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>',
   settings:
@@ -98,12 +101,28 @@ const icon = {
     '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6.005 2.5v7M2.5 6h7" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   camera:
     '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6.5 5.5 8 3.833h4L13.5 5.5H16A1.5 1.5 0 0 1 17.5 7v8A1.5 1.5 0 0 1 16 16.5H4A1.5 1.5 0 0 1 2.5 15V7A1.5 1.5 0 0 1 4 5.5h2.5ZM10 8a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  phone:
+    '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 3.5h6a1.4 1.4 0 0 1 1.4 1.4v10.2a1.4 1.4 0 0 1-1.4 1.4H7a1.4 1.4 0 0 1-1.4-1.4V4.9A1.4 1.4 0 0 1 7 3.5Z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M9.1 14.1h1.8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
+  volume:
+    '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4.2 8.2h2.5l3.5-3v9.6l-3.5-3H4.2V8.2Z" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linejoin="round"/><path d="M13.1 7.1a4.2 4.2 0 0 1 0 5.8M15.2 5.4a6.8 6.8 0 0 1 0 9.2" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round"/></svg>',
   grid2:
     '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 3h6.25v6.25H3V3Zm7.75 0H17v6.25h-6.25V3ZM3 10.75h6.25V17H3v-6.25Zm7.75 0H17V17h-6.25v-6.25Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>',
   layoutBoard:
     '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 9h8M12 15h8M12 4v16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   grid3:
     '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 3h4.167v4.167H3V3Zm5.417 0h4.166v4.167H8.417V3Zm5.416 0H18v4.167h-4.167V3ZM3 8.417h4.167v4.166H3V8.417Zm5.417 0h4.166v4.166H8.417V8.417Zm5.416 0H18v4.166h-4.167V8.417ZM3 13.833h4.167V18H3v-4.167Zm5.417 0h4.166V18H8.417v-4.167Zm5.416 0H18V18h-4.167v-4.167Z" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/></svg>',
+  faceScan:
+    '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5.2 3.5H4.1a1.6 1.6 0 0 0-1.6 1.6v1.1M14.8 3.5h1.1a1.6 1.6 0 0 1 1.6 1.6v1.1M5.2 16.5H4.1a1.6 1.6 0 0 1-1.6-1.6v-1.1M14.8 16.5h1.1a1.6 1.6 0 0 0 1.6-1.6v-1.1M6.6 10a3.4 3.4 0 0 1 6.8 0M8.1 11.8c.95.65 2.85.65 3.8 0" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  user:
+    '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 10.2a3.7 3.7 0 1 0 0-7.4 3.7 3.7 0 0 0 0 7.4ZM3.4 17.2c.65-3.1 2.9-4.95 6.6-4.95s5.95 1.85 6.6 4.95" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  layers:
+    '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.8 17 6.4 10 10 3 6.4 10 2.8ZM3 10l7 3.6 7-3.6M3 13.6l7 3.6 7-3.6" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  product:
+    '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5.2 4.2H3.8a1.4 1.4 0 0 0-1.4 1.4v8.8a1.4 1.4 0 0 0 1.4 1.4h1.4V4.2ZM14.8 4.2h1.4a1.4 1.4 0 0 1 1.4 1.4v8.8a1.4 1.4 0 0 1-1.4 1.4h-1.4V4.2ZM5.2 3.2h9.6v13.6H5.2V3.2Z" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linejoin="round"/></svg>',
+  filmGrid:
+    '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3.2 3.2h13.6v13.6H3.2V3.2ZM7.4 3.2v13.6M12.6 3.2v13.6M3.2 7.4h13.6M3.2 12.6h13.6" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linejoin="round"/></svg>',
+  imageCorrect:
+    '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4.2 4.1h11.6a1.6 1.6 0 0 1 1.6 1.6v8.6a1.6 1.6 0 0 1-1.6 1.6H4.2a1.6 1.6 0 0 1-1.6-1.6V5.7a1.6 1.6 0 0 1 1.6-1.6ZM4.4 13.7l3-3.2a.9.9 0 0 1 1.32.02l1.75 2.02 1.25-1.4a.9.9 0 0 1 1.32-.02l2.55 2.58M13.8 6.7l.43 1.02 1.07.38-1.07.38-.43 1.02-.43-1.02-1.07-.38 1.07-.38.43-1.02Z" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   refresh:
     '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="m10.15 3.4.62 1.72a1.2 1.2 0 0 0 .71.72l1.72.62-1.72.62a1.2 1.2 0 0 0-.71.71l-.62 1.72-.62-1.72a1.2 1.2 0 0 0-.71-.71l-1.72-.62 1.72-.62a1.2 1.2 0 0 0 .71-.72l.62-1.72ZM5.26 10.82l.44 1.22a.85.85 0 0 0 .5.5l1.22.44-1.22.44a.85.85 0 0 0-.5.5l-.44 1.22-.44-1.22a.85.85 0 0 0-.5-.5l-1.22-.44 1.22-.44a.85.85 0 0 0 .5-.5l.44-1.22ZM13.8 10.2l2 2m-1.06-4.1 1.72.62m-9.4 7.34 5.8-5.8" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   sparkles:
@@ -112,6 +131,8 @@ const icon = {
     '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 3v14M10 3v14M14 3v14M3 6h14M3 10h14M3 14h14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
   expand:
     '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 3.5H16.5V7.5M7.5 16.5H3.5V12.5M16.2 3.8 11 9M3.8 16.2 9 11" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  eye:
+    '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M2.25 10s2.7-5 7.75-5 7.75 5 7.75 5-2.7 5-7.75 5-7.75-5-7.75-5Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="10" cy="10" r="2.25" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>',
   resetView:
     '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 10a6.5 6.5 0 0 1 11.092-4.596L16 6.833M16 6.833V3.5m0 3.333h-3.333M16.5 10a6.5 6.5 0 0 1-11.094 4.595L4 13.166M4 13.166V16.5m0-3.334h3.334" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
 };
@@ -147,11 +168,36 @@ const workflowPlayerIcon = {
 const workflowReferenceSources = [
   { id: "local", label: "本地" },
   { id: "project", label: "项目资产库" },
-  { id: "team", label: "团队资产库" },
+  { id: "public", label: "公共资产库" },
   { id: "market", label: "素材广场" },
 ];
 
-const workflowReferenceCategories = ["角色", "场景", "服装", "道具", "音频", "其他"];
+const workflowReferenceCategories = ["角色", "服装", "场景", "道具", "音频", "其他"];
+
+const workflowReferenceCategoryTypes = {
+  project: {
+    角色: ["image"],
+    服装: ["image"],
+    场景: ["image"],
+    道具: ["image"],
+    音频: ["audio"],
+    其他: ["image", "video"],
+  },
+  public: {
+    角色: ["image"],
+    服装: ["image"],
+    场景: ["image"],
+    道具: ["image"],
+    音频: ["audio"],
+  },
+  market: {
+    角色: ["image"],
+    服装: ["image"],
+    场景: ["image"],
+    道具: ["image"],
+    音频: ["audio"],
+  },
+};
 
 const workflowReferenceImagePool = [
   "./assets/images/canvas-character.jpg",
@@ -164,12 +210,12 @@ const workflowReferenceImagePool = [
 
 const workflowReferenceLibraryNames = {
   project: "项目资产库",
-  team: "团队资产库",
+  public: "公共资产库",
   market: "素材广场",
 };
 
 const workflowReferenceAssetName = (source, category, index) => {
-  const sourcePrefix = { project: "项目", team: "团队", market: "广场" }[source] || "本地";
+  const sourcePrefix = { project: "项目", public: "公共", market: "广场" }[source] || "本地";
   const variants = {
     角色: ["李柏", "罗根", "雨夜线人"],
     场景: ["废弃仓库", "医院走廊", "码头雨棚"],
@@ -179,6 +225,68 @@ const workflowReferenceAssetName = (source, category, index) => {
     其他: ["冷白光效", "烟雾氛围", "镜头参考"],
   }[category] || ["资产"];
   return `${sourcePrefix}${variants[index % variants.length]}`;
+};
+
+const workflowUploadTargetConfig = (target = "keyframe") => {
+  const configs = {
+    keyframe: { type: "image", title: "上传关键帧", usage: "用于当前场景关键帧", multiple: true },
+    "keyframe-reference": { type: "image", title: "上传参考图", usage: "用于关键帧生成参考", multiple: true },
+    "video-image": { type: "image", title: "上传参考图", usage: "用于视频生成参考图", multiple: false },
+    "video-video": { type: "video", title: "上传参考视频", usage: "用于视频生成参考视频", multiple: false },
+    "video-audio": { type: "audio", title: "上传参考音频", usage: "用于视频生成参考音频", multiple: false },
+    "audio-reference": { type: "audio", title: "上传参考音乐", usage: "用于音乐创作参考", multiple: false },
+    "timeline-keyframe": { type: "image", title: "上传关键帧", usage: "添加到关键帧线", multiple: true },
+    "timeline-video": { type: "video", title: "上传视频", usage: "添加到视频线", multiple: true },
+    "timeline-audio": { type: "audio", title: "上传音频", usage: "添加到音频线", multiple: true },
+  };
+  return configs[target] || configs.keyframe;
+};
+
+const workflowUploadTypeMeta = {
+  image: {
+    label: "图片",
+    accept: "image/*",
+    extensions: "JPG、PNG、WEBP",
+    localTip: "适用于角色、服装、场景、道具、关键帧和参考图。",
+  },
+  video: {
+    label: "视频",
+    accept: "video/*",
+    extensions: "MP4、MOV",
+    localTip: "建议上传清晰画面，可作为视频轨道或视频生成参考。",
+  },
+  audio: {
+    label: "音频",
+    accept: "audio/*",
+    extensions: "MP3、WAV、M4A",
+    localTip: "建议上传无明显噪声的音频，可作为音频轨道、参考音乐或参考音频。",
+  },
+};
+
+const workflowReferenceCategoriesForSource = (source, type) =>
+  workflowReferenceCategories.filter((category) => workflowReferenceCategoryTypes[source]?.[category]?.includes(type));
+
+const workflowReferenceSourceAvailable = (source) => workflowReferenceSources.some((item) => item.id === source);
+
+const workflowReferenceCurrentCategory = (source, type) => {
+  const categories = workflowReferenceCategoriesForSource(source, type);
+  if (!categories.length) return "";
+  return categories.includes(state.workflowReferenceCategory) ? state.workflowReferenceCategory : categories[0];
+};
+
+const workflowReferenceVisual = (type, index = 0) => {
+  if (type === "video") return "./assets/images/canvas-chase-sequence.jpg";
+  if (type === "audio") return "";
+  return workflowReferenceImagePool[index % workflowReferenceImagePool.length];
+};
+
+const openWorkflowUploadModal = (target) => {
+  const config = workflowUploadTargetConfig(target);
+  const activeSource = workflowReferenceSourceAvailable(state.workflowReferenceSource) ? state.workflowReferenceSource : "local";
+  state.workflowReferenceTarget = target;
+  state.workflowReferenceSource = activeSource;
+  state.workflowReferenceCategory = workflowReferenceCurrentCategory(activeSource, config.type) || "角色";
+  state.workflowReferenceModalOpen = true;
 };
 
 const projectSeed = [
@@ -337,6 +445,60 @@ const FOCAL_LENGTH_OPTIONS = ["8mm", "14mm", "24mm", "35mm", "50mm", "75mm", "12
 const APERTURE_OPTIONS = ["f/1.4", "f/4", "f/11"];
 const WASH_IMAGE_COST = 30;
 const REVERSE_PROMPT_COST = 30;
+const PORTRAIT_TEXTURE_MODELS = [
+  { id: "portrait-texture-lite", name: "人像质感 Lite", cost: 30 },
+  { id: "portrait-texture-pro", name: "人像质感 Pro", cost: 60 },
+  { id: "portrait-texture-film", name: "电影级人像质感", cost: 90 },
+];
+const CANVAS_STORY_TOOL_CONFIG = {
+  storyboard: {
+    label: "故事板",
+    placeholder:
+      "描述一个 10-15秒内能演完的小剧情片段，系统会整理为 4-8个连续分镜，内容过长时会自动提炼关键剧情。提供角色三视圈、美术设定图及准确的需求描述，生成效果会更好。",
+  },
+  scheduleStoryboard: {
+    label: "调度故事板",
+    placeholder:
+      "描述一个 10-15 秒内能演完的小剧情片段。可补充角色、场景、道具、动作过程、走位、对白或参考图，系统会整理为 4-6 个中文调度分镜手绘版",
+  },
+  characterSheet: {
+    label: "角色设定图",
+    placeholder: "点击生成，直接基于当前图像生成完整的角色设定图；支持通过文本/参考图生成。",
+  },
+  sceneSheet: {
+    label: "场景设定图",
+    placeholder: "点击生成，直接基于当前图像生成完整的场景设定图；支持通过文本/参考图生成。",
+  },
+  productSheet: {
+    label: "产品设定图",
+    placeholder: "点击生成，直接基于当前图像生成完整的产品设定图；支持通过文本/参考图生成。",
+  },
+  lightingCorrect: {
+    label: "电影级光影校正",
+    placeholder: "点击生成，直接对当前图像进行电影机光影矫正、景别视角；支持通过文本/参考图生成。",
+  },
+};
+const CANVAS_TOOLBOX_ITEMS = [
+  { key: "multi-position", label: "多机位九宫格", icon: "grid3" },
+  { key: "story-four", label: "剧情推演四宫格", icon: "grid2", active: true },
+  { key: "face-three-view", label: "角色脸部三视图", icon: "faceScan" },
+  { key: "character-sheet", label: "角色设定图", icon: "user" },
+  { key: "scene-sheet", label: "场景设定图", icon: "layers" },
+  { key: "product-sheet", label: "产品设定图", icon: "product" },
+  { key: "portrait-texture", label: "人像质感调节", icon: "sparkles" },
+  { key: "storyboard", label: "故事板", icon: "layoutBoard" },
+  { key: "schedule-storyboard", label: "调度故事板", icon: "filmGrid" },
+  { key: "lens-grid", label: "25宫格连贯分镜", icon: "filmGrid" },
+  { key: "lighting-correct", label: "电影级光影校正", icon: "imageCorrect" },
+];
+
+const CANVAS_VIDEO_MODELS = ["Seedance 2.0", "Seedance 1.6", "Kling 2.1", "Runway Gen-4"];
+const isSeedanceVideoModel = (model = "") => String(model).trim().toLowerCase().startsWith("seedance");
+const optimizeVideoPromptText = (prompt = "") => {
+  const source = prompt.trim() || "一个 5 秒内可完成的清晰视频画面";
+  if (source.includes("优化提示词：")) return source;
+  return `${source}\n\n优化提示词：保持主体一致，动作节奏清晰，镜头稳定推进；补充明确的场景光线、景别视角、运动方向与画面细节，整体呈现自然连贯的电影感视频。`;
+};
 
 const createImageNode = ({
   id,
@@ -349,6 +511,8 @@ const createImageNode = ({
   panoramaSource = null,
   panoramaOffset = null,
   cameraControl = null,
+  toolTag = null,
+  promptPlaceholder = "",
 } = {}) => ({
   id: id || `n${Date.now()}${Math.floor(Math.random() * 1000)}`,
   type,
@@ -356,7 +520,9 @@ const createImageNode = ({
   image: image || CANVAS_NODE_PREVIEW,
   x,
   y,
-  prompt: prompt || DEFAULT_NODE_PROMPT,
+  prompt: prompt ?? DEFAULT_NODE_PROMPT,
+  promptPlaceholder,
+  toolTag,
   panoramaSource,
   panoramaOffset,
   cameraControl: {
@@ -366,7 +532,7 @@ const createImageNode = ({
     focalLength: cameraControl?.focalLength || "35mm",
     aperture: cameraControl?.aperture || "f/1.4",
   },
-  topTags: ["全景", "多角度", "打光", "九宫格", "擦除", "宫格切分"],
+  topTags: ["全景", "多角度", "打光", "工具箱", "擦除", "宫格切分"],
   badge: "",
   model: "Gemini 3.1 Flash Lite",
   ratio: "16:9·2K",
@@ -466,6 +632,38 @@ const createAudioNode = ({
   otherSetting,
 });
 
+const createVideoNode = ({
+  id,
+  name,
+  x = 0,
+  y = 0,
+  prompt,
+  mode = "text-video",
+  model = "Seedance 2.0",
+  duration = "5s",
+  quality = "720p",
+  ratio = "9:16",
+  audioEnabled = true,
+  cost = "788",
+  balance = "10002377",
+  type = "video",
+} = {}) => ({
+  id: id || `v${Date.now()}${Math.floor(Math.random() * 1000)}`,
+  type,
+  name: name || "视频节点",
+  x,
+  y,
+  prompt: prompt || "",
+  mode,
+  model,
+  duration,
+  quality,
+  ratio,
+  audioEnabled,
+  cost,
+  balance,
+});
+
 const officialCanvasTemplates = [
   {
     id: "official-character-board",
@@ -538,6 +736,13 @@ const hydrateCanvasNode = (node, nodeIndex = 0) => {
   }
   if (node?.type === "audio") {
     return createAudioNode({
+      ...node,
+      x: node.x ?? 140 + nodeIndex * 28,
+      y: node.y ?? 126 + nodeIndex * 24,
+    });
+  }
+  if (node?.type === "video") {
+    return createVideoNode({
       ...node,
       x: node.x ?? 140 + nodeIndex * 28,
       y: node.y ?? 126 + nodeIndex * 24,
@@ -653,27 +858,35 @@ const saveVideosState = () => {
 };
 
 const WORKFLOW_RECYCLE_KEY = "phanty-movie-workflow-recycle-v1";
-const WORKFLOW_RECYCLE_SOURCES = ["模型对话广场", "拍摄台", "项目资产库"];
+const WORKFLOW_RECYCLE_SOURCES = ["画布", "项目资产库", "模型对话广场", "拍摄台", "全自动AI生成"];
 const normalizeWorkflowRecycleSource = (source = "") => {
   if (WORKFLOW_RECYCLE_SOURCES.includes(source)) return source;
   if (["项目资产库", "本地上传"].includes(source)) return "项目资产库";
   if (["模型对话广场"].includes(source)) return "模型对话广场";
   return "拍摄台";
 };
+const activeHistoryProjectId = () => state.currentProjectId || state.projects[0]?.id || "p1";
 const normalizeWorkflowRecycleItem = (item) => ({
   ...item,
+  projectId: item.projectId || "p1",
   source: normalizeWorkflowRecycleSource(item.source),
   createdAt: item.createdAt || item.deletedAt,
   createdAtMs: item.createdAtMs || item.deletedAtMs || Date.now(),
 });
 const workflowRecycleSeed = [
-  { id: "history-img-1", type: "image", name: "雨夜仓库 · 关键帧 03", source: "拍摄台", createdAt: "2026-08-10 14:32:00", createdAtMs: 1786343520000, image: "./assets/images/canvas-chase-sequence.jpg" },
-  { id: "history-img-2", type: "image", name: "东京街口 · 氛围参考", source: "项目资产库", createdAt: "2026-08-09 18:06:00", createdAtMs: 1786279560000, image: "./assets/images/project-neon-tokyo.jpg" },
-  { id: "history-img-3", type: "image", name: "角色定妆 · 李柏", source: "模型对话广场", createdAt: "2026-08-08 09:45:00", createdAtMs: 1786153500000, image: "./assets/images/canvas-character.jpg" },
-  { id: "history-video-1", type: "video", name: "仓库对峙 · 镜头 02", source: "拍摄台", createdAt: "2026-08-10 11:18:00", createdAtMs: 1786331880000, duration: "00:18", image: "./assets/images/style-cinematic.jpg" },
-  { id: "history-video-2", type: "video", name: "雨夜追车 · 合成预览", source: "项目资产库", createdAt: "2026-08-07 16:20:00", createdAtMs: 1786090800000, duration: "00:36", image: "./assets/images/project-neon-tokyo.jpg" },
-  { id: "history-audio-1", type: "audio", name: "雨夜环境声", source: "拍摄台", createdAt: "2026-08-10 10:12:00", createdAtMs: 1786327920000, duration: "00:24", image: "./assets/images/canvas-node-preview.png" },
-  { id: "history-audio-2", type: "audio", name: "紧张鼓点", source: "模型对话广场", createdAt: "2026-08-09 15:28:00", createdAtMs: 1786270080000, duration: "00:30", image: "./assets/images/default-cover.jpg" },
+  { id: "history-img-1", type: "image", name: "雨夜仓库 · 关键帧 03", source: "拍摄台", projectId: "p1", createdAt: "2026-08-26 16:50:35", createdAtMs: Date.parse("2026-08-26T16:50:35"), image: "./assets/images/canvas-chase-sequence.jpg" },
+  { id: "history-img-2", type: "image", name: "东京街口 · 氛围参考", source: "项目资产库", projectId: "p1", createdAt: "2026-08-09 18:06:00", createdAtMs: 1786279560000, image: "./assets/images/project-neon-tokyo.jpg" },
+  { id: "history-img-3", type: "image", name: "角色定妆 · 李柏", source: "模型对话广场", projectId: "p1", createdAt: "2026-08-08 09:45:00", createdAtMs: 1786153500000, image: "./assets/images/canvas-character.jpg" },
+  { id: "history-video-1", type: "video", name: "仓库对峙 · 镜头 02", source: "拍摄台", projectId: "p1", createdAt: "2026-08-10 11:18:00", createdAtMs: 1786331880000, duration: "00:18", image: "./assets/images/style-cinematic.jpg" },
+  { id: "history-video-2", type: "video", name: "雨夜追车 · 合成预览", source: "项目资产库", projectId: "p1", createdAt: "2026-08-07 16:20:00", createdAtMs: 1786090800000, duration: "00:36", image: "./assets/images/project-neon-tokyo.jpg" },
+  { id: "history-audio-1", type: "audio", name: "雨夜环境声", source: "拍摄台", projectId: "p1", createdAt: "2026-08-10 10:12:00", createdAtMs: 1786327920000, duration: "00:24", image: "./assets/images/canvas-node-preview.png" },
+  { id: "history-audio-2", type: "audio", name: "紧张鼓点", source: "模型对话广场", projectId: "p1", createdAt: "2026-08-09 15:28:00", createdAtMs: 1786270080000, duration: "00:30", image: "./assets/images/default-cover.jpg" },
+  { id: "history-p3-img-1", type: "image", name: "时间裂缝 · 关键帧 01", source: "画布", projectId: "p3", createdAt: "2026-08-26 16:50:35", createdAtMs: Date.parse("2026-08-26T16:50:35"), image: "./assets/images/canvas-chase-sequence.jpg" },
+  { id: "history-p3-img-2", type: "image", name: "时间裂缝 · 角色参考", source: "项目资产库", projectId: "p3", createdAt: "2026-08-25 14:18:22", createdAtMs: Date.parse("2026-08-25T14:18:22"), image: "./assets/images/canvas-character.jpg" },
+  { id: "history-p3-video-1", type: "video", name: "时间裂缝 · 镜头预览", source: "拍摄台", projectId: "p3", createdAt: "2026-08-24 19:06:10", createdAtMs: Date.parse("2026-08-24T19:06:10"), duration: "00:18", image: "./assets/images/style-cinematic.jpg" },
+  { id: "history-p3-video-2", type: "video", name: "时间裂缝 · 全自动生成", source: "全自动AI生成", projectId: "p3", createdAt: "2026-08-23 11:32:48", createdAtMs: Date.parse("2026-08-23T11:32:48"), duration: "00:36", image: "./assets/images/project-neon-tokyo.jpg" },
+  { id: "history-p3-audio-1", type: "audio", name: "时间裂缝 · 环境声", source: "画布", projectId: "p3", createdAt: "2026-08-22 09:15:04", createdAtMs: Date.parse("2026-08-22T09:15:04"), duration: "00:24", image: "./assets/images/canvas-node-preview.png" },
+  { id: "history-p3-audio-2", type: "audio", name: "时间裂缝 · 氛围配乐", source: "模型对话广场", projectId: "p3", createdAt: "2026-08-21 17:42:36", createdAtMs: Date.parse("2026-08-21T17:42:36"), duration: "00:30", image: "./assets/images/default-cover.jpg" },
 ];
 const loadWorkflowRecycle = () => {
   try {
@@ -718,18 +931,35 @@ const state = {
   canvasTemplateDraftTitle: "",
   canvasTemplateDraftCover: "",
   canvasTemplateDeleteTargetId: null,
+  canvasHistoryOpen: false,
+  canvasHistoryTab: "image",
+  canvasHistoryBatchMode: false,
+  canvasHistorySelectedIds: new Set(),
+  canvasHistoryPreviewId: null,
+  canvasHistoryFilter: "all",
+  canvasHistorySort: "date-desc",
+  canvasHistoryOpenMenu: null,
+  canvasOperationHistoryTab: "image",
+  canvasOperationHistoryBatchMode: false,
+  canvasOperationHistorySelectedIds: new Set(),
+  canvasOperationHistoryPreviewId: null,
+  canvasOperationHistoryFilter: "all",
+  canvasOperationHistorySort: "date-desc",
+  canvasOperationHistoryOpenMenu: null,
   canvasTemplateActionGuardUntil: 0,
   canvasContextActionGuardUntil: 0,
   canvasAddPanelGuardUntil: 0,
   canvasDraftName: "",
   canvasContextMenu: null,
+  canvasToolboxNodeId: null,
   avatarOpen: false,
-  noticeOpen: false,
   fullscreenPanoramaId: null,
   cameraControlNodeId: null,
   cameraControlDraft: null,
   washConfirmNodeId: null,
   reversePromptConfirmNodeId: null,
+  portraitTextureConfirmNodeId: null,
+  portraitTextureModelId: PORTRAIT_TEXTURE_MODELS[0].id,
   audioVoiceNodeId: null,
   workflowGenerateMode: null,
   workflowPreviewFrameIndex: null,
@@ -747,6 +977,7 @@ const state = {
   workflowRenamingFrameIndex: null,
   workflowDeleteFrameIndex: null,
   workflowDeleteVideoIndex: null,
+  workflowDeleteAudioIndex: null,
   workflowClearConfirmOpen: false,
   workflowPreviewModalOpen: false,
   workflowClipContextMenu: null,
@@ -765,6 +996,8 @@ const state = {
   workflowRecycleSort: "date-desc",
   workflowRecycleOpenMenu: null,
   workflowRecyclePreviewId: null,
+  workflowRecycleBatchMode: false,
+  workflowRecycleSelectedIds: new Set(),
   workflowRecyclePlaying: false,
   workflowRecycleProgress: 18,
   workflowRecycleVolume: 72,
@@ -782,6 +1015,53 @@ const state = {
     resolution: "1080P",
     duration: "",
     dubbing: "不生成配音",
+  },
+  workflowAudioMode: "music",
+  workflowAudioDraftPrompt: "低沉悬疑的电影配乐，雨夜废弃仓库，缓慢推进的弦乐与克制的电子脉冲，在人物对峙时逐渐增强张力，不要突兀的高潮。",
+  workflowAudioLyrics: "",
+  workflowAudioStyle: "悬疑电影配乐，低音弦乐，电子脉冲，冷峻克制，缓慢推进",
+  workflowAudioSongName: "雨夜仓库",
+  workflowAudioReference: null,
+  workflowAudioInstrumental: true,
+  workflowAudioCount: 1,
+  workflowAudioName: "仓库对白",
+  workflowAudioModesExpanded: false,
+  workflowTtsVoicesExpanded: false,
+  workflowTtsText: "",
+  workflowTtsModel: "phan Voice 2.0",
+  workflowTtsVoiceId: "voice-linxi",
+  workflowTtsVoiceTab: "official",
+  workflowTtsLongMode: false,
+  workflowTtsLanguage: "自动检测",
+  workflowTtsSpeed: 1,
+  workflowTtsPitch: 0,
+  workflowTtsVolume: 100,
+  workflowTtsCloneOpen: false,
+  workflowTtsCloneMethod: "record",
+  workflowTtsCloneName: "我的音色",
+  workflowTtsCloneRecorded: false,
+  workflowTtsEmotionMenu: null,
+  workflowTtsSelectionRange: null,
+  workflowTtsVoices: [
+    { id: "voice-linxi", name: "林溪", meta: "温柔女声 · 叙事", group: "official", color: "#8c7cf6" },
+    { id: "voice-chenyu", name: "陈宇", meta: "沉稳男声 · 纪录片", group: "official", color: "#4aa8d8" },
+    { id: "voice-xiaoyu", name: "小雨", meta: "活力女声 · 广告", group: "official", color: "#e27eaa" },
+    { id: "voice-baiyan", name: "白砚", meta: "磁性男声 · 影视", group: "official", color: "#dc9459" },
+    { id: "voice-sumu", name: "苏沐", meta: "清亮女声 · 解说", group: "official", color: "#6bb6f0" },
+    { id: "voice-guyan", name: "顾言", meta: "青年男声 · 短剧", group: "official", color: "#62c7a7" },
+    { id: "voice-ali", name: "阿梨", meta: "甜美女声 · 口播", group: "official", color: "#f08fc0" },
+    { id: "voice-zhouche", name: "周澈", meta: "成熟男声 · 商务", group: "official", color: "#d3a45f" },
+  ],
+  workflowAudioSettings: {
+    model: "phan Music 1.5",
+    duration: "30s",
+    structure: "自动编排",
+    vocal: "纯音乐",
+    bpm: "82 BPM",
+    key: "D 小调",
+    creativity: "平衡",
+    intensity: "中等",
+    loop: "关闭",
   },
   workflowEpisodeIndex: 0,
   workflowSceneIndex: 0,
@@ -816,6 +1096,7 @@ const canvasRuntime = {
 };
 
 const grid = document.getElementById("project-grid");
+const canvasHistoryPage = document.getElementById("canvas-history-page");
 const homeView = document.getElementById("home-view");
 const creatorCenterView = document.getElementById("creator-center-view");
 const reviewCenterView = document.getElementById("review-center-view");
@@ -846,6 +1127,7 @@ const pageSubtitle = document.getElementById("page-subtitle");
 const backTrigger = document.getElementById("back-trigger");
 const sidebar = document.getElementById("canvas-list-sidebar");
 const sidebarBackTrigger = document.getElementById("sidebar-back-trigger");
+const canvasHistoryNavTrigger = document.getElementById("canvas-history-nav-trigger");
 const sidebarProjectName = document.getElementById("sidebar-project-name");
 const sidebarRatioTag = document.getElementById("sidebar-ratio-tag");
 const sidebarStyleTag = document.getElementById("sidebar-style-tag");
@@ -869,8 +1151,6 @@ const workflowGenerateModalRoot = document.getElementById("workflow-generate-mod
 const createLabel = document.getElementById("create-label");
 const avatarTrigger = document.getElementById("avatar-trigger");
 const avatarPanel = document.getElementById("avatar-panel");
-const noticeTrigger = document.getElementById("notice-trigger");
-const noticePanel = document.getElementById("notice-panel");
 const createModal = document.getElementById("create-modal");
 const deleteModal = document.getElementById("delete-modal");
 const projectModeModal = document.getElementById("project-mode-modal");
@@ -985,6 +1265,22 @@ const escapeHtml = (value) =>
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#39;");
+
+const renderCanvasToolboxMenu = (nodeId) => `
+  <div class="canvas-toolbox-menu" role="menu" aria-label="工具箱">
+    ${CANVAS_TOOLBOX_ITEMS.map(
+      (item) => `
+        <button class="canvas-toolbox-item${item.active ? " is-active" : ""}" type="button" role="menuitem" data-toolbox-action="${escapeHtml(item.key)}" data-node-id="${nodeId}">
+          <span class="canvas-toolbox-item-icon">${icon[item.icon] || icon.grid}</span>
+          <span>${escapeHtml(item.label)}</span>
+        </button>
+      `,
+    ).join("")}
+  </div>
+`;
+
+const selectedPortraitTextureModel = () =>
+  PORTRAIT_TEXTURE_MODELS.find((model) => model.id === state.portraitTextureModelId) || PORTRAIT_TEXTURE_MODELS[0];
 
 const workflowStudioData = [
   {
@@ -1119,6 +1415,34 @@ const workflowSceneVideoResults = (scene) => {
     scene.videos = [];
   }
   return scene.videos;
+};
+
+const workflowSceneAudioResults = (scene) => {
+  if (!Array.isArray(scene.audios)) {
+    scene.audios = [
+      {
+        id: "audio-demo-1",
+        title: "雨夜仓库 · 悬疑配乐",
+        mode: "音乐创作",
+        model: "phan Music 1.5",
+        duration: "00:30",
+        status: "已完成",
+        prompt: "",
+        params: { instrumental: true, lyrics: "", style: "悬疑电影配乐，低音弦乐，电子脉冲，冷峻克制", songName: "雨夜仓库", count: 1 },
+      },
+      {
+        id: "audio-demo-2",
+        title: "林溪 · 仓库对白",
+        mode: "文生音频",
+        model: "phan Voice 2.0",
+        duration: "00:12",
+        status: "已完成",
+        prompt: "[紧张] 目标不止一个，二层还有人。<#0.5#>你先别回头。",
+        params: { voiceId: "voice-linxi", speed: 1, pitch: 0, volume: 100, language: "中文", longMode: false },
+      },
+    ];
+  }
+  return scene.audios;
 };
 
 const workflowAssignedKeyframes = (scene) => {
@@ -1448,6 +1772,168 @@ const renderWorkflowVideoGenerator = (episode, scene) => {
   `;
 };
 
+const workflowWaveform = (seed = 0, count = 42) => `<div class="workflow-audio-waveform" aria-hidden="true">${Array.from({ length: count }, (_, index) => {
+  const height = 18 + ((index * 31 + seed * 17) % 68);
+  return `<b style="height:${height}%"></b>`;
+}).join("")}</div>`;
+
+const renderWorkflowAudioTabs = () => `
+  <div class="workflow-result-tabs" role="tablist" aria-label="本场音频">
+    <button class="${state.workflowResultView === "audio-generator" ? "active" : ""}" type="button" data-workflow-action="set-result-view" data-result-view="audio-generator">音频生成器</button>
+    <button class="${state.workflowResultView === "audios" ? "active" : ""}" type="button" data-workflow-action="set-result-view" data-result-view="audios">本场音频</button>
+  </div>`;
+
+const renderWorkflowAudioResults = (scene) => {
+  const audios = workflowSceneAudioResults(scene);
+  return `
+    ${renderWorkflowAudioTabs()}
+    <div class="workflow-audio-result-list">
+      <div class="workflow-audio-list-head"><span>${audios.length} 条音频</span></div>
+      ${audios.map((audio, index) => `
+        <article class="workflow-audio-card${audio.status === "生成中" ? " is-pending" : ""}" draggable="${audio.status === "已完成"}" data-workflow-audio-index="${index}">
+          <button class="workflow-audio-play" type="button" data-workflow-action="preview-scene-audio" data-workflow-audio-index="${index}" aria-label="预览音频">${audio.status === "生成中" ? workflowEditIcon.imageGeneration : workflowPlayerIcon.play}</button>
+          <div class="workflow-audio-card-main">
+            <div class="workflow-audio-card-title"><strong>${escapeHtml(audio.title)}</strong><span>${escapeHtml(audio.duration)}</span><em>${escapeHtml(audio.mode)}</em></div>
+            ${workflowWaveform(index)}
+          </div>
+          <div class="workflow-audio-card-actions">
+            <button type="button" data-workflow-action="copy-audio-params" data-workflow-audio-index="${index}">复制参数</button>
+            <button type="button" data-workflow-action="send-audio-to-timeline" data-workflow-audio-index="${index}">加入时间线</button>
+            <button type="button" data-workflow-action="download-scene-audio" data-workflow-audio-index="${index}">下载</button>
+            <button class="is-danger" type="button" data-workflow-action="delete-scene-audio" data-workflow-audio-index="${index}">删除</button>
+          </div>
+        </article>`).join("")}
+    </div>`;
+};
+
+const workflowTtsVoice = () => state.workflowTtsVoices.find((voice) => voice.id === state.workflowTtsVoiceId) || state.workflowTtsVoices[0];
+
+const renderWorkflowTtsContent = (value = "") => {
+  const pattern = /\[([^\]|]+)\|([^\]]+)\]/g;
+  let lastIndex = 0;
+  let html = "";
+  for (const match of value.matchAll(pattern)) {
+    html += escapeHtml(value.slice(lastIndex, match.index)).replace(/\n/g, "<br>");
+    html += `<span class="workflow-tts-emotion-chip" contenteditable="false" data-emotion="${escapeHtml(match[1])}" data-text="${escapeHtml(match[2])}"><b>${escapeHtml(match[1])}</b><span>${escapeHtml(match[2])}</span><i data-workflow-action="remove-tts-emotion-chip">×</i></span>`;
+    lastIndex = match.index + match[0].length;
+  }
+  return html + escapeHtml(value.slice(lastIndex)).replace(/\n/g, "<br>");
+};
+
+const workflowTtsEditorValue = (editor) => {
+  if (!editor) return state.workflowTtsText;
+  const read = (node) => {
+    if (node.nodeType === Node.TEXT_NODE) return node.nodeValue || "";
+    if (node.nodeType !== Node.ELEMENT_NODE) return "";
+    if (node.classList.contains("workflow-tts-emotion-chip")) return `[${node.dataset.emotion}|${node.dataset.text}]`;
+    if (node.tagName === "BR") return "\n";
+    return Array.from(node.childNodes).map(read).join("");
+  };
+  return Array.from(editor.childNodes).map(read).join("");
+};
+
+const workflowTtsSelectionOffset = (editor, boundaryNode, boundaryOffset) => {
+  let offset = 0;
+  let found = false;
+  const walk = (node) => {
+    if (found) return;
+    if (node === boundaryNode) {
+      if (node.nodeType === Node.TEXT_NODE) offset += boundaryOffset;
+      else Array.from(node.childNodes).slice(0, boundaryOffset).forEach((child) => { offset += workflowTtsEditorValue({ childNodes: [child] }).length; });
+      found = true;
+      return;
+    }
+    if (node.nodeType === Node.TEXT_NODE) { offset += (node.nodeValue || "").length; return; }
+    if (node.nodeType !== Node.ELEMENT_NODE) return;
+    if (node.classList.contains("workflow-tts-emotion-chip")) { offset += `[${node.dataset.emotion}|${node.dataset.text}]`.length; return; }
+    if (node.tagName === "BR") { offset += 1; return; }
+    Array.from(node.childNodes).forEach(walk);
+  };
+  Array.from(editor.childNodes).forEach(walk);
+  return offset;
+};
+
+const renderWorkflowTtsCloneModal = () => state.workflowTtsCloneOpen ? `
+  <div class="workflow-voice-clone-modal">
+    <button class="workflow-voice-clone-backdrop" type="button" data-workflow-action="close-voice-clone" aria-label="关闭音色克隆"></button>
+    <section class="workflow-voice-clone-dialog" role="dialog" aria-modal="true" aria-label="克隆音色">
+      <header><div><strong>克隆我的音色</strong><span>使用清晰、无噪声的录音可获得更自然的效果</span></div><button type="button" data-workflow-action="close-voice-clone">×</button></header>
+      <label class="workflow-voice-clone-name"><span>音色名称</span><input type="text" maxlength="20" value="${escapeHtml(state.workflowTtsCloneName)}" data-workflow-tts-field="cloneName" /></label>
+      <div class="workflow-voice-clone-methods">
+        <button class="${state.workflowTtsCloneMethod === "record" ? "active" : ""}" type="button" data-workflow-action="set-voice-clone-method" data-clone-method="record"><strong>朗读文字</strong><span>按示例朗读约 10–20 秒</span></button>
+        <button class="${state.workflowTtsCloneMethod === "upload" ? "active" : ""}" type="button" data-workflow-action="set-voice-clone-method" data-clone-method="upload"><strong>上传录音</strong><span>支持 MP3、WAV，10 秒以上</span></button>
+      </div>
+      ${state.workflowTtsCloneMethod === "record" ? `
+        <div class="workflow-voice-record"><span>请朗读</span><p>清晨的第一缕阳光越过山坡，风从窗外轻轻吹进来。今天会是充满希望的一天。</p><button class="${state.workflowTtsCloneRecorded ? "is-recorded" : ""}" type="button" data-workflow-action="record-clone-voice">${state.workflowTtsCloneRecorded ? "✓ 录音完成 · 00:14" : "● 开始录音"}</button></div>
+      ` : `<button class="workflow-voice-upload" type="button" data-workflow-action="upload-clone-voice"><strong>上传一段录音</strong><span>${state.workflowTtsCloneRecorded ? "录音样本.wav · 00:18" : "点击选择或拖入音频文件"}</span></button>`}
+      <label class="workflow-voice-consent"><input type="checkbox" checked /><span>我确认拥有该声音的合法使用授权，并同意音色克隆服务条款</span></label>
+      <footer><button type="button" data-workflow-action="close-voice-clone">取消</button><button class="primary" type="button" data-workflow-action="create-cloned-voice" ${state.workflowTtsCloneRecorded ? "" : "disabled"}>生成音色</button></footer>
+    </section>
+  </div>` : "";
+
+const renderWorkflowAudioGenerator = () => {
+  const isMusic = state.workflowAudioMode === "music";
+  const isTts = state.workflowAudioMode === "sfx";
+  const isVoiceDesign = state.workflowAudioMode === "voice-design";
+  const settings = state.workflowAudioSettings;
+  const models = ["phan Music 1.5", "Suno v4.5", "Mureka O2"];
+  if (!models.includes(settings.model)) settings.model = models[0];
+  const voiceOptions = state.workflowTtsVoices.filter((voice) => voice.group === state.workflowTtsVoiceTab);
+  const visibleVoices = state.workflowTtsVoicesExpanded ? voiceOptions : voiceOptions.slice(0, 4);
+  const hiddenVoiceCount = Math.max(0, voiceOptions.length - visibleVoices.length);
+  const selectedVoice = workflowTtsVoice();
+  return `
+    ${renderWorkflowAudioTabs()}
+    <div class="workflow-audio-generator">
+      <div class="workflow-audio-mode-switch" role="radiogroup" aria-label="音频创作模式">
+        <button class="${isMusic ? "active" : ""}" type="button" data-workflow-action="set-audio-mode" data-audio-mode="music"><span>♫</span><div><strong>音乐创作</strong><small>配乐、主题曲、氛围音乐</small></div></button>
+        <button class="${isTts ? "active" : ""}" type="button" data-workflow-action="set-audio-mode" data-audio-mode="sfx"><span>≋</span><div><strong>文生音频</strong><small>选择音色，将文字生成语音</small></div></button>
+        <button class="${isVoiceDesign ? "active" : ""}" type="button" data-workflow-action="set-audio-mode" data-audio-mode="voice-design"><span>◌</span><div><strong>音色设计</strong><small>设计、管理和调试音色</small></div></button>
+      </div>
+      ${isMusic ? `
+        <label class="workflow-video-field"><span>选择模型</span><select data-workflow-audio-param="model">${models.map((item) => workflowSelectOption(item, settings.model)).join("")}</select></label>
+        <button class="workflow-audio-reference-upload${state.workflowAudioReference ? " has-file" : ""}" type="button" data-workflow-action="upload-audio-reference">
+          <span>♫</span><div><strong>参考音乐（可选）</strong><small>${state.workflowAudioReference ? escapeHtml(state.workflowAudioReference) : "点击上传，生成专属翻唱"}</small></div><em>${state.workflowAudioReference ? "重新上传" : "上传"}</em>
+        </button>
+        ${state.workflowAudioInstrumental ? `<section class="workflow-music-instrumental-row"><strong>歌词不可用</strong><label class="workflow-audio-toggle"><button class="active" type="button" data-workflow-action="toggle-audio-instrumental" aria-pressed="true"><i></i></button><span>纯音乐</span></label></section>` : `<section class="workflow-music-text-card">
+          <header><strong>歌词</strong><label class="workflow-audio-toggle"><button type="button" data-workflow-action="toggle-audio-instrumental" aria-pressed="false"><i></i></button><span>纯音乐</span></label></header>
+          <textarea data-workflow-music-field="lyrics" maxlength="3500" placeholder="在此添加你的歌词，也可以输入 / 查看或插入歌词结构\n可以在 [Intro]、[Verse]、[Chorus] 等结构后补充编曲、人声、情绪等说明\n如果未填写歌词，我们将根据曲风为你自动生成">${escapeHtml(state.workflowAudioLyrics)}</textarea>
+          <footer><span>${state.workflowAudioLyrics.length} / 3,500 字符</span></footer>
+        </section>`}
+        <section class="workflow-music-text-card is-style">
+          <header><strong>风格</strong></header>
+          <textarea data-workflow-music-field="style" maxlength="2000" placeholder="描述音乐风格与制作要求。例如曲风、情绪、速度、乐器或人声类型">${escapeHtml(state.workflowAudioStyle)}</textarea>
+          <footer><span>${state.workflowAudioStyle.length} / 2,000 字符</span></footer>
+        </section>
+        <label class="workflow-music-name"><span>歌曲名称</span><input type="text" maxlength="60" value="${escapeHtml(state.workflowAudioSongName)}" data-workflow-music-field="songName" placeholder="输入歌曲名称" /></label>
+      ` : isTts ? `
+        <label class="workflow-video-field"><span>选择模型</span><select data-workflow-tts-model>${["phan Voice 2.0", "CosyVoice 3", "Eleven Multilingual v2"].map((item) => workflowSelectOption(item, state.workflowTtsModel)).join("")}</select></label>
+        <section class="workflow-tts-voice-section">
+          <header><div><strong>选择音色</strong><span>当前：${escapeHtml(selectedVoice.name)} · ${escapeHtml(selectedVoice.meta)}</span></div><button type="button" data-workflow-action="open-voice-clone">＋ 克隆音色</button></header>
+          <div class="workflow-tts-voice-tabs"><button class="${state.workflowTtsVoiceTab === "official" ? "active" : ""}" type="button" data-workflow-action="set-voice-tab" data-voice-tab="official">官方音色</button><button class="${state.workflowTtsVoiceTab === "mine" ? "active" : ""}" type="button" data-workflow-action="set-voice-tab" data-voice-tab="mine">我的音色</button></div>
+          <div class="workflow-tts-voice-list">${visibleVoices.length ? visibleVoices.map((voice) => `<button class="${voice.id === state.workflowTtsVoiceId ? "active" : ""}" type="button" data-workflow-action="select-tts-voice" data-voice-id="${voice.id}"><div><strong>${escapeHtml(voice.name)}</strong><span>${escapeHtml(voice.meta)}</span></div><em data-workflow-action="preview-tts-voice">▷</em>${voice.group === "mine" ? `<span class="workflow-tts-delete-voice" data-workflow-action="delete-tts-voice" data-voice-id="${voice.id}" title="删除音色">删除</span>` : ""}</button>`).join("") : `<div class="workflow-tts-empty-voice"><span>还没有克隆音色</span><button type="button" data-workflow-action="open-voice-clone">创建第一个音色</button></div>`}</div>
+          ${voiceOptions.length > 4 ? `<button class="workflow-tts-voice-more" type="button" data-workflow-action="toggle-tts-voices">${state.workflowTtsVoicesExpanded ? "收起" : `查看更多（${hiddenVoiceCount}）`}</button>` : ""}
+        </section>
+        <section class="workflow-tts-effects"><header><strong>音色效果</strong><button type="button" data-workflow-action="reset-tts-effects">恢复默认</button></header><div>
+          <label><span>语速 <em>${state.workflowTtsSpeed.toFixed(1)}×</em></span><input type="range" min="0.5" max="2" step="0.1" value="${state.workflowTtsSpeed}" data-workflow-tts-range="speed" /></label>
+          <label><span>声调 <em>${state.workflowTtsPitch > 0 ? "+" : ""}${state.workflowTtsPitch}</em></span><input type="range" min="-12" max="12" step="1" value="${state.workflowTtsPitch}" data-workflow-tts-range="pitch" /></label>
+          <label><span>音量 <em>${state.workflowTtsVolume}%</em></span><input type="range" min="0" max="150" step="5" value="${state.workflowTtsVolume}" data-workflow-tts-range="volume" /></label>
+        </div></section>
+        <section class="workflow-tts-editor">
+          <div class="workflow-tts-content" contenteditable="true" data-workflow-tts-editor data-placeholder="在此处开始输入文字，生成您的个性化音频。\A\A💡选中文字后点击下方情绪按钮，即可为文字添加情绪。">${renderWorkflowTtsContent(state.workflowTtsText)}</div>
+          <div class="workflow-tts-tools"><div><button type="button" data-workflow-action="open-tts-emotion" disabled>＋ 情绪</button><button type="button" data-workflow-action="insert-tts-tag" data-tts-tag="<#0.5#>">&lt;#&gt; 停顿</button><button type="button" data-workflow-action="insert-tts-tag" data-tts-tag="(轻笑)">( ) 语气词</button></div><label>长文模式 <button class="${state.workflowTtsLongMode ? "active" : ""}" type="button" data-workflow-action="toggle-tts-long-mode"><i></i></button></label><span>${state.workflowTtsText.length.toLocaleString()} / ${(state.workflowTtsLongMode ? 200000 : 5000).toLocaleString()} 字符</span></div>
+          ${state.workflowTtsEmotionMenu ? `<div class="workflow-tts-emotion-menu" style="--emotion-x:${state.workflowTtsEmotionMenu.x}px;--emotion-y:${state.workflowTtsEmotionMenu.y}px"><strong>选择情绪</strong><div>${["开心", "难过", "生气", "害怕", "厌恶", "惊讶", "中性", "生动"].map((emotion) => `<button type="button" data-workflow-action="apply-tts-emotion" data-emotion="${emotion}">${emotion}</button>`).join("")}</div><button class="close" type="button" data-workflow-action="close-tts-emotion">×</button></div>` : ""}
+          <label class="workflow-music-name workflow-tts-audio-name"><span>音频名称</span><input type="text" maxlength="60" value="${escapeHtml(state.workflowAudioName)}" data-workflow-audio-name placeholder="输入音频名称" /></label>
+          <footer><label><span>◎</span><select data-workflow-tts-language>${["自动检测", "中文", "英语", "日语", "法语"].map((item) => workflowSelectOption(item, state.workflowTtsLanguage)).join("")}</select></label><span class="workflow-generate-cost workflow-tts-credit"><img src="${CANVAS_NODE_CREDIT}" alt="" />${Math.max(1, Math.ceil(state.workflowTtsText.length / 100))}</span><button class="primary" type="button" data-workflow-action="generate-scene-audio">✦ 生成音频</button></footer>
+        </section>` : `
+        <section class="workflow-audio-coming-soon">
+          <strong>音色设计</strong>
+          <span>后续可在这里集中创建、调试、管理音色，并复用到文生音频模块。</span>
+        </section>`}
+      ${isMusic ? `<div class="workflow-video-generator-actions workflow-audio-generator-actions"><div class="workflow-music-quantity"><span>数量</span><button type="button" data-workflow-action="change-audio-count" data-count-delta="-1" ${state.workflowAudioCount <= 1 ? "disabled" : ""}>−</button><strong>${state.workflowAudioCount}</strong><button type="button" data-workflow-action="change-audio-count" data-count-delta="1" ${state.workflowAudioCount >= 4 ? "disabled" : ""}>＋</button></div><span class="workflow-generate-cost"><img src="${CANVAS_NODE_CREDIT}" alt="" />${48 * state.workflowAudioCount}</span><button class="workflow-primary-button" type="button" data-workflow-action="generate-scene-audio">生成${state.workflowAudioCount} 首音乐</button></div>` : ""}
+    </div>${renderWorkflowTtsCloneModal()}`;
+};
+
 const renderWorkflowTimelineKeyframeClips = (episode, scene) => {
   let nonGridOrdinal = -1;
   const positions = [
@@ -1475,35 +1961,34 @@ const renderWorkflowTimelineKeyframeClips = (episode, scene) => {
 
 const renderWorkflowReferenceModal = () => {
   if (!state.workflowReferenceModalOpen) return "";
-  const activeSource = state.workflowReferenceSource || "local";
-  const activeCategory = state.workflowReferenceCategory || "角色";
-  const uploadTargetLabels = {
-    "timeline-keyframe": "上传关键帧",
-    "timeline-video": "上传视频",
-    "timeline-audio": "上传音频",
-  };
-  const uploadTargetAccept = state.workflowReferenceTarget === "timeline-video"
-    ? "video/*"
-    : state.workflowReferenceTarget === "timeline-audio"
-      ? "audio/*"
-      : "image/*";
-  const uploadTitle = uploadTargetLabels[state.workflowReferenceTarget] || "上传参考";
+  const uploadConfig = workflowUploadTargetConfig(state.workflowReferenceTarget);
+  const uploadMeta = workflowUploadTypeMeta[uploadConfig.type];
+  const activeSource = workflowReferenceSourceAvailable(state.workflowReferenceSource) ? state.workflowReferenceSource : "local";
+  const availableCategories = workflowReferenceCategoriesForSource(activeSource, uploadConfig.type);
+  const activeCategory = workflowReferenceCurrentCategory(activeSource, uploadConfig.type);
   const sourceLabel = workflowReferenceSources.find((source) => source.id === activeSource)?.label || "本地";
   const libraryLabel = workflowReferenceLibraryNames[activeSource] || "";
   const categoryOffset = Math.max(0, workflowReferenceCategories.indexOf(activeCategory));
   const libraryAssets = Array.from({ length: 8 }, (_, index) => ({
-    image: workflowReferenceImagePool[(categoryOffset + index) % workflowReferenceImagePool.length],
+    image: workflowReferenceVisual(uploadConfig.type, categoryOffset + index),
     name: workflowReferenceAssetName(activeSource, activeCategory, index),
+    type: uploadConfig.type,
+    index,
   }));
+  const emptyText = uploadConfig.type === "video"
+    ? `暂无可用视频${activeSource === "market" ? "素材" : "资产"}`
+    : uploadConfig.type === "audio"
+      ? `暂无可用音频${activeSource === "market" ? "素材" : "资产"}`
+      : `暂无可用图片${activeSource === "market" ? "素材" : "资产"}`;
 
   return `
     <div class="workflow-reference-modal">
-      <button class="workflow-generate-backdrop" type="button" data-workflow-action="close-reference-modal" aria-label="关闭上传参考"></button>
+      <button class="workflow-generate-backdrop" type="button" data-workflow-action="close-reference-modal" aria-label="关闭${uploadMeta.label}上传"></button>
       <section class="workflow-reference-dialog" role="dialog" aria-modal="true" aria-labelledby="workflow-reference-title">
         <header>
           <div>
-            <strong id="workflow-reference-title">${uploadTitle}</strong>
-            <span>${escapeHtml(sourceLabel)}</span>
+            <strong id="workflow-reference-title">${escapeHtml(uploadConfig.title)}</strong>
+            <span>${escapeHtml(uploadConfig.usage)} · ${escapeHtml(sourceLabel)}</span>
           </div>
           <button type="button" data-workflow-action="close-reference-modal" aria-label="关闭">✕</button>
         </header>
@@ -1516,32 +2001,36 @@ const renderWorkflowReferenceModal = () => {
           <section class="workflow-reference-modal-body">
             ${activeSource === "local" ? `
               <label class="workflow-reference-local-drop">
-                <input type="file" accept="${uploadTargetAccept}" hidden />
+                <input type="file" accept="${uploadMeta.accept}" ${uploadConfig.multiple ? "multiple" : ""} hidden />
                 <span>＋</span>
-                <strong>选择文件</strong>
+                <strong>选择${uploadMeta.label}文件</strong>
+                <small>支持 ${uploadMeta.extensions}${uploadConfig.multiple ? "，可多选上传" : "，仅支持单个文件"}</small>
+                <em>${uploadMeta.localTip}</em>
               </label>
             ` : `
-              <div class="workflow-reference-category-nav" aria-label="${libraryLabel}分类">
-                ${workflowReferenceCategories
+              ${availableCategories.length ? `
+                <div class="workflow-reference-category-nav" aria-label="${libraryLabel}分类">
+                  ${availableCategories
                   .map((category) => `<button class="${activeCategory === category ? "active" : ""}" type="button" data-workflow-action="set-reference-category" data-reference-category="${category}">${category}</button>`)
                   .join("")}
-              </div>
-              <div class="workflow-reference-asset-grid" aria-label="${libraryLabel}${activeCategory}">
-                ${libraryAssets
+                </div>
+                <div class="workflow-reference-asset-grid" aria-label="${libraryLabel}${activeCategory}">
+                  ${libraryAssets
                   .map((asset) => `
-                    <button type="button" class="workflow-reference-asset-card">
-                      <img src="${escapeHtml(asset.image)}" alt="" />
+                    <button type="button" class="workflow-reference-asset-card is-${asset.type}" data-workflow-action="confirm-reference-modal" data-reference-asset-index="${asset.index ?? 0}">
+                      ${asset.type === "audio" ? `<span class="workflow-reference-audio-card">${icon.audio}<em>Audio</em></span>` : `<img src="${escapeHtml(asset.image)}" alt="" />`}
                       <strong>${escapeHtml(asset.name)}</strong>
                     </button>
                   `)
                   .join("")}
-              </div>
+                </div>
+              ` : `<div class="workflow-reference-empty"><strong>${emptyText}</strong><span>请切换到本地上传，或选择其他资源来源。</span></div>`}
             `}
           </section>
         </main>
         <footer>
           <button class="workflow-secondary-button" type="button" data-workflow-action="close-reference-modal">取消</button>
-          <button class="workflow-primary-button" type="button" data-workflow-action="confirm-reference-modal">确认</button>
+          ${activeSource === "local" ? `<button class="workflow-primary-button" type="button" data-workflow-action="confirm-reference-modal">确认上传</button>` : ""}
         </footer>
       </section>
     </div>
@@ -2069,6 +2558,29 @@ const renderWorkflowVideoDeleteConfirmModal = () => {
   `;
 };
 
+const renderWorkflowAudioDeleteConfirmModal = () => {
+  if (state.workflowDeleteAudioIndex === null) return "";
+  return `
+    <div class="modal-backdrop is-open workflow-keyframe-delete-modal">
+      <div class="modal-shell delete-modal-shell" role="dialog" aria-modal="true" aria-labelledby="workflow-audio-delete-title">
+        <div class="modal-header">
+          <h2 id="workflow-audio-delete-title">确认删除</h2>
+          <button class="icon-close" type="button" data-workflow-action="close-audio-delete" aria-label="关闭">
+            <img src="./assets/icons/close.svg" alt="" />
+          </button>
+        </div>
+        <div class="modal-body delete-modal-body">
+          <p>是否确认删除？生成记录仍可在生成历史查看</p>
+        </div>
+        <div class="modal-footer">
+          <button class="pill ghost-footer-pill compact-footer-pill" type="button" data-workflow-action="close-audio-delete">取消</button>
+          <button class="pill confirm-footer-pill compact-footer-pill" type="button" data-workflow-action="confirm-audio-delete">确认</button>
+        </div>
+      </div>
+    </div>
+  `;
+};
+
 const renderWorkflowKeyframeClearConfirmModal = () => {
   if (!state.workflowClearConfirmOpen) return "";
   return `
@@ -2226,6 +2738,91 @@ const appendTimelineUploadedClip = (track) => {
   });
 };
 
+const workflowReferenceResult = (actionButton) => {
+  const config = workflowUploadTargetConfig(state.workflowReferenceTarget);
+  const source = workflowReferenceSourceAvailable(state.workflowReferenceSource) ? state.workflowReferenceSource : "local";
+  const category = workflowReferenceCurrentCategory(source, config.type) || "其他";
+  const assetIndex = Number(actionButton?.dataset.referenceAssetIndex || 0);
+  const sourceLabel = workflowReferenceSources.find((item) => item.id === source)?.label || "本地";
+  const name = source === "local"
+    ? `${config.title} ${Date.now().toString().slice(-4)}${config.type === "video" ? ".mp4" : config.type === "audio" ? ".mp3" : ""}`
+    : workflowReferenceAssetName(source, category, assetIndex);
+  return {
+    type: config.type,
+    source,
+    sourceLabel,
+    category,
+    name,
+    label: name,
+    image: source === "local" ? workflowReferenceVisual(config.type, assetIndex) : workflowReferenceVisual(config.type, workflowReferenceCategories.indexOf(category) + assetIndex),
+  };
+};
+
+const appendWorkflowUploadedKeyframe = (result) => {
+  const { scene } = currentWorkflowStudioSelection();
+  scene.keyframes.push({
+    id: `uploaded-keyframe-${Date.now()}`,
+    title: `KF#${scene.keyframes.length + 1}`,
+    meta: result.source === "local" ? "本地上传" : result.sourceLabel,
+    image: result.image || "./assets/images/canvas-node-preview.png",
+    grid: false,
+    pending: false,
+    resultCount: 1,
+    assignedShotIndex: state.workflowShotIndex,
+  });
+  state.workflowResultView = "keyframes";
+};
+
+const appendWorkflowKeyframeReference = (result) => {
+  const { shot } = currentWorkflowStudioSelection();
+  if (!shot) return;
+  shot.assets = shot.assets || [];
+  shot.assets.push({
+    type: result.category && result.category !== "其他" ? result.category : "参考图",
+    name: result.name,
+    image: result.image || "./assets/images/canvas-node-preview.png",
+  });
+};
+
+const completeWorkflowUpload = (actionButton) => {
+  const target = state.workflowReferenceTarget || "keyframe";
+  const result = workflowReferenceResult(actionButton);
+  if (target === "video-image") {
+    state.workflowVideoReferences.images.push({
+      label: result.name,
+      image: result.image || "./assets/images/canvas-node-preview.png",
+      source: result.source === "local" ? "上传" : result.category,
+    });
+    state.workflowVideoDraftPrompt = `${workflowPromptEditorValue(workflowHomeView?.querySelector("[data-workflow-video-prompt]"))}\n@参考图:${result.name}`.trim();
+  } else if (target === "video-video") {
+    state.workflowVideoReferences.videos.push({
+      name: result.name,
+      label: result.name,
+      image: result.image || "./assets/images/canvas-chase-sequence.jpg",
+      source: result.source === "local" ? "上传" : result.category,
+    });
+    state.workflowVideoDraftPrompt = `${workflowPromptEditorValue(workflowHomeView?.querySelector("[data-workflow-video-prompt]"))}\n@参考视频:${result.name}`.trim();
+  } else if (target === "video-audio") {
+    state.workflowVideoReferences.audios.push({
+      name: result.name,
+      label: result.name,
+      image: result.image || "./assets/images/canvas-node-preview.png",
+      source: result.source === "local" ? "上传" : result.category,
+    });
+    state.workflowVideoDraftPrompt = `${workflowPromptEditorValue(workflowHomeView?.querySelector("[data-workflow-video-prompt]"))}\n@参考音频:${result.name}`.trim();
+  } else if (target === "audio-reference") {
+    state.workflowAudioReference = result.name;
+  } else if (target === "keyframe-reference") {
+    appendWorkflowKeyframeReference(result);
+  } else if (target === "keyframe") {
+    appendWorkflowUploadedKeyframe(result);
+  } else if (target.startsWith("timeline-")) {
+    appendTimelineUploadedClip(target.replace("timeline-", ""));
+  }
+  state.workflowReferenceModalOpen = false;
+  state.workflowReferenceTarget = "keyframe";
+};
+
 const renderWorkflowClipContextMenu = () => {
   if (!state.workflowClipContextMenu) return "";
   return `
@@ -2245,17 +2842,13 @@ const renderWorkflowMediaPreviewModal = () => {
       <button class="workflow-generate-backdrop" type="button" data-workflow-action="close-media-preview" aria-label="关闭预览"></button>
       <section class="workflow-media-preview-dialog" role="dialog" aria-modal="true" aria-label="媒体预览">
         <header>
-          <strong>${escapeHtml(preview.title || "预览")}</strong>
+          <strong>${isAudio ? "音频预览" : escapeHtml(preview.title || "预览")}</strong>
           <button type="button" data-workflow-action="close-media-preview" aria-label="关闭">✕</button>
         </header>
         <main class="${isAudio ? "is-audio" : ""}">
           ${isAudio ? `
             <div class="workflow-media-audio-preview">
-              ${workflowEditIcon.imageGeneration}
-              <strong>${escapeHtml(preview.title || "参考音频")}</strong>
-              <div class="workflow-audio-bars">
-                <b style="height:28%;"></b><b style="height:72%;"></b><b style="height:45%;"></b><b style="height:86%;"></b><b style="height:54%;"></b><b style="height:68%;"></b><b style="height:34%;"></b><b style="height:78%;"></b>
-              </div>
+              ${workflowWaveform(4, 68)}
             </div>
           ` : `
             <img src="${escapeHtml(preview.image || "./assets/images/canvas-chase-sequence.jpg")}" alt="" />
@@ -2265,7 +2858,7 @@ const renderWorkflowMediaPreviewModal = () => {
             <div class="workflow-media-player-controls">
               <button type="button" data-workflow-action="toggle-media-preview-play" aria-label="${preview.playing ? "暂停" : "播放"}">${preview.playing ? workflowPlayerIcon.pause : workflowPlayerIcon.play}</button>
               <div class="workflow-media-progress" aria-hidden="true"><span style="width:${preview.playing ? "42%" : "18%"};"></span></div>
-              <em>${preview.playing ? "00:04 / 00:10" : "00:00 / 00:10"}</em>
+              <em>${preview.playing ? "00:04" : "00:00"} / ${escapeHtml(preview.duration || "00:10")}</em>
               <label>
                 <span>音量</span>
                 <input type="range" min="0" max="100" value="${preview.volume ?? 72}" data-workflow-action="set-media-preview-volume" aria-label="调节音量" />
@@ -2314,8 +2907,11 @@ const renderWorkflowSceneKeyframePickerModal = (episodeArg = null, sceneArg = nu
   `;
 };
 
+const projectWorkflowRecycleItems = () =>
+  state.workflowRecycleItems.filter((item) => item.projectId === activeHistoryProjectId());
+
 const workflowRecycleVisibleItems = () => {
-  return state.workflowRecycleItems
+  return projectWorkflowRecycleItems()
     .filter((item) => item.type === state.workflowRecycleTab)
     .filter((item) => state.workflowRecycleFilter === "all" || item.source === state.workflowRecycleFilter)
     .sort((a, b) => {
@@ -2368,23 +2964,221 @@ const workflowRecycleCreatedAtText = (item) => {
   const date = new Date(item.createdAtMs || Date.parse(item.createdAt || ""));
   if (Number.isNaN(date.getTime())) return item.createdAt || "--";
   const pad = (value) => String(value).padStart(2, "0");
-  return `${date.getFullYear()}年${pad(date.getMonth() + 1)}月${pad(date.getDate())} 日 ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+  return `${date.getFullYear()}年${pad(date.getMonth() + 1)}月${pad(date.getDate())}日 ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+};
+
+const workflowRecycleDateLabel = (item) => {
+  const date = new Date(item.createdAtMs || Date.parse(item.createdAt || ""));
+  if (Number.isNaN(date.getTime())) return "未知日期";
+  return `${date.getMonth() + 1}月${date.getDate()}日`;
+};
+
+const workflowRecycleGroupedItems = () =>
+  workflowRecycleVisibleItems().reduce((groups, item) => {
+    const label = workflowRecycleDateLabel(item);
+    const currentGroup = groups.find((group) => group.label === label);
+    if (currentGroup) currentGroup.items.push(item);
+    else groups.push({ label, items: [item] });
+    return groups;
+  }, []);
+
+const workflowRecycleVisibleIds = () => workflowRecycleVisibleItems().map((item) => item.id);
+
+const workflowRecycleDateSelectedState = (items) => {
+  const selectedCount = items.filter((item) => state.workflowRecycleSelectedIds.has(item.id)).length;
+  if (!selectedCount) return "";
+  return selectedCount === items.length ? " is-selected" : " is-partial";
+};
+
+const renderWorkflowRecycleCard = (item, { operationMode = false } = {}) => `
+  <article class="workflow-recycle-card${state.workflowRecycleSelectedIds.has(item.id) ? " is-selected" : ""}">
+    <div class="workflow-recycle-cover-wrap">
+      ${state.workflowRecycleBatchMode ? `<button class="workflow-recycle-select-dot" type="button" data-recycle-action="toggle-select" data-recycle-id="${item.id}" aria-label="选择${escapeHtml(item.name)}"></button>` : ""}
+      <button class="workflow-recycle-cover is-${item.type}" type="button" data-recycle-action="${state.workflowRecycleBatchMode ? "toggle-select" : "preview"}" data-recycle-id="${item.id}" aria-label="预览${item.type === "image" ? "图片" : item.type === "video" ? "视频" : "音频"}">
+        ${item.type === "audio" ? `<div class="workflow-recycle-audio-cover">${icon.audio}<span>Audio</span></div>` : `<img src="${escapeHtml(item.image)}" alt="" />`}
+        <span class="workflow-recycle-source-badge">${escapeHtml(item.source)}</span>
+        ${item.type === "video" || item.type === "audio" ? `<em>${item.duration || "00:18"}</em>` : ""}
+      </button>
+      ${state.workflowRecycleBatchMode ? "" : `<div class="workflow-recycle-card-actions" aria-label="历史操作"><button type="button" data-recycle-action="preview" data-recycle-id="${item.id}" aria-label="预览" title="预览">${icon.eye}</button><button type="button" data-recycle-action="download" data-recycle-id="${item.id}" aria-label="下载" title="下载"><img src="./assets/icons/download.svg" alt="" /></button>${operationMode ? `<button type="button" data-recycle-action="use" data-recycle-id="${item.id}" aria-label="使用" title="使用">${icon.plus}</button>` : ""}</div>`}
+    </div>
+  </article>
+`;
+
+const historyTypeLabel = (type) => ({ image: "图片", video: "视频", audio: "音频" }[type] || "图片");
+
+const canvasHistoryItems = () =>
+  projectWorkflowRecycleItems()
+    .filter((item) => item.type === state.canvasHistoryTab)
+    .filter((item) => state.workflowRecycleFilter === "all" || item.source === state.workflowRecycleFilter)
+    .sort((a, b) => {
+      if (state.workflowRecycleSort === "date-asc") return a.createdAtMs - b.createdAtMs;
+      return b.createdAtMs - a.createdAtMs;
+    });
+
+const canvasHistoryDateLabel = (item) => {
+  const date = new Date(item.createdAtMs || Date.parse(item.createdAt || ""));
+  if (Number.isNaN(date.getTime())) return "未知日期";
+  return `${date.getMonth() + 1}月${date.getDate()}日`;
+};
+
+const canvasHistoryGroupedItems = () =>
+  canvasHistoryItems().reduce((groups, item) => {
+    const label = canvasHistoryDateLabel(item);
+    if (!groups.some((group) => group.label === label)) groups.push({ label, items: [] });
+    groups.find((group) => group.label === label).items.push(item);
+    return groups;
+  }, []);
+
+const canvasHistoryCount = (type) => projectWorkflowRecycleItems().filter((item) => item.type === type).length;
+
+const renderCanvasHistoryDropdown = (kind, label, options, currentValue) => `
+  <div class="workflow-recycle-dropdown ${state.workflowRecycleOpenMenu === `canvas-${kind}` ? "is-open" : ""}">
+    <button class="workflow-recycle-menu-trigger" type="button" data-canvas-history-action="toggle-menu" data-recycle-menu="canvas-${kind}" aria-expanded="${state.workflowRecycleOpenMenu === `canvas-${kind}` ? "true" : "false"}">${workflowRecycleMenuIcon(kind)}<span>${escapeHtml(label)}</span></button>
+    <div class="workflow-recycle-menu">
+      ${options.map((option) => `<button type="button" data-canvas-history-action="set-${kind}" data-recycle-value="${escapeHtml(option.value)}"><span>${escapeHtml(option.label)}</span>${option.value === currentValue ? "<i>✓</i>" : ""}</button>`).join("")}
+    </div>
+  </div>
+`;
+
+const renderCanvasHistoryThumb = (item) => {
+  const selected = state.canvasHistorySelectedIds.has(item.id);
+  const canUseHistory = ["canvas-detail", "canvas-share"].includes(state.currentView);
+  const sourceBadge = `<span class="canvas-history-source-badge">${escapeHtml(item.source)}</span>`;
+  return `
+    <article class="canvas-history-thumb${selected ? " is-selected" : ""}">
+      ${state.canvasHistoryBatchMode ? `<button class="canvas-history-select-dot" type="button" data-canvas-history-action="toggle-select" data-history-id="${item.id}" aria-label="选择${escapeHtml(item.name)}"></button>` : ""}
+      <button class="canvas-history-thumb-media" type="button" data-canvas-history-action="${state.canvasHistoryBatchMode ? "toggle-select" : "preview"}" data-history-id="${item.id}" aria-label="查看${escapeHtml(item.name)}">
+        <img src="${escapeHtml(item.image || DEFAULT_COVER)}" alt="" />
+      </button>
+      ${sourceBadge}
+      ${!state.canvasHistoryBatchMode ? `<div class="canvas-history-hover-actions"><button type="button" data-canvas-history-action="preview" data-history-id="${item.id}" aria-label="预览" title="预览">${icon.eye}</button><button type="button" data-canvas-history-action="download" data-history-id="${item.id}" aria-label="下载" title="下载"><img src="./assets/icons/download.svg" alt="" /></button>${canUseHistory ? `<button type="button" data-canvas-history-action="use" data-history-id="${item.id}" aria-label="使用" title="使用">${icon.plus}</button>` : ""}</div>` : ""}
+    </article>
+  `;
+};
+
+const renderCanvasListHistory = () => {
+  const previous = {
+    tab: state.workflowRecycleTab,
+    batchMode: state.workflowRecycleBatchMode,
+    selectedIds: state.workflowRecycleSelectedIds,
+    previewId: state.workflowRecyclePreviewId,
+    filter: state.workflowRecycleFilter,
+    sort: state.workflowRecycleSort,
+    openMenu: state.workflowRecycleOpenMenu,
+  };
+  state.workflowRecycleTab = state.canvasHistoryTab;
+  state.workflowRecycleBatchMode = state.canvasHistoryBatchMode;
+  state.workflowRecycleSelectedIds = state.canvasHistorySelectedIds;
+  state.workflowRecyclePreviewId = state.canvasHistoryPreviewId;
+  state.workflowRecycleFilter = state.canvasHistoryFilter;
+  state.workflowRecycleSort = state.canvasHistorySort;
+  state.workflowRecycleOpenMenu = state.canvasHistoryOpenMenu;
+  const markup = renderWorkflowRecycleMarkup()
+    .replaceAll("data-recycle-action", "data-canvas-history-action")
+    .replaceAll("data-recycle-id", "data-history-id")
+    .replaceAll("data-recycle-tab", "data-history-tab")
+    .replaceAll("data-recycle-date", "data-history-date");
+  Object.assign(state, {
+    workflowRecycleTab: previous.tab,
+    workflowRecycleBatchMode: previous.batchMode,
+    workflowRecycleSelectedIds: previous.selectedIds,
+    workflowRecyclePreviewId: previous.previewId,
+    workflowRecycleFilter: previous.filter,
+    workflowRecycleSort: previous.sort,
+    workflowRecycleOpenMenu: previous.openMenu,
+  });
+  return markup;
+};
+
+const renderCanvasOperationHistory = () => {
+  if (!state.canvasHistoryOpen) return "";
+  const previous = {
+    tab: state.workflowRecycleTab,
+    batchMode: state.workflowRecycleBatchMode,
+    selectedIds: state.workflowRecycleSelectedIds,
+    previewId: state.workflowRecyclePreviewId,
+    filter: state.workflowRecycleFilter,
+    sort: state.workflowRecycleSort,
+    openMenu: state.workflowRecycleOpenMenu,
+  };
+  state.workflowRecycleTab = state.canvasOperationHistoryTab;
+  state.workflowRecycleBatchMode = state.canvasOperationHistoryBatchMode;
+  state.workflowRecycleSelectedIds = state.canvasOperationHistorySelectedIds;
+  state.workflowRecyclePreviewId = state.canvasOperationHistoryPreviewId;
+  state.workflowRecycleFilter = state.canvasOperationHistoryFilter;
+  state.workflowRecycleSort = state.canvasOperationHistorySort;
+  state.workflowRecycleOpenMenu = state.canvasOperationHistoryOpenMenu;
+  const markup = renderWorkflowRecycleMarkup({ operationMode: true })
+    .replaceAll("data-recycle-action", "data-canvas-history-action")
+    .replaceAll("data-recycle-id", "data-history-id")
+    .replaceAll("data-recycle-tab", "data-history-tab")
+    .replaceAll("data-recycle-date", "data-history-date");
+  state.canvasOperationHistoryTab = state.workflowRecycleTab;
+  state.canvasOperationHistoryBatchMode = state.workflowRecycleBatchMode;
+  state.canvasOperationHistorySelectedIds = state.workflowRecycleSelectedIds;
+  state.canvasOperationHistoryPreviewId = state.workflowRecyclePreviewId;
+  state.canvasOperationHistoryFilter = state.workflowRecycleFilter;
+  state.canvasOperationHistorySort = state.workflowRecycleSort;
+  state.canvasOperationHistoryOpenMenu = state.workflowRecycleOpenMenu;
+  Object.assign(state, {
+    workflowRecycleTab: previous.tab,
+    workflowRecycleBatchMode: previous.batchMode,
+    workflowRecycleSelectedIds: previous.selectedIds,
+    workflowRecyclePreviewId: previous.previewId,
+    workflowRecycleFilter: previous.filter,
+    workflowRecycleSort: previous.sort,
+    workflowRecycleOpenMenu: previous.openMenu,
+  });
+  return `<div class="canvas-history-modal canvas-operation-history-modal" role="dialog" aria-modal="true" aria-label="生成历史"><section class="canvas-operation-history-panel"><button class="canvas-operation-history-close" type="button" data-canvas-history-action="close" aria-label="关闭" title="关闭">✕</button>${markup}</section></div>`;
+};
+
+const renderWorkflowRecycleMarkup = ({ operationMode = false } = {}) => {
+  const previewHeaderAction = operationMode ? `<button type="button" data-recycle-action="close-preview">‹ 返回</button>` : `<button class="workflow-recycle-preview-close" type="button" data-recycle-action="close-preview" aria-label="关闭预览" title="关闭预览">×</button>`;
+  const groups = workflowRecycleGroupedItems();
+  const visibleIds = workflowRecycleVisibleIds();
+  const allVisibleSelected = Boolean(visibleIds.length) && visibleIds.every((id) => state.workflowRecycleSelectedIds.has(id));
+  const projectItems = projectWorkflowRecycleItems();
+  const imageCount = projectItems.filter((item) => item.type === "image").length;
+  const videoCount = projectItems.filter((item) => item.type === "video").length;
+  const audioCount = projectItems.filter((item) => item.type === "audio").length;
+  const preview = projectItems.find((item) => item.id === state.workflowRecyclePreviewId);
+  const activeFilter = workflowRecycleFilterOptions.find((item) => item.value === state.workflowRecycleFilter)?.label || "全部来源";
+  const activeSort = workflowRecycleSortOptions.find((item) => item.value === state.workflowRecycleSort)?.label || "时间倒序";
+  return `
+    <header class="workflow-recycle-header"><div><h1>生成历史</h1></div><span class="workflow-recycle-total">共 ${projectItems.length} 项</span></header>
+    <div class="workflow-recycle-tabs" role="tablist">
+      <button class="${state.workflowRecycleTab === "image" ? "active" : ""}" type="button" data-recycle-action="tab" data-recycle-tab="image">图片 <span>${imageCount}</span></button>
+      <button class="${state.workflowRecycleTab === "video" ? "active" : ""}" type="button" data-recycle-action="tab" data-recycle-tab="video">视频 <span>${videoCount}</span></button>
+      <button class="${state.workflowRecycleTab === "audio" ? "active" : ""}" type="button" data-recycle-action="tab" data-recycle-tab="audio">音频 <span>${audioCount}</span></button>
+    </div>
+    <div class="workflow-recycle-toolbar"><div class="workflow-recycle-controls">
+      ${state.workflowRecycleBatchMode ? `<button class="workflow-recycle-select-all${allVisibleSelected ? " is-selected" : ""}" type="button" data-recycle-action="toggle-select-all">${allVisibleSelected ? "取消全选" : "全选"}</button><span>已选择 ${state.workflowRecycleSelectedIds.size} 项</span><button type="button" data-recycle-action="cancel-batch">取消</button><button class="workflow-recycle-download-selected" type="button" data-recycle-action="download-selected">下载</button>${operationMode ? `<button class="workflow-recycle-use-selected" type="button" data-recycle-action="download-use-selected">${icon.plus}使用</button>` : ""}` : `${renderWorkflowRecycleDropdown("sort", activeSort, workflowRecycleSortOptions, state.workflowRecycleSort)}${renderWorkflowRecycleDropdown("filter", activeFilter, workflowRecycleFilterOptions, state.workflowRecycleFilter)}<button type="button" data-recycle-action="enter-batch">多选</button>`}
+    </div></div>
+    ${groups.length ? `<section class="workflow-recycle-groups">${groups.map((group) => `<section class="workflow-recycle-date-group"><header>${state.workflowRecycleBatchMode ? `<button class="workflow-recycle-date-select${workflowRecycleDateSelectedState(group.items)}" type="button" data-recycle-action="toggle-date" data-recycle-date="${escapeHtml(group.label)}" aria-label="选择${escapeHtml(group.label)}全部内容"></button>` : ""}<h2 class="workflow-recycle-date-title">${escapeHtml(group.label)}</h2><span>${group.items.length} 项</span></header><div class="workflow-recycle-grid">${group.items.map((item) => renderWorkflowRecycleCard(item, { operationMode })).join("")}</div></section>`).join("")}</section>` : `<div class="workflow-recycle-empty">${icon.clock}<strong>暂无${state.workflowRecycleTab === "image" ? "图片" : state.workflowRecycleTab === "video" ? "视频" : "音频"}生成历史</strong></div>`}
+    ${preview ? `<div class="workflow-recycle-modal"><button class="workflow-recycle-backdrop" type="button" data-recycle-action="close-preview" aria-label="关闭预览"></button><section class="workflow-recycle-preview workflow-recycle-preview-unified" role="dialog" aria-modal="true" aria-label="${historyTypeLabel(preview.type)}预览"><header class="${operationMode ? "" : "has-preview-close"}">${previewHeaderAction}<strong>${historyTypeLabel(preview.type)}预览</strong><div><button type="button" data-recycle-action="download" data-recycle-id="${preview.id}">下载</button></div></header><main><div class="workflow-recycle-preview-stage">${preview.type === "audio" ? `<div class="workflow-recycle-audio-preview">${icon.audio}<span>音频</span><em>${escapeHtml(preview.duration || "00:04")}</em></div>` : `<img src="${escapeHtml(preview.image || DEFAULT_COVER)}" alt="" />`}${preview.type === "video" || preview.type === "audio" ? `<div class="workflow-recycle-player"><button type="button" data-recycle-action="toggle-play" aria-label="${state.workflowRecyclePlaying ? "暂停" : "播放"}">${state.workflowRecyclePlaying ? workflowPlayerIcon.pause : workflowPlayerIcon.play}</button><input class="workflow-recycle-progress" type="range" min="0" max="100" value="${state.workflowRecycleProgress}" data-recycle-progress aria-label="进度" /><time data-recycle-time>${workflowRecycleTimeText(state.workflowRecycleProgress, preview.duration)} / ${preview.duration || "00:18"}</time><label class="workflow-recycle-volume">♬<input type="range" min="0" max="100" value="${state.workflowRecycleVolume}" data-recycle-volume aria-label="音量" /></label></div>` : ""}</div><aside><dl><dt>${historyTypeLabel(preview.type)}信息</dt><div><span>来源</span><strong>${escapeHtml(preview.source)}</strong></div><div><span>创建时间</span><strong>${escapeHtml(workflowRecycleCreatedAtText(preview))}</strong></div><div><span>格式</span><strong>${preview.type === "image" ? "JPG" : preview.type === "video" ? "MP4" : "MP3"}</strong></div><div><span>模型</span><strong>${preview.type === "video" ? "sd2.0" : preview.type === "audio" ? "Music 1.5" : "Gemini"}</strong></div><div><span>ID</span><strong>#${escapeHtml(String(preview.id).replace(/\D/g, "").slice(-4) || "2208")}</strong></div></dl></aside></main></section></div>` : ""}
+  `;
 };
 
 const renderWorkflowRecycle = () => {
   if (!workflowRecycleContent) return;
   saveWorkflowRecycle();
-  const items = workflowRecycleVisibleItems();
-  const imageCount = state.workflowRecycleItems.filter((item) => item.type === "image").length;
-  const videoCount = state.workflowRecycleItems.filter((item) => item.type === "video").length;
-  const audioCount = state.workflowRecycleItems.filter((item) => item.type === "audio").length;
-  const preview = state.workflowRecycleItems.find((item) => item.id === state.workflowRecyclePreviewId);
+  workflowRecycleContent.innerHTML = renderWorkflowRecycleMarkup();
+  return;
+  const previewHeaderAction = `<button class="workflow-recycle-preview-close" type="button" data-recycle-action="close-preview" aria-label="关闭预览" title="关闭预览">×</button>`;
+  const groups = workflowRecycleGroupedItems();
+  const visibleIds = workflowRecycleVisibleIds();
+  const allVisibleSelected = Boolean(visibleIds.length) && visibleIds.every((id) => state.workflowRecycleSelectedIds.has(id));
+  const projectItems = projectWorkflowRecycleItems();
+  const imageCount = projectItems.filter((item) => item.type === "image").length;
+  const videoCount = projectItems.filter((item) => item.type === "video").length;
+  const audioCount = projectItems.filter((item) => item.type === "audio").length;
+  const preview = projectItems.find((item) => item.id === state.workflowRecyclePreviewId);
   const activeFilter = workflowRecycleFilterOptions.find((item) => item.value === state.workflowRecycleFilter)?.label || "全部来源";
   const activeSort = workflowRecycleSortOptions.find((item) => item.value === state.workflowRecycleSort)?.label || "时间倒序";
   workflowRecycleContent.innerHTML = `
     <header class="workflow-recycle-header">
       <div><h1>生成历史</h1></div>
-      <span class="workflow-recycle-total">共 ${state.workflowRecycleItems.length} 项</span>
+      <span class="workflow-recycle-total">共 ${projectItems.length} 项</span>
     </header>
     <div class="workflow-recycle-tabs" role="tablist">
       <button class="${state.workflowRecycleTab === "image" ? "active" : ""}" type="button" data-recycle-action="tab" data-recycle-tab="image">图片 <span>${imageCount}</span></button>
@@ -2393,25 +3187,25 @@ const renderWorkflowRecycle = () => {
     </div>
     <div class="workflow-recycle-toolbar">
       <div class="workflow-recycle-controls">
-        ${renderWorkflowRecycleDropdown("sort", activeSort, workflowRecycleSortOptions, state.workflowRecycleSort)}
-        ${renderWorkflowRecycleDropdown("filter", activeFilter, workflowRecycleFilterOptions, state.workflowRecycleFilter)}
+        ${state.workflowRecycleBatchMode ? `
+          <button class="workflow-recycle-select-all${allVisibleSelected ? " is-selected" : ""}" type="button" data-recycle-action="toggle-select-all">${allVisibleSelected ? "取消全选" : "全选"}</button>
+          <span>已选择 ${state.workflowRecycleSelectedIds.size} 项</span>
+          <button type="button" data-recycle-action="cancel-batch">取消</button>
+          <button class="workflow-recycle-download-selected" type="button" data-recycle-action="download-selected">下载</button>
+        ` : `${renderWorkflowRecycleDropdown("sort", activeSort, workflowRecycleSortOptions, state.workflowRecycleSort)}${renderWorkflowRecycleDropdown("filter", activeFilter, workflowRecycleFilterOptions, state.workflowRecycleFilter)}<button type="button" data-recycle-action="enter-batch">多选</button>`}
       </div>
     </div>
-    ${items.length ? `<section class="workflow-recycle-grid">${items.map((item) => `
-      <article class="workflow-recycle-card">
-        <button class="workflow-recycle-cover is-${item.type}" type="button" data-recycle-action="preview" data-recycle-id="${item.id}" aria-label="预览${item.type === "image" ? "图片" : item.type === "video" ? "视频" : "音频"}">
-          ${item.type === "audio" ? `<div class="workflow-recycle-audio-cover">${icon.audio}<span>Audio</span></div>` : `<img src="${escapeHtml(item.image)}" alt="" />`}
-          <span class="workflow-recycle-source-badge">${escapeHtml(item.source)}</span>
-          ${item.type === "video" || item.type === "audio" ? `<span class="workflow-recycle-play">${workflowPlayerIcon.play}</span><em>${item.duration || "00:18"}</em>` : `<span class="workflow-recycle-zoom">${icon.expand}</span>`}
-        </button>
-        <div class="workflow-recycle-card-body">
-          <time>创建于 ${escapeHtml(workflowRecycleCreatedAtText(item))}</time>
-          <div class="workflow-recycle-card-actions">
-            <button type="button" data-recycle-action="download" data-recycle-id="${item.id}" aria-label="下载" title="下载"><img src="./assets/icons/download.svg" alt="" /></button>
-          </div>
-        </div>
-      </article>`).join("")}</section>` : `<div class="workflow-recycle-empty">${icon.clock}<strong>暂无${state.workflowRecycleTab === "image" ? "图片" : state.workflowRecycleTab === "video" ? "视频" : "音频"}生成历史</strong></div>`}
-    ${preview ? `<div class="workflow-recycle-modal"><button class="workflow-recycle-backdrop" type="button" data-recycle-action="close-preview" aria-label="关闭预览"></button><section class="workflow-recycle-preview" role="dialog" aria-modal="true"><header><strong>预览</strong><button type="button" data-recycle-action="close-preview" aria-label="关闭">✕</button></header><div class="workflow-recycle-preview-stage">${preview.type === "audio" ? `<div class="workflow-recycle-audio-preview">${icon.audio}<span>音频预览</span></div>` : `<img src="${escapeHtml(preview.image)}" alt="" />`}</div>${preview.type === "video" || preview.type === "audio" ? `<div class="workflow-recycle-player"><button type="button" data-recycle-action="toggle-play" aria-label="${state.workflowRecyclePlaying ? "暂停" : "播放"}">${state.workflowRecyclePlaying ? workflowPlayerIcon.pause : workflowPlayerIcon.play}</button><input class="workflow-recycle-progress" type="range" min="0" max="100" value="${state.workflowRecycleProgress}" data-recycle-progress aria-label="进度" /><time data-recycle-time>${workflowRecycleTimeText(state.workflowRecycleProgress, preview.duration)} / ${preview.duration || "00:18"}</time><label class="workflow-recycle-volume">♬<input type="range" min="0" max="100" value="${state.workflowRecycleVolume}" data-recycle-volume aria-label="音量" /></label></div>` : ""}<footer><span>创建于 ${escapeHtml(workflowRecycleCreatedAtText(preview))}</span><div class="workflow-recycle-preview-actions"><button type="button" data-recycle-action="download" data-recycle-id="${preview.id}" aria-label="下载" title="下载"><img src="./assets/icons/download.svg" alt="" /></button></div></footer></section></div>` : ""}
+    ${groups.length ? `<section class="workflow-recycle-groups">${groups.map((group) => `
+      <section class="workflow-recycle-date-group">
+        <header>
+          ${state.workflowRecycleBatchMode ? `<button class="workflow-recycle-date-select${workflowRecycleDateSelectedState(group.items)}" type="button" data-recycle-action="toggle-date" data-recycle-date="${escapeHtml(group.label)}" aria-label="选择${escapeHtml(group.label)}全部内容"></button>` : ""}
+          <h2 class="workflow-recycle-date-title">${escapeHtml(group.label)}</h2>
+          <span>${group.items.length} 项</span>
+        </header>
+        <div class="workflow-recycle-grid">${group.items.map(renderWorkflowRecycleCard).join("")}</div>
+      </section>
+    `).join("")}</section>` : `<div class="workflow-recycle-empty">${icon.clock}<strong>暂无${state.workflowRecycleTab === "image" ? "图片" : state.workflowRecycleTab === "video" ? "视频" : "音频"}生成历史</strong></div>`}
+    ${preview ? `<div class="workflow-recycle-modal"><button class="workflow-recycle-backdrop" type="button" data-recycle-action="close-preview" aria-label="关闭预览"></button><section class="workflow-recycle-preview workflow-recycle-preview-unified" role="dialog" aria-modal="true" aria-label="${historyTypeLabel(preview.type)}预览"><header class="${operationMode ? "" : "has-preview-close"}">${previewHeaderAction}<strong>${historyTypeLabel(preview.type)}预览</strong><div><button type="button" data-recycle-action="download" data-recycle-id="${preview.id}">下载</button></div></header><main><div class="workflow-recycle-preview-stage">${preview.type === "audio" ? `<div class="workflow-recycle-audio-preview">${icon.audio}<span>音频</span><em>${escapeHtml(preview.duration || "00:04")}</em></div>` : `<img src="${escapeHtml(preview.image || DEFAULT_COVER)}" alt="" />`}${preview.type === "video" || preview.type === "audio" ? `<div class="workflow-recycle-player"><button type="button" data-recycle-action="toggle-play" aria-label="${state.workflowRecyclePlaying ? "暂停" : "播放"}">${state.workflowRecyclePlaying ? workflowPlayerIcon.pause : workflowPlayerIcon.play}</button><input class="workflow-recycle-progress" type="range" min="0" max="100" value="${state.workflowRecycleProgress}" data-recycle-progress aria-label="进度" /><time data-recycle-time>${workflowRecycleTimeText(state.workflowRecycleProgress, preview.duration)} / ${preview.duration || "00:18"}</time><label class="workflow-recycle-volume">♬<input type="range" min="0" max="100" value="${state.workflowRecycleVolume}" data-recycle-volume aria-label="音量" /></label></div>` : ""}</div><aside><dl><dt>${historyTypeLabel(preview.type)}信息</dt><div><span>来源</span><strong>${escapeHtml(preview.source)}</strong></div><div><span>创建时间</span><strong>${escapeHtml(workflowRecycleCreatedAtText(preview))}</strong></div><div><span>格式</span><strong>${preview.type === "image" ? "JPG" : preview.type === "video" ? "MP4" : "MP3"}</strong></div><div><span>模型</span><strong>${preview.type === "video" ? "sd2.0" : preview.type === "audio" ? "Music 1.5" : "Gemini"}</strong></div><div><span>ID</span><strong>#${escapeHtml(String(preview.id).replace(/\D/g, "").slice(-4) || "2208")}</strong></div></dl></aside></main></section></div>` : ""}
   `;
 };
 
@@ -2422,6 +3216,7 @@ const addWorkflowRecycleItem = (item) => {
     createdAt: `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")} ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}`,
     createdAtMs: now.getTime(),
     ...item,
+    projectId: item.projectId || activeHistoryProjectId(),
     source: normalizeWorkflowRecycleSource(item.source || "拍摄台"),
   });
   saveWorkflowRecycle();
@@ -2433,7 +3228,7 @@ const renderWorkflowStudio = () => {
   if (!workflowEpisodeSelect || !workflowSceneSelect || !workflowScriptCard || !workflowShotTable || !workflowShotSummary || !workflowKeyframeGrid) return;
   workflowHomeView?.classList.toggle(
     "is-workflow-modal-open",
-    Boolean(state.workflowGenerateMode || state.workflowPreviewFrameIndex !== null || state.workflowDetailFrameIndex !== null || state.workflowEditFrameIndex !== null || state.workflowDeleteFrameIndex !== null || state.workflowDeleteVideoIndex !== null || state.workflowClearConfirmOpen || state.workflowEditDeleteVersionKey || state.workflowPreviewModalOpen || state.workflowReferenceModalOpen || state.workflowMediaPreview || state.workflowSceneKeyframePickerOpen),
+    Boolean(state.workflowGenerateMode || state.workflowPreviewFrameIndex !== null || state.workflowDetailFrameIndex !== null || state.workflowEditFrameIndex !== null || state.workflowDeleteFrameIndex !== null || state.workflowDeleteVideoIndex !== null || state.workflowDeleteAudioIndex !== null || state.workflowClearConfirmOpen || state.workflowEditDeleteVersionKey || state.workflowPreviewModalOpen || state.workflowReferenceModalOpen || state.workflowMediaPreview || state.workflowSceneKeyframePickerOpen),
   );
   const episodeIndex = Math.min(state.workflowEpisodeIndex, workflowStudioData.length - 1);
   const episode = workflowStudioData[episodeIndex];
@@ -2496,6 +3291,8 @@ const renderWorkflowStudio = () => {
     state.workflowResultView = "keyframes";
   } else if (state.workflowStage === "video" && !["generator", "videos"].includes(state.workflowResultView)) {
     state.workflowResultView = "generator";
+  } else if (state.workflowStage === "audio" && !["audio-generator", "audios"].includes(state.workflowResultView)) {
+    state.workflowResultView = "audio-generator";
   }
 
   const filterValue = state.workflowKeyframeFilter;
@@ -2562,13 +3359,17 @@ const renderWorkflowStudio = () => {
       state.workflowStage === "video"
         ? ""
         : state.workflowStage === "audio"
-          ? "沿用同一条拍摄台时间线"
+          ? ""
           : "可拖入底部时间线";
   }
   if (state.workflowStage === "video" && state.workflowResultView === "videos") {
     workflowKeyframeGrid.innerHTML = renderWorkflowVideoResults(episode, scene, episodeIndex, sceneIndex);
   } else if (state.workflowStage === "video" && state.workflowResultView === "generator") {
     workflowKeyframeGrid.innerHTML = renderWorkflowVideoGenerator(episode, scene);
+  } else if (state.workflowStage === "audio" && state.workflowResultView === "audios") {
+    workflowKeyframeGrid.innerHTML = renderWorkflowAudioResults(scene);
+  } else if (state.workflowStage === "audio") {
+    workflowKeyframeGrid.innerHTML = renderWorkflowAudioGenerator(scene);
   } else {
     workflowKeyframeGrid.innerHTML = keyframeResultHtml;
   }
@@ -2578,7 +3379,7 @@ const renderWorkflowStudio = () => {
     const label = clip.querySelector("em");
     if (item && label) label.textContent = workflowKeyframeDisplayName(episode, scene, item.frame, item.assignedShotIndex);
   });
-  if (workflowGenerateModalRoot) workflowGenerateModalRoot.innerHTML = `${renderWorkflowGenerateModal()}${renderWorkflowFrameModal()}${renderWorkflowEditModal()}${renderWorkflowEditCostConfirmModal()}${renderWorkflowKeyframeDeleteConfirmModal()}${renderWorkflowVideoDeleteConfirmModal()}${renderWorkflowKeyframeClearConfirmModal()}${renderWorkflowEditVersionDeleteConfirmModal()}${renderWorkflowTimelinePreviewModal()}${renderWorkflowReferenceModal()}${renderWorkflowMediaPreviewModal()}${renderWorkflowSceneKeyframePickerModal(episode, scene)}${renderWorkflowClipContextMenu()}`;
+  if (workflowGenerateModalRoot) workflowGenerateModalRoot.innerHTML = `${renderWorkflowGenerateModal()}${renderWorkflowFrameModal()}${renderWorkflowEditModal()}${renderWorkflowEditCostConfirmModal()}${renderWorkflowKeyframeDeleteConfirmModal()}${renderWorkflowVideoDeleteConfirmModal()}${renderWorkflowAudioDeleteConfirmModal()}${renderWorkflowKeyframeClearConfirmModal()}${renderWorkflowEditVersionDeleteConfirmModal()}${renderWorkflowTimelinePreviewModal()}${renderWorkflowReferenceModal()}${renderWorkflowMediaPreviewModal()}${renderWorkflowSceneKeyframePickerModal(episode, scene)}${renderWorkflowClipContextMenu()}`;
 };
 
 const currentItems = () => {
@@ -2944,14 +3745,15 @@ const syncHeader = () => {
   const inCreatorCenter = state.currentView === "creator-center";
   const inReviewCenter = state.currentView === "review-center";
   const inCanvasView = state.currentView === "canvases";
+  const inCanvasHistory = inCanvasView && state.canvasHistoryOpen;
   const inWorkflowHome = state.currentView === "workflow-home";
   const inCanvasDetail = state.currentView === "canvas-detail";
   const inCanvasShare = state.currentView === "canvas-share";
   const inCanvasSurface = inCanvasDetail || inCanvasShare;
   const project = currentProject();
   backTrigger.classList.toggle("is-visible", inCanvasView);
-  pageTitle.textContent = inCanvasView ? `${project?.name || ""} · 画布列表` : "我的项目";
-  pageSubtitle.textContent = inCanvasView ? "管理项目下的 AI画布创作" : "管理您的 AI影视创作";
+  pageTitle.textContent = inCanvasHistory ? `${project?.name || ""} · 生成历史` : inCanvasView ? `${project?.name || ""} · 画布列表` : "我的项目";
+  pageSubtitle.textContent = inCanvasHistory ? "查看项目下所有模式的生成记录" : inCanvasView ? "管理项目下的 AI画布创作" : "管理您的 AI影视创作";
   createLabel.textContent = inCanvasView ? "新建画布" : "创建新项目";
   homeView.classList.toggle("is-hidden", !inHomeView);
   creatorCenterView?.classList.toggle("is-hidden", !inCreatorCenter);
@@ -2959,6 +3761,12 @@ const syncHeader = () => {
   workflowHomeView?.classList.toggle("is-hidden", !inWorkflowHome);
   listView.classList.toggle("is-hidden", inHomeView || inCreatorCenter || inReviewCenter || inWorkflowHome || inCanvasSurface);
   listView.classList.toggle("canvas-list-mode", state.currentView === "canvases");
+  listView.classList.toggle("canvas-history-page", inCanvasHistory);
+  document.querySelector("#list-view .heading-row")?.classList.toggle("is-hidden", inCanvasHistory);
+  document.querySelector("#list-view .toolbar")?.classList.toggle("is-hidden", inCanvasHistory);
+  document.querySelector("#list-view .batch-bottom-tools")?.classList.toggle("is-hidden", inCanvasHistory);
+  document.querySelector("#list-view .project-grid")?.classList.toggle("is-hidden", inCanvasHistory);
+  canvasHistoryPage?.classList.toggle("is-visible", inCanvasHistory);
   detailView.classList.toggle("is-open", inCanvasSurface);
   detailView.classList.toggle("is-share-view", inCanvasShare);
   const topbar = document.querySelector(".topbar");
@@ -2967,6 +3775,9 @@ const syncHeader = () => {
   topbar?.classList.toggle("is-canvas-share", inCanvasShare);
   topbarNav?.classList.toggle("is-hidden", inCanvasView || inWorkflowHome || inCanvasSurface);
   sidebar.classList.toggle("is-visible", state.currentView === "canvases");
+  sidebar.querySelectorAll("[data-canvas-nav]").forEach((item) => {
+    item.classList.toggle("active", (inCanvasHistory && item.dataset.canvasNav === "history") || (!inCanvasHistory && item.dataset.canvasNav === "list"));
+  });
   sidebarProjectName.textContent = project?.name || "测试项目";
   sidebarRatioTag.textContent = project?.ratio || "16:9 横屏";
   sidebarStyleTag.textContent = project?.style || "电影感";
@@ -2976,7 +3787,6 @@ const syncHeader = () => {
   if (workflowMainProjectName) workflowMainProjectName.textContent = project?.name || "test";
   if (workflowMainStyleTag) workflowMainStyleTag.textContent = project?.style || "写实";
   avatarPanel.classList.toggle("is-open", state.avatarOpen);
-  noticePanel.classList.toggle("is-open", state.noticeOpen);
   topbarNav?.querySelectorAll("[data-nav-target]").forEach((item) => {
     const target = item.dataset.navTarget;
     const active =
@@ -3016,6 +3826,7 @@ const renderGrid = () => {
   }
   if (state.currentView === "workflow-home") {
     const inRecycle = state.workflowPage === "recycle";
+    workflowHomeView?.classList.toggle("is-recycle-page", inRecycle);
     workflowStudioMain?.classList.toggle("is-hidden", inRecycle);
     workflowRecycleMain?.classList.toggle("is-hidden", !inRecycle);
     workflowHomeView?.querySelectorAll(".workflow-nav-item").forEach((item) => {
@@ -3029,6 +3840,12 @@ const renderGrid = () => {
     renderCanvasDetail();
     return;
   }
+  if (state.currentView === "canvases" && state.canvasHistoryOpen) {
+    if (canvasHistoryPage) canvasHistoryPage.innerHTML = renderCanvasListHistory();
+    grid.innerHTML = "";
+    return;
+  }
+  if (canvasHistoryPage) canvasHistoryPage.innerHTML = "";
   syncBatchBar();
   sortLabel.textContent = sortLabelMap[state.sortKey];
   const items = currentItems();
@@ -3083,6 +3900,10 @@ const renderGrid = () => {
 };
 
 const renderCanvasDetail = () => {
+  if (state.currentView === "canvases") {
+    renderGrid();
+    return;
+  }
   const project = currentProject();
   const canvas = currentCanvas();
   if (!project || !canvas) return;
@@ -3130,6 +3951,9 @@ const renderCanvasDetail = () => {
     }
     if (node.type === "audio") {
       return { leftX: node.x + 24, rightX: node.x + 626, centerY: node.y + 190 };
+    }
+    if (node.type === "video") {
+      return { leftX: node.x + 46, rightX: node.x + 914, centerY: node.y + 272 };
     }
     return { leftX: node.x + 89, rightX: node.x + 539, centerY: node.y + 185 };
   };
@@ -3346,6 +4170,78 @@ const renderCanvasDetail = () => {
           </article>
         `;
       }
+      if (node.type === "video") {
+        const modeTabs = [
+          { key: "text-video", label: "文生视频" },
+          { key: "first-frame", label: "纯首帧" },
+          { key: "first-last-frame", label: "首尾帧" },
+          { key: "reference-image", label: "参考图" },
+        ];
+        return `
+          <article class="canvas-canvas-node canvas-video-node${selected ? " is-selected" : ""}" data-node-id="${node.id}" style="left:${node.x}px; top:${node.y}px;">
+            <div class="canvas-video-node-head"${nodeDragAttr}>
+              <div class="canvas-node-title-meta">
+                <span class="canvas-node-title-icon is-video" aria-hidden="true">${icon.video}</span>
+                <span>${escapeHtml(node.name)}</span>
+              </div>
+              ${shareView ? "" : `<button class="canvas-video-upload-button" type="button" aria-label="上传视频">${icon.expand}</button>`}
+            </div>
+
+            ${sideAnchors}
+
+            <button class="canvas-video-frame" type="button" data-node-id="${node.id}"${nodeDragAttr}>
+              <span class="canvas-video-empty-button" aria-hidden="true">${icon.video}</span>
+            </button>
+
+            <div class="canvas-video-prompt-card">
+              <button class="canvas-video-expand-button" type="button" aria-label="展开提示词">${icon.expand}</button>
+              <div class="canvas-video-mode-tabs" role="tablist" aria-label="视频生成模式">
+                ${modeTabs
+                  .map(
+                    (tab) => `
+                      <button class="${node.mode === tab.key ? "is-active" : ""}" type="button" data-node-action="set-video-mode" data-node-id="${node.id}" data-video-mode="${tab.key}">
+                        ${escapeHtml(tab.label)}
+                      </button>
+                    `,
+                  )
+                  .join("")}
+              </div>
+              <textarea
+                class="canvas-video-textarea"
+                data-node-field="prompt"
+                data-node-id="${node.id}"
+                rows="4"
+                placeholder="描述你想要生成的画面内容，输入 @ 引用素材"
+                ${shareView ? " readonly" : ""}
+              >${escapeHtml(node.prompt || "")}</textarea>
+              <div class="canvas-video-footer-row">
+                <div class="canvas-video-footer-left">
+                  <span class="canvas-video-brain" aria-hidden="true">${icon.sparkles}</span>
+                  <label class="canvas-video-model-select">
+                    <select data-node-field="model" data-node-id="${node.id}" aria-label="视频模型">
+                      ${renderSelectOptions(CANVAS_VIDEO_MODELS, node.model)}
+                    </select>
+                  </label>
+                  <span class="canvas-video-caret">⌄</span>
+                  <span class="canvas-video-divider"></span>
+                  <span class="canvas-video-param">${icon.phone}<strong>${escapeHtml(node.duration)}</strong><span>·</span><strong>${escapeHtml(node.quality)}</strong><span>·</span><strong>${escapeHtml(node.ratio)}</strong></span>
+                  <span class="canvas-video-audio">声 ${icon.volume}</span>
+                  ${
+                    isSeedanceVideoModel(node.model) && !shareView
+                      ? `<button class="canvas-video-optimize-button" type="button" data-node-action="optimize-video-prompt" data-node-id="${node.id}" title="优化提示词" aria-label="优化提示词">${icon.sparkles}</button>`
+                      : ""
+                  }
+                </div>
+                <div class="canvas-video-footer-right">
+                  <span class="canvas-video-cost">${icon.sparkles}<strong>${escapeHtml(node.cost)}</strong></span>
+                  <span class="canvas-video-balance">余额：${escapeHtml(node.balance)} 星钻</span>
+                  ${shareView ? "" : `<button class="canvas-node-send-button" type="button" data-node-action="focus" data-node-id="${node.id}"><img src="${CANVAS_NODE_SEND}" alt="" /></button>`}
+                </div>
+              </div>
+            </div>
+          </article>
+        `;
+      }
       return `
         <article class="canvas-canvas-node canvas-image-node${selected ? " is-selected" : ""}" data-node-id="${node.id}" style="left:${node.x}px; top:${node.y}px;">
           ${selected ? `
@@ -3354,7 +4250,13 @@ const renderCanvasDetail = () => {
               <button class="canvas-toolbar-chip" type="button" data-toolbar-action="panorama" data-node-id="${node.id}"><img src="${CANVAS_NODE_TOOLBAR_FULLSCREEN}" alt="" /><span>全景</span></button>
               <div class="canvas-toolbar-chip"><img src="${CANVAS_NODE_TOOLBAR_MULTI}" alt="" /><span>多角度</span></div>
               <div class="canvas-toolbar-chip"><img src="${CANVAS_NODE_TOOLBAR_LIGHT}" alt="" /><span>打光</span></div>
-              <div class="canvas-toolbar-chip"><img src="${CANVAS_NODE_TOOLBAR_GRID}" alt="" /><span>九宫格</span></div>
+              <div class="canvas-toolbox-anchor">
+                <button class="canvas-toolbar-chip${state.canvasToolboxNodeId === node.id ? " is-active" : ""}" type="button" data-toolbar-action="toggle-toolbox" data-node-id="${node.id}" aria-haspopup="menu" aria-expanded="${state.canvasToolboxNodeId === node.id ? "true" : "false"}">
+                  <img src="${CANVAS_NODE_TOOLBAR_TOOLBOX}" alt="" />
+                  <span>工具箱</span>
+                </button>
+                ${state.canvasToolboxNodeId === node.id ? renderCanvasToolboxMenu(node.id) : ""}
+              </div>
               <div class="canvas-toolbar-chip"><span class="canvas-mask-icon canvas-erase-icon"><img src="${CANVAS_NODE_TOOLBAR_ERASE_MASK}" alt="" /><img src="${CANVAS_NODE_TOOLBAR_ERASE}" alt="" /></span><span>擦除</span></div>
               <button class="canvas-toolbar-chip" type="button" data-toolbar-action="wash-image" data-node-id="${node.id}"><span class="canvas-toolbar-inline-icon">${icon.refresh}</span><span>洗图</span></button>
               <div class="canvas-toolbar-chip"><img src="${CANVAS_NODE_TOOLBAR_SLICE}" alt="" /><span>宫格切分</span></div>
@@ -3384,8 +4286,18 @@ const renderCanvasDetail = () => {
 
           ${sideAnchors}
 
-          <div class="canvas-node-prompt-card">
-            <textarea class="canvas-node-textarea" data-node-field="prompt" data-node-id="${node.id}" rows="3"${shareView ? " readonly" : ""}>${escapeHtml(node.prompt)}</textarea>
+          <div class="canvas-node-prompt-card${node.toolTag ? " has-tool-tag" : ""}">
+            ${node.toolTag ? `
+              <div class="canvas-node-tool-prompt-line">
+                <div class="canvas-node-tool-tag">
+                  <span class="canvas-node-tool-tag-icon"><img src="${CANVAS_NODE_TOOLBAR_TOOLBOX}" alt="" /></span>
+                  <span>${escapeHtml(node.toolTag.label)}</span>
+                  ${shareView ? "" : `<button type="button" data-node-action="remove-tool-tag" data-node-id="${node.id}" aria-label="删除${escapeHtml(node.toolTag.label)}标签">×</button>`}
+                </div>
+                <span class="canvas-node-tool-placeholder">${escapeHtml(node.promptPlaceholder || "")}</span>
+              </div>
+            ` : ""}
+            <textarea class="canvas-node-textarea${node.toolTag ? " has-tool-tag" : ""}" data-node-field="prompt" data-node-id="${node.id}" rows="3" placeholder="${node.toolTag ? "" : escapeHtml(node.promptPlaceholder || "")}"${shareView ? " readonly" : ""}>${escapeHtml(node.prompt)}</textarea>
 
             <div class="canvas-node-footer-row">
               <div class="canvas-node-footer-left">
@@ -3394,7 +4306,7 @@ const renderCanvasDetail = () => {
                 <div class="canvas-node-meta-chip"><img src="${CANVAS_NODE_COUNT}" alt="" /><span>${escapeHtml(node.outputCount)}</span></div>
               </div>
               <div class="canvas-node-footer-right">
-                ${shareView ? "" : `<button class="canvas-node-camera-button${node.cameraControl?.enabled ? " is-active" : ""}" type="button" data-node-action="open-camera-control" data-node-id="${node.id}" aria-label="摄像机控制">${icon.camera}</button>`}
+                ${shareView ? "" : `<button class="canvas-node-camera-button${node.cameraControl?.enabled ? " is-active" : ""}${node.toolTag ? " is-disabled" : ""}" type="button" data-node-action="open-camera-control" data-node-id="${node.id}" aria-label="摄像机控制"${node.toolTag ? " disabled title=\"删除工具标签后可调整摄像机参数\"" : ""}>${icon.camera}</button>`}
                 <div class="canvas-node-like-chip"><img src="${CANVAS_NODE_LIKE}" alt="" /><span>${escapeHtml(node.likes)}</span></div>
                 ${shareView ? "" : `<button class="canvas-node-send-button" type="button" data-node-action="upload-image" data-node-id="${node.id}"><img src="${CANVAS_NODE_SEND}" alt="" /></button>`}
               </div>
@@ -3473,6 +4385,8 @@ const renderCanvasDetail = () => {
     : "";
   const washConfirmNode = state.washConfirmNodeId ? findNodeById(state.washConfirmNodeId) : null;
   const reversePromptNode = state.reversePromptConfirmNodeId ? findNodeById(state.reversePromptConfirmNodeId) : null;
+  const portraitTextureNode = state.portraitTextureConfirmNodeId ? findNodeById(state.portraitTextureConfirmNodeId) : null;
+  const portraitTextureModel = selectedPortraitTextureModel();
   const audioVoiceNode = state.audioVoiceNodeId ? findNodeById(state.audioVoiceNodeId) : null;
   const templateDraftNode = state.canvasTemplateDraftNodeId ? findNodeById(state.canvasTemplateDraftNodeId) : null;
   const templateDeleteTarget = state.canvasTemplateDeleteTargetId ? currentProject()?.canvasTemplates?.find((template) => template.id === state.canvasTemplateDeleteTargetId) : null;
@@ -3510,6 +4424,31 @@ const renderCanvasDetail = () => {
           <div class="canvas-action-modal-footer">
             <button class="canvas-action-modal-button is-ghost" type="button" data-canvas-action="close-wash-confirm">取消</button>
             <button class="canvas-action-modal-button is-primary" type="button" data-canvas-action="confirm-wash-image">确认</button>
+          </div>
+        </div>
+      </div>
+    `
+    : portraitTextureNode
+    ? `
+      <div class="canvas-action-modal">
+        <button class="canvas-action-modal-backdrop" type="button" data-canvas-action="close-portrait-texture-confirm" aria-label="关闭人像质感调节弹窗"></button>
+        <div class="canvas-action-modal-panel canvas-portrait-texture-modal-panel" role="dialog" aria-modal="true" aria-labelledby="portrait-texture-title">
+          <div class="canvas-action-modal-header">
+            <strong id="portrait-texture-title">确认</strong>
+            <button class="canvas-action-modal-close" type="button" data-canvas-action="close-portrait-texture-confirm" aria-label="关闭人像质感调节弹窗">✕</button>
+          </div>
+          <div class="canvas-action-modal-body canvas-portrait-texture-body">
+            <label class="canvas-portrait-texture-field">
+              <span>选择模型</span>
+              <select data-canvas-portrait-model>
+                ${PORTRAIT_TEXTURE_MODELS.map((model) => `<option value="${escapeHtml(model.id)}"${model.id === portraitTextureModel.id ? " selected" : ""}>${escapeHtml(model.name)}</option>`).join("")}
+              </select>
+            </label>
+          </div>
+          <div class="canvas-action-modal-footer">
+            <span class="canvas-portrait-texture-cost"><img src="${CANVAS_NODE_CREDIT}" alt="" /><strong>${portraitTextureModel.cost}</strong></span>
+            <button class="canvas-action-modal-button is-ghost" type="button" data-canvas-action="close-portrait-texture-confirm">取消</button>
+            <button class="canvas-action-modal-button is-primary" type="button" data-canvas-action="confirm-portrait-texture">确认</button>
           </div>
         </div>
       </div>
@@ -3680,7 +4619,7 @@ const renderCanvasDetail = () => {
           <div class="canvas-add-line"><img src="${CANVAS_ADD_PANEL_LINE}" alt="" /></div>
           <button class="canvas-add-button is-image" type="button" data-canvas-action="create-image-node"><img src="${CANVAS_ADD_PANEL_IMAGE}" alt="" /><span>图片</span></button>
           <div class="canvas-add-line"><img src="${CANVAS_ADD_PANEL_LINE}" alt="" /></div>
-          <button class="canvas-add-button is-video" type="button" data-canvas-action="create-node"><img src="${CANVAS_ADD_PANEL_TEXT}" alt="" /><span>视频</span></button>
+          <button class="canvas-add-button is-video" type="button" data-canvas-action="create-video-node"><span class="canvas-add-inline-icon">${icon.video}</span><span>视频</span></button>
           <div class="canvas-add-line"><img src="${CANVAS_ADD_PANEL_LINE}" alt="" /></div>
           <button class="canvas-add-button is-audio" type="button" data-canvas-action="create-audio-node"><span class="canvas-add-inline-icon">${icon.audio}</span><span>音频</span></button>
           <div class="canvas-add-line"><img src="${CANVAS_ADD_PANEL_LINE}" alt="" /></div>
@@ -3742,13 +4681,14 @@ const renderCanvasDetail = () => {
           <button class="canvas-left-tool" type="button" aria-label="搜索"><img src="${hasNodes ? CANVAS_NODE_LEFT_SEARCH : CANVAS_EMPTY_LEFT_SEARCH}" alt="" /></button>
           <button class="canvas-left-tool" type="button" data-canvas-action="toggle-template-panel" aria-label="模板库" title="模板库">${icon.layoutBoard}</button>
           <button class="canvas-left-tool" type="button" aria-label="视图"><img src="${hasNodes ? CANVAS_NODE_LEFT_GRID : CANVAS_EMPTY_LEFT_GRID}" alt="" /></button>
-          <button class="canvas-left-tool" type="button" aria-label="历史"><img src="${hasNodes ? CANVAS_NODE_LEFT_CLOCK : CANVAS_EMPTY_LEFT_CLOCK}" alt="" /></button>
+          <button class="canvas-left-tool${state.canvasHistoryOpen ? " is-active" : ""}" type="button" data-canvas-action="toggle-history" aria-label="生成历史" title="生成历史"><img src="${hasNodes ? CANVAS_NODE_LEFT_CLOCK : CANVAS_EMPTY_LEFT_CLOCK}" alt="" /></button>
           <button class="canvas-left-tool" type="button" aria-label="删除"><img src="${hasNodes ? CANVAS_NODE_LEFT_DELETE : CANVAS_EMPTY_LEFT_DELETE}" alt="" /></button>
         </div>`}
 
         ${shareView ? "" : addPanelMarkup}
         ${shareView ? "" : templatePanelMarkup}
         ${shareView ? "" : contextMenuMarkup}
+        ${shareView ? "" : renderCanvasOperationHistory()}
 
         <div class="canvas-bottom-dock">
           <button class="canvas-dock-button" type="button" aria-label="网格"><img src="${dockGridIcon}" alt="" /></button>
@@ -3793,6 +4733,17 @@ const renderCanvasDetail = () => {
       event.stopPropagation();
       event.preventDefault();
       createNodeAtViewportCenter(CANVAS_NODE_PREVIEW);
+    };
+    trigger.onpointerdown = (event) => {
+      event.stopPropagation();
+      event.preventDefault();
+    };
+  });
+  canvasStage.querySelectorAll('[data-canvas-action="create-video-node"]').forEach((trigger) => {
+    trigger.onclick = (event) => {
+      event.stopPropagation();
+      event.preventDefault();
+      createVideoNodeAtViewportCenter();
     };
     trigger.onpointerdown = (event) => {
       event.stopPropagation();
@@ -3877,6 +4828,38 @@ const renderCanvasDetail = () => {
       deleteTemplate();
     };
   });
+  canvasStage.querySelectorAll("[data-toolbox-action]").forEach((trigger) => {
+    const runToolboxAction = () => {
+      const nodeId = trigger.dataset.nodeId;
+      const action = trigger.dataset.toolboxAction;
+      if (action === "portrait-texture") {
+        openPortraitTextureConfirm(nodeId);
+        return;
+      }
+      const toolMap = {
+        storyboard: "storyboard",
+        "schedule-storyboard": "scheduleStoryboard",
+        "character-sheet": "characterSheet",
+        "scene-sheet": "sceneSheet",
+        "product-sheet": "productSheet",
+        "lighting-correct": "lightingCorrect",
+      };
+      if (toolMap[action]) {
+        createStoryToolNode(nodeId, toolMap[action]);
+        return;
+      }
+      state.canvasToolboxNodeId = null;
+      renderCanvasDetail();
+    };
+    trigger.onclick = (event) => {
+      event.stopPropagation();
+      event.preventDefault();
+      runToolboxAction();
+    };
+    trigger.onpointerdown = (event) => {
+      event.stopPropagation();
+    };
+  });
   canvasStage.querySelectorAll("[data-context-action]").forEach((trigger) => {
     const runContextAction = () => {
       const nodeId = trigger.dataset.nodeId;
@@ -3938,16 +4921,24 @@ const getNodeTemplateCover = (node) => {
 const closeCanvasPopups = () => {
   state.canvasAddPanelOpen = false;
   state.canvasTemplatePanelOpen = false;
+  state.canvasHistoryOpen = false;
+  state.canvasHistoryPreviewId = null;
+  state.canvasHistoryBatchMode = false;
+  state.canvasHistorySelectedIds.clear();
   state.canvasContextMenu = null;
+  state.canvasToolboxNodeId = null;
   state.washConfirmNodeId = null;
   state.reversePromptConfirmNodeId = null;
+  state.portraitTextureConfirmNodeId = null;
   state.audioVoiceNodeId = null;
 };
 
 const openCanvasAddPanel = () => {
   state.canvasAddPanelOpen = true;
   state.canvasTemplatePanelOpen = false;
+  state.canvasHistoryOpen = false;
   state.canvasContextMenu = null;
+  state.canvasToolboxNodeId = null;
   state.canvasAddPanelGuardUntil = Date.now() + 250;
   renderCanvasDetail();
 };
@@ -3955,7 +4946,9 @@ const openCanvasAddPanel = () => {
 const toggleCanvasAddPanel = () => {
   state.canvasAddPanelOpen = !state.canvasAddPanelOpen;
   state.canvasTemplatePanelOpen = false;
+  state.canvasHistoryOpen = false;
   state.canvasContextMenu = null;
+  state.canvasToolboxNodeId = null;
   state.canvasAddPanelGuardUntil = Date.now() + 250;
   renderCanvasDetail();
 };
@@ -3963,9 +4956,201 @@ const toggleCanvasAddPanel = () => {
 const toggleCanvasTemplatePanel = () => {
   state.canvasTemplatePanelOpen = !state.canvasTemplatePanelOpen;
   state.canvasAddPanelOpen = false;
+  state.canvasHistoryOpen = false;
   state.canvasContextMenu = null;
+  state.canvasToolboxNodeId = null;
   state.canvasAddPanelGuardUntil = Date.now() + 250;
   renderCanvasDetail();
+};
+
+const toggleCanvasHistory = () => {
+  state.canvasHistoryOpen = !state.canvasHistoryOpen;
+  state.canvasAddPanelOpen = false;
+  state.canvasTemplatePanelOpen = false;
+  state.canvasContextMenu = null;
+  state.canvasToolboxNodeId = null;
+  state.canvasHistoryPreviewId = null;
+  state.canvasAddPanelGuardUntil = Date.now() + 250;
+  renderCanvasDetail();
+};
+
+const useCanvasHistoryItem = (item, offset = { x: 0, y: 0 }) => {
+  if (!item) return;
+  if (item.type === "video") {
+    createVideoNodeAtViewportCenter(offset);
+    const node = currentCanvas()?.nodes.at(-1);
+    if (node?.type === "video") {
+      node.name = item.name || node.name;
+      node.prompt = `${item.source || "历史"}生成视频`;
+      saveProjectsState();
+      renderCanvasDetail();
+    }
+    return;
+  }
+  if (item.type === "audio") {
+    createAudioNodeAtViewportCenter(offset);
+    const node = currentCanvas()?.nodes.at(-1);
+    if (node?.type === "audio") {
+      node.name = item.name || node.name;
+      node.scriptText = `${item.source || "历史"}生成音频`;
+      saveProjectsState();
+      renderCanvasDetail();
+    }
+    return;
+  }
+  createNodeAtViewportCenter(item.image || CANVAS_NODE_PREVIEW, offset);
+  const node = currentCanvas()?.nodes.at(-1);
+  if (node?.type === "image") {
+    node.name = item.name || node.name;
+    saveProjectsState();
+    renderCanvasDetail();
+  }
+};
+
+const downloadCanvasHistoryItem = (item) => {
+  if (!item) return;
+  const link = document.createElement("a");
+  link.href = item.image || DEFAULT_COVER;
+  link.download = `${item.name || "history"}.${item.type === "video" ? "mp4" : item.type === "audio" ? "mp3" : "jpg"}`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+};
+
+const downloadWorkflowHistoryItems = (items) => items.filter(Boolean).forEach((item) => downloadCanvasHistoryItem(item));
+
+const renderCanvasHistoryOwner = () => {
+  if (state.currentView === "canvases") renderGrid();
+  else renderCanvasDetail();
+};
+
+const handleCanvasHistoryAction = (actionButton, event) => {
+  if (!actionButton) return false;
+  const operationHistory = isCanvasDetailView();
+  const listHistory = state.currentView === "canvases";
+  if (operationHistory) {
+    state.canvasHistoryTab = state.canvasOperationHistoryTab;
+    state.canvasHistoryBatchMode = state.canvasOperationHistoryBatchMode;
+    state.canvasHistorySelectedIds = state.canvasOperationHistorySelectedIds;
+    state.canvasHistoryPreviewId = state.canvasOperationHistoryPreviewId;
+    state.workflowRecycleFilter = state.canvasOperationHistoryFilter;
+    state.workflowRecycleSort = state.canvasOperationHistorySort;
+    state.workflowRecycleOpenMenu = state.canvasOperationHistoryOpenMenu;
+  } else if (listHistory) {
+    state.workflowRecycleTab = state.canvasHistoryTab;
+    state.workflowRecycleBatchMode = state.canvasHistoryBatchMode;
+    state.workflowRecycleSelectedIds = state.canvasHistorySelectedIds;
+    state.workflowRecyclePreviewId = state.canvasHistoryPreviewId;
+    state.workflowRecycleFilter = state.canvasHistoryFilter;
+    state.workflowRecycleSort = state.canvasHistorySort;
+    state.workflowRecycleOpenMenu = state.canvasHistoryOpenMenu;
+  }
+  const action = actionButton.dataset.canvasHistoryAction;
+  if (!action) return false;
+  event.preventDefault();
+  event.stopPropagation();
+  const id = actionButton.dataset.historyId;
+  const item = state.workflowRecycleItems.find((candidate) => candidate.id === id);
+  if (action === "close") {
+    state.canvasHistoryOpen = false;
+    state.canvasHistoryPreviewId = null;
+    state.canvasHistoryBatchMode = false;
+    state.canvasHistorySelectedIds.clear();
+    if (operationHistory) {
+      state.canvasOperationHistoryPreviewId = null;
+      state.canvasOperationHistoryBatchMode = false;
+      state.canvasOperationHistorySelectedIds.clear();
+    }
+    renderCanvasHistoryOwner();
+  } else if (action === "tab") {
+    state.canvasHistoryTab = actionButton.dataset.historyTab || "image";
+    state.canvasHistoryBatchMode = false;
+    state.canvasHistorySelectedIds.clear();
+    state.canvasHistoryPreviewId = null;
+    renderCanvasHistoryOwner();
+  } else if (action === "enter-batch") {
+    state.canvasHistoryBatchMode = true;
+    state.canvasHistoryPreviewId = null;
+    renderCanvasHistoryOwner();
+  } else if (action === "cancel-batch") {
+    state.canvasHistoryBatchMode = false;
+    state.canvasHistorySelectedIds.clear();
+    renderCanvasHistoryOwner();
+  } else if (action === "toggle-select") {
+    if (state.canvasHistorySelectedIds.has(id)) state.canvasHistorySelectedIds.delete(id);
+    else state.canvasHistorySelectedIds.add(id);
+    renderCanvasHistoryOwner();
+  } else if (action === "toggle-select-all") {
+    const ids = canvasHistoryItems().map((candidate) => candidate.id);
+    const allSelected = ids.length > 0 && ids.every((candidateId) => state.canvasHistorySelectedIds.has(candidateId));
+    ids.forEach((candidateId) => allSelected ? state.canvasHistorySelectedIds.delete(candidateId) : state.canvasHistorySelectedIds.add(candidateId));
+    renderCanvasHistoryOwner();
+  } else if (action === "toggle-date") {
+    const label = actionButton.dataset.historyDate;
+    const ids = canvasHistoryItems().filter((candidate) => canvasHistoryDateLabel(candidate) === label).map((candidate) => candidate.id);
+    const allSelected = ids.every((candidateId) => state.canvasHistorySelectedIds.has(candidateId));
+    ids.forEach((candidateId) => {
+      if (allSelected) state.canvasHistorySelectedIds.delete(candidateId);
+      else state.canvasHistorySelectedIds.add(candidateId);
+    });
+    renderCanvasHistoryOwner();
+  } else if (action === "preview") {
+    state.canvasHistoryPreviewId = id;
+    renderCanvasHistoryOwner();
+  } else if (action === "close-preview") {
+    state.canvasHistoryPreviewId = null;
+    renderCanvasHistoryOwner();
+  } else if (action === "toggle-menu") {
+    const menu = actionButton.dataset.recycleMenu || "";
+    state.workflowRecycleOpenMenu = state.workflowRecycleOpenMenu === menu ? null : menu;
+    renderCanvasHistoryOwner();
+  } else if (action === "set-filter") {
+    state.workflowRecycleFilter = actionButton.dataset.recycleValue || "all";
+    state.workflowRecycleOpenMenu = null;
+    renderCanvasHistoryOwner();
+  } else if (action === "set-sort") {
+    state.workflowRecycleSort = actionButton.dataset.recycleValue || "date-desc";
+    state.workflowRecycleOpenMenu = null;
+    renderCanvasHistoryOwner();
+  } else if (action === "toggle-sort") {
+    state.workflowRecycleSort = state.workflowRecycleSort === "date-desc" ? "date-asc" : "date-desc";
+    renderCanvasHistoryOwner();
+  } else if (action === "download") {
+    downloadCanvasHistoryItem(item);
+  } else if (action === "download-selected" || action === "download-use-selected") {
+    const selectedItems = [...state.canvasHistorySelectedIds].map((selectedId) => state.workflowRecycleItems.find((candidate) => candidate.id === selectedId)).filter(Boolean);
+    downloadWorkflowHistoryItems(selectedItems);
+    if (action === "download-use-selected") selectedItems.forEach((selectedItem, index) => useCanvasHistoryItem(selectedItem, { x: index * 36, y: index * 36 }));
+    state.canvasHistoryBatchMode = false;
+    state.canvasHistorySelectedIds.clear();
+    renderCanvasHistoryOwner();
+  } else if (action === "use") {
+    state.canvasHistoryOpen = false;
+    state.canvasHistoryPreviewId = null;
+    useCanvasHistoryItem(item);
+  } else if (action === "use-selected") {
+    const selectedItems = [...state.canvasHistorySelectedIds]
+      .map((selectedId) => state.workflowRecycleItems.find((candidate) => candidate.id === selectedId))
+      .filter(Boolean);
+    state.canvasHistoryOpen = false;
+    state.canvasHistoryBatchMode = false;
+    state.canvasHistorySelectedIds.clear();
+    selectedItems.forEach((selectedItem, index) => useCanvasHistoryItem(selectedItem, { x: index * 36, y: index * 36 }));
+  }
+  if (operationHistory) {
+    state.canvasOperationHistoryTab = state.canvasHistoryTab;
+    state.canvasOperationHistoryBatchMode = state.canvasHistoryBatchMode;
+    state.canvasOperationHistorySelectedIds = state.canvasHistorySelectedIds;
+    state.canvasOperationHistoryPreviewId = state.canvasHistoryPreviewId;
+    state.canvasOperationHistoryFilter = state.workflowRecycleFilter;
+    state.canvasOperationHistorySort = state.workflowRecycleSort;
+    state.canvasOperationHistoryOpenMenu = state.workflowRecycleOpenMenu;
+  } else if (listHistory) {
+    state.canvasHistoryFilter = state.workflowRecycleFilter;
+    state.canvasHistorySort = state.workflowRecycleSort;
+    state.canvasHistoryOpenMenu = state.workflowRecycleOpenMenu;
+  }
+  return true;
 };
 
 const createNodeAtViewportCenter = (image = null, offset = { x: 0, y: 0 }) => {
@@ -3999,6 +5184,25 @@ const createAudioNodeAtViewportCenter = (offset = { x: 0, y: 0 }) => {
     name: `音频节点 ${audioNodes.length + 1}`,
     x: centerX - 325 + offset.x,
     y: centerY - 190 + offset.y,
+  });
+  canvas.nodes.push(node);
+  canvas.selectedNodeId = node.id;
+  closeCanvasPopups();
+  saveProjectsState();
+  renderCanvasDetail();
+};
+
+const createVideoNodeAtViewportCenter = (offset = { x: 0, y: 0 }) => {
+  const canvas = currentCanvas();
+  const board = document.getElementById("canvas-board");
+  if (!canvas || !board) return;
+  const centerX = (board.clientWidth / 2 - canvas.viewport.x) / canvas.viewport.scale;
+  const centerY = (board.clientHeight / 2 - canvas.viewport.y) / canvas.viewport.scale;
+  const videoNodes = canvas.nodes.filter((node) => node.type === "video");
+  const node = createVideoNode({
+    name: `视频节点${videoNodes.length + 1}`,
+    x: centerX - 480 + offset.x,
+    y: centerY - 390 + offset.y,
   });
   canvas.nodes.push(node);
   canvas.selectedNodeId = node.id;
@@ -4325,6 +5529,14 @@ const openWashImageConfirm = (nodeId) => {
   renderCanvasDetail();
 };
 
+const openPortraitTextureConfirm = (nodeId) => {
+  const node = findNodeById(nodeId);
+  if (!node || node.type !== "image") return;
+  state.portraitTextureConfirmNodeId = nodeId;
+  state.canvasToolboxNodeId = null;
+  renderCanvasDetail();
+};
+
 const openAudioVoiceSettings = (nodeId) => {
   const node = findNodeById(nodeId);
   if (!node || node.type !== "audio") return;
@@ -4380,6 +5592,66 @@ const createWashedImageNode = (nodeId) => {
   });
   canvas.selectedNodeId = washedNode.id;
   state.washConfirmNodeId = null;
+  closeCanvasPopups();
+  saveProjectsState();
+  renderCanvasDetail();
+};
+
+const createPortraitTextureNode = (nodeId) => {
+  const canvas = currentCanvas();
+  const sourceNode = findNodeById(nodeId);
+  if (!canvas || !sourceNode || sourceNode.type !== "image") return;
+  const model = selectedPortraitTextureModel();
+  const resultIndex = getNextPanoramaOutputIndex("人像质感调节", (name) => /^人像质感调节\d+$/.test(name));
+  const textureNode = createImageNode({
+    name: `人像质感调节${resultIndex}`,
+    image: sourceNode.image,
+    prompt: `${sourceNode.prompt}\n\n人像质感调节：${model.name}`,
+    cameraControl: sourceNode.cameraControl,
+    x: sourceNode.x + 720,
+    y: sourceNode.y + 36,
+  });
+  textureNode.model = model.name;
+  canvas.nodes.push(textureNode);
+  canvas.connections.push({
+    id: `link${Date.now()}${Math.floor(Math.random() * 1000)}`,
+    from: sourceNode.id,
+    to: textureNode.id,
+  });
+  canvas.selectedNodeId = textureNode.id;
+  state.portraitTextureConfirmNodeId = null;
+  closeCanvasPopups();
+  saveProjectsState();
+  renderCanvasDetail();
+};
+
+const createStoryToolNode = (nodeId, toolKey) => {
+  const canvas = currentCanvas();
+  const sourceNode = findNodeById(nodeId);
+  const config = CANVAS_STORY_TOOL_CONFIG[toolKey];
+  if (!canvas || !sourceNode || sourceNode.type !== "image" || !config) return;
+  const resultIndex = getNextPanoramaOutputIndex(config.label, (name) => name.startsWith(config.label));
+  const storyNode = createImageNode({
+    name: `${config.label}${resultIndex}`,
+    image: sourceNode.image,
+    prompt: "",
+    promptPlaceholder: config.placeholder,
+    toolTag: {
+      key: toolKey,
+      label: config.label,
+    },
+    cameraControl: sourceNode.cameraControl,
+    x: sourceNode.x + 720,
+    y: sourceNode.y + 36,
+  });
+  canvas.nodes.push(storyNode);
+  canvas.connections.push({
+    id: `link${Date.now()}${Math.floor(Math.random() * 1000)}`,
+    from: sourceNode.id,
+    to: storyNode.id,
+  });
+  canvas.selectedNodeId = storyNode.id;
+  state.canvasToolboxNodeId = null;
   closeCanvasPopups();
   saveProjectsState();
   renderCanvasDetail();
@@ -4456,7 +5728,6 @@ const enterCanvasSharePage = () => {
   closeModal(canvasShareModal);
   state.currentView = "canvas-share";
   state.avatarOpen = false;
-  state.noticeOpen = false;
   closeCanvasPopups();
   renderGrid();
 };
@@ -4509,7 +5780,6 @@ const updateActivityCountdown = () => {
 
 const openLimitedActivityModal = () => {
   state.avatarOpen = false;
-  state.noticeOpen = false;
   syncHeader();
   updateActivityCountdown();
   openModal(limitedActivityModal);
@@ -4520,7 +5790,6 @@ activityRechargeTrigger?.addEventListener("click", () => closeModal(limitedActiv
 
 contactSupportTrigger?.addEventListener("click", () => {
   state.avatarOpen = false;
-  state.noticeOpen = false;
   syncHeader();
   openModal(contactSupportModal);
 });
@@ -4534,7 +5803,6 @@ creatorCenterTrigger?.addEventListener("click", () => {
   state.activeMenuId = null;
   state.creatorVideoMenuId = null;
   state.avatarOpen = false;
-  state.noticeOpen = false;
   renderGrid();
 });
 
@@ -4547,7 +5815,6 @@ reviewCenterTrigger?.addEventListener("click", () => {
   state.activeMenuId = null;
   state.creatorVideoMenuId = null;
   state.avatarOpen = false;
-  state.noticeOpen = false;
   renderGrid();
 });
 
@@ -4804,7 +6071,9 @@ workflowModeSwitchTrigger?.addEventListener("click", () => {
 });
 
 workflowHistoryTrigger?.addEventListener("click", () => {
-  window.alert("暂无构建历史");
+  state.workflowPage = "recycle";
+  state.workflowRecyclePreviewId = null;
+  renderGrid();
 });
 
 const handleWorkflowAction = (workflowAction, event) => {
@@ -4813,7 +6082,7 @@ const handleWorkflowAction = (workflowAction, event) => {
     event.preventDefault();
     event.stopPropagation();
     state.workflowStage = workflowAction.dataset.workflowStage || "keyframe";
-    state.workflowResultView = state.workflowStage === "video" ? "generator" : "keyframes";
+    state.workflowResultView = state.workflowStage === "video" ? "generator" : state.workflowStage === "audio" ? "audio-generator" : "keyframes";
     renderWorkflowStudio();
     return true;
   }
@@ -4826,27 +6095,294 @@ const handleWorkflowAction = (workflowAction, event) => {
     renderWorkflowStudio();
     return true;
   }
+  if (action === "set-audio-mode") {
+    event.preventDefault();
+    event.stopPropagation();
+    state.workflowAudioMode = workflowAction.dataset.audioMode || "music";
+    if (state.workflowAudioMode === "music") state.workflowAudioSettings.model = "phan Music 1.5";
+    renderWorkflowStudio();
+    return true;
+  }
+  if (action === "set-voice-tab") {
+    event.preventDefault();
+    state.workflowTtsVoiceTab = workflowAction.dataset.voiceTab || "official";
+    state.workflowTtsVoicesExpanded = false;
+    renderWorkflowStudio();
+    return true;
+  }
+  if (action === "toggle-tts-voices") {
+    event.preventDefault();
+    event.stopPropagation();
+    state.workflowTtsVoicesExpanded = !state.workflowTtsVoicesExpanded;
+    renderWorkflowStudio();
+    return true;
+  }
+  if (action === "select-tts-voice") {
+    event.preventDefault();
+    event.stopPropagation();
+    state.workflowTtsVoiceId = workflowAction.dataset.voiceId || state.workflowTtsVoiceId;
+    renderWorkflowStudio();
+    return true;
+  }
+  if (action === "delete-tts-voice") {
+    event.preventDefault();
+    event.stopPropagation();
+    const voiceId = workflowAction.dataset.voiceId || "";
+    const voice = state.workflowTtsVoices.find((item) => item.id === voiceId);
+    if (voice?.group === "mine") {
+      state.workflowTtsVoices = state.workflowTtsVoices.filter((item) => item.id !== voiceId);
+      if (state.workflowTtsVoiceId === voiceId) state.workflowTtsVoiceId = "voice-linxi";
+      renderWorkflowStudio();
+    }
+    return true;
+  }
+  if (action === "preview-tts-voice") {
+    event.preventDefault();
+    event.stopPropagation();
+    window.alert(`正在试听「${workflowTtsVoice().name}」`);
+    return true;
+  }
+  if (action === "open-voice-clone") {
+    event.preventDefault();
+    state.workflowTtsCloneOpen = true;
+    state.workflowTtsCloneRecorded = false;
+    renderWorkflowStudio();
+    return true;
+  }
+  if (action === "close-voice-clone") {
+    event.preventDefault();
+    state.workflowTtsCloneOpen = false;
+    renderWorkflowStudio();
+    return true;
+  }
+  if (action === "set-voice-clone-method") {
+    event.preventDefault();
+    state.workflowTtsCloneMethod = workflowAction.dataset.cloneMethod || "record";
+    state.workflowTtsCloneRecorded = false;
+    renderWorkflowStudio();
+    return true;
+  }
+  if (action === "record-clone-voice" || action === "upload-clone-voice") {
+    event.preventDefault();
+    state.workflowTtsCloneRecorded = true;
+    renderWorkflowStudio();
+    return true;
+  }
+  if (action === "create-cloned-voice") {
+    event.preventDefault();
+    if (!state.workflowTtsCloneRecorded) return true;
+    const id = `voice-clone-${Date.now()}`;
+    state.workflowTtsVoices.push({ id, name: state.workflowTtsCloneName || "我的音色", meta: "克隆音色 · 私有", group: "mine", color: "#2ec9a5" });
+    state.workflowTtsVoiceId = id;
+    state.workflowTtsVoiceTab = "mine";
+    state.workflowTtsCloneOpen = false;
+    renderWorkflowStudio();
+    return true;
+  }
+  if (action === "reset-tts-effects") {
+    event.preventDefault();
+    state.workflowTtsSpeed = 1;
+    state.workflowTtsPitch = 0;
+    state.workflowTtsVolume = 100;
+    renderWorkflowStudio();
+    return true;
+  }
+  if (action === "toggle-tts-long-mode") {
+    event.preventDefault();
+    state.workflowTtsLongMode = !state.workflowTtsLongMode;
+    renderWorkflowStudio();
+    return true;
+  }
+  if (action === "open-tts-emotion") {
+    event.preventDefault();
+    const selection = state.workflowTtsSelectionRange;
+    if (!selection || selection.start === selection.end) return true;
+    const editor = workflowHomeView?.querySelector("[data-workflow-tts-editor]");
+    state.workflowTtsText = workflowTtsEditorValue(editor);
+    state.workflowTtsEmotionMenu = { ...selection };
+    renderWorkflowStudio();
+    return true;
+  }
+  if (action === "apply-tts-emotion") {
+    event.preventDefault();
+    const selection = state.workflowTtsEmotionMenu;
+    const emotion = workflowAction.dataset.emotion || "中性";
+    if (selection) {
+      const selectedText = state.workflowTtsText.slice(selection.start, selection.end);
+      state.workflowTtsText = `${state.workflowTtsText.slice(0, selection.start)}[${emotion}|${selectedText}]${state.workflowTtsText.slice(selection.end)}`;
+      state.workflowTtsEmotionMenu = null;
+      state.workflowTtsSelectionRange = null;
+      renderWorkflowStudio();
+    }
+    return true;
+  }
+  if (action === "close-tts-emotion") {
+    event.preventDefault();
+    state.workflowTtsEmotionMenu = null;
+    renderWorkflowStudio();
+    return true;
+  }
+  if (action === "remove-tts-emotion-chip") {
+    event.preventDefault();
+    event.stopPropagation();
+    const chip = workflowAction.closest(".workflow-tts-emotion-chip");
+    chip?.replaceWith(document.createTextNode(chip.dataset.text || ""));
+    const editor = workflowHomeView?.querySelector("[data-workflow-tts-editor]");
+    state.workflowTtsText = workflowTtsEditorValue(editor);
+    state.workflowTtsSelectionRange = null;
+    return true;
+  }
+  if (action === "insert-tts-tag") {
+    event.preventDefault();
+    const tag = workflowAction.dataset.ttsTag || "";
+    const editor = workflowHomeView?.querySelector("[data-workflow-tts-editor]");
+    state.workflowTtsText = workflowTtsEditorValue(editor);
+    const start = state.workflowTtsSelectionRange?.start ?? state.workflowTtsText.length;
+    const end = state.workflowTtsSelectionRange?.end ?? start;
+    state.workflowTtsText = `${state.workflowTtsText.slice(0, start)}${tag}${state.workflowTtsText.slice(end)}`;
+    state.workflowTtsSelectionRange = null;
+    renderWorkflowStudio();
+    return true;
+  }
+  if (action === "upload-audio-reference") {
+    event.preventDefault();
+    event.stopPropagation();
+    openWorkflowUploadModal("audio-reference");
+    renderWorkflowStudio();
+    return true;
+  }
+  if (action === "toggle-audio-instrumental") {
+    event.preventDefault();
+    state.workflowAudioInstrumental = !state.workflowAudioInstrumental;
+    renderWorkflowStudio();
+    return true;
+  }
+  if (action === "change-audio-count") {
+    event.preventDefault();
+    const delta = Number(workflowAction.dataset.countDelta || 0);
+    state.workflowAudioCount = Math.max(1, Math.min(4, state.workflowAudioCount + delta));
+    renderWorkflowStudio();
+    return true;
+  }
+  if (action === "generate-scene-audio") {
+    event.preventDefault();
+    state.workflowAudioSettings.model = workflowHomeView?.querySelector("[data-workflow-audio-param=\"model\"]")?.value || state.workflowAudioSettings.model;
+    state.workflowTtsModel = workflowHomeView?.querySelector("[data-workflow-tts-model]")?.value || state.workflowTtsModel;
+    state.workflowAudioName = workflowHomeView?.querySelector("[data-workflow-audio-name]")?.value || state.workflowAudioName;
+    const ttsEditor = workflowHomeView?.querySelector("[data-workflow-tts-editor]");
+    if (ttsEditor) state.workflowTtsText = workflowTtsEditorValue(ttsEditor);
+    const { scene } = currentWorkflowStudioSelection();
+    const isMusic = state.workflowAudioMode === "music";
+    if (!isMusic && state.workflowAudioMode !== "sfx") return true;
+    const prompt = isMusic ? state.workflowAudioStyle : state.workflowTtsText.trim();
+    if (prompt) state.workflowAudioDraftPrompt = prompt;
+    const createAudio = (ordinal = 0) => ({
+      id: `audio-${Date.now()}-${ordinal}`,
+      title: isMusic ? (state.workflowAudioSongName || `未命名歌曲 ${ordinal + 1}`) : (state.workflowAudioName.trim() || `${workflowTtsVoice().name} · 语音 ${new Date().toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" })}`),
+      mode: state.workflowAudioMode === "music" ? "音乐创作" : "文生音频",
+      model: isMusic ? state.workflowAudioSettings.model : state.workflowTtsModel,
+      duration: isMusic ? `00:${String(Number.parseInt(state.workflowAudioSettings.duration, 10) || 30).padStart(2, "0")}` : `00:${String(Math.max(2, Math.ceil(state.workflowTtsText.length / (4.5 * state.workflowTtsSpeed)))).padStart(2, "0")}`,
+      status: "生成中",
+      prompt: state.workflowAudioDraftPrompt,
+      params: isMusic
+        ? { instrumental: state.workflowAudioInstrumental, lyrics: state.workflowAudioLyrics, style: state.workflowAudioStyle, songName: state.workflowAudioSongName, reference: state.workflowAudioReference, count: state.workflowAudioCount }
+        : { model: state.workflowTtsModel, audioName: state.workflowAudioName, voiceId: state.workflowTtsVoiceId, speed: state.workflowTtsSpeed, pitch: state.workflowTtsPitch, volume: state.workflowTtsVolume, language: state.workflowTtsLanguage, longMode: state.workflowTtsLongMode },
+    });
+    const createdAudios = Array.from({ length: isMusic ? state.workflowAudioCount : 1 }, (_, index) => createAudio(index));
+    workflowSceneAudioResults(scene).unshift(...createdAudios);
+    state.workflowResultView = "audios";
+    renderWorkflowStudio();
+    window.setTimeout(() => { createdAudios.forEach((audio) => { audio.status = "已完成"; }); renderWorkflowStudio(); }, 1100);
+    return true;
+  }
+  if (action === "preview-scene-audio") {
+    event.preventDefault();
+    event.stopPropagation();
+    const { scene } = currentWorkflowStudioSelection();
+    const audio = workflowSceneAudioResults(scene)[Number(workflowAction.dataset.workflowAudioIndex || 0)];
+    if (audio?.status === "已完成") {
+      state.workflowMediaPreview = { kind: "audio", title: "音频预览", duration: audio.duration, playing: false, volume: 72 };
+      renderWorkflowStudio();
+    }
+    return true;
+  }
+  if (action === "delete-scene-audio") {
+    event.preventDefault();
+    event.stopPropagation();
+    state.workflowDeleteAudioIndex = Number(workflowAction.dataset.workflowAudioIndex || 0);
+    renderWorkflowStudio();
+    return true;
+  }
+  if (action === "close-audio-delete") {
+    event.preventDefault();
+    event.stopPropagation();
+    state.workflowDeleteAudioIndex = null;
+    renderWorkflowStudio();
+    return true;
+  }
+  if (action === "confirm-audio-delete") {
+    event.preventDefault();
+    event.stopPropagation();
+    const { scene } = currentWorkflowStudioSelection();
+    if (state.workflowDeleteAudioIndex !== null) {
+      workflowSceneAudioResults(scene).splice(state.workflowDeleteAudioIndex, 1);
+    }
+    state.workflowDeleteAudioIndex = null;
+    renderWorkflowStudio();
+    return true;
+  }
+  if (action === "copy-audio-params") {
+    event.preventDefault();
+    event.stopPropagation();
+    const { scene } = currentWorkflowStudioSelection();
+    const audio = workflowSceneAudioResults(scene)[Number(workflowAction.dataset.workflowAudioIndex || 0)];
+    if (audio) {
+      const isMusic = audio.mode === "音乐创作";
+      state.workflowAudioMode = isMusic ? "music" : "sfx";
+      if (isMusic) state.workflowAudioSettings.model = audio.model || "phan Music 1.5";
+      state.workflowAudioDraftPrompt = audio.prompt || "";
+      if (isMusic) {
+        state.workflowAudioInstrumental = audio.params?.instrumental ?? true;
+        state.workflowAudioLyrics = audio.params?.lyrics || "";
+        state.workflowAudioStyle = audio.params?.style || audio.prompt || "";
+        state.workflowAudioSongName = audio.params?.songName || audio.title || "";
+        state.workflowAudioReference = audio.params?.reference || null;
+        state.workflowAudioCount = audio.params?.count || 1;
+      } else {
+        state.workflowTtsVoiceId = audio.params?.voiceId || state.workflowTtsVoiceId;
+        state.workflowTtsModel = audio.params?.model || audio.model || "phan Voice 2.0";
+        state.workflowTtsSpeed = audio.params?.speed ?? 1;
+        state.workflowTtsPitch = audio.params?.pitch ?? 0;
+        state.workflowTtsVolume = audio.params?.volume ?? 100;
+        state.workflowTtsLanguage = audio.params?.language || "自动检测";
+        state.workflowTtsLongMode = audio.params?.longMode ?? false;
+        state.workflowTtsText = audio.prompt || "";
+        state.workflowAudioName = audio.params?.audioName || audio.title || "";
+      }
+      state.workflowResultView = "audio-generator";
+      renderWorkflowStudio();
+    }
+    return true;
+  }
+  if (action === "send-audio-to-timeline") {
+    event.preventDefault();
+    event.stopPropagation();
+    const timeline = workflowHomeView?.querySelector(".workflow-timeline-panel:not(.workflow-timeline-preview-editor) .workflow-timeline");
+    timeline?.classList.add("is-updated");
+    window.setTimeout(() => timeline?.classList.remove("is-updated"), 900);
+    return true;
+  }
+  if (action === "download-scene-audio") {
+    event.preventDefault();
+    event.stopPropagation();
+    window.alert("已开始下载音频");
+    return true;
+  }
   if (action === "upload-video-reference") {
     event.preventDefault();
     event.stopPropagation();
     const kind = workflowAction.dataset.referenceKind || "image";
-    if (kind === "image") {
-      state.workflowReferenceTarget = "video-image";
-      state.workflowReferenceModalOpen = true;
-      renderWorkflowStudio();
-      return true;
-    }
-    const referenceName = kind === "video" ? `参考视频 ${state.workflowVideoReferences.videos.length + 1}.mp4` : kind === "audio" ? `参考音频 ${state.workflowVideoReferences.audios.length + 1}.mp3` : `上传参考图 ${state.workflowVideoReferences.images.length + 1}`;
-    if (kind === "video") {
-      state.workflowVideoReferences.videos.push({ name: referenceName, label: referenceName, image: "./assets/images/canvas-chase-sequence.jpg" });
-      state.workflowVideoDraftPrompt = `${workflowPromptEditorValue(workflowHomeView?.querySelector("[data-workflow-video-prompt]"))}\n@参考视频:${referenceName}`.trim();
-    } else if (kind === "audio") {
-      state.workflowVideoReferences.audios.push({ name: referenceName, label: referenceName, image: "./assets/images/canvas-node-preview.png" });
-      state.workflowVideoDraftPrompt = `${workflowPromptEditorValue(workflowHomeView?.querySelector("[data-workflow-video-prompt]"))}\n@参考音频:${referenceName}`.trim();
-    } else {
-      state.workflowVideoReferences.images.push({ label: referenceName, image: "./assets/images/canvas-node-preview.png", source: "上传" });
-      state.workflowVideoDraftPrompt = `${workflowPromptEditorValue(workflowHomeView?.querySelector("[data-workflow-video-prompt]"))}\n@参考图:${referenceName}`.trim();
-    }
+    openWorkflowUploadModal(kind === "video" ? "video-video" : kind === "audio" ? "video-audio" : "video-image");
     renderWorkflowStudio();
     return true;
   }
@@ -4854,8 +6390,7 @@ const handleWorkflowAction = (workflowAction, event) => {
     event.preventDefault();
     event.stopPropagation();
     const track = workflowAction.dataset.timelineTrack || "keyframe";
-    state.workflowReferenceTarget = `timeline-${track}`;
-    state.workflowReferenceModalOpen = true;
+    openWorkflowUploadModal(`timeline-${track}`);
     renderWorkflowStudio();
     return true;
   }
@@ -5246,7 +6781,7 @@ const handleWorkflowAction = (workflowAction, event) => {
   if (action === "upload-keyframe") {
     event.preventDefault();
     event.stopPropagation();
-    state.workflowReferenceModalOpen = true;
+    openWorkflowUploadModal("keyframe");
     renderWorkflowStudio();
     return true;
   }
@@ -5370,8 +6905,7 @@ const handleWorkflowAction = (workflowAction, event) => {
   if (action === "open-reference-modal") {
     event.preventDefault();
     event.stopPropagation();
-    state.workflowReferenceTarget = "keyframe";
-    state.workflowReferenceModalOpen = true;
+    openWorkflowUploadModal("keyframe-reference");
     renderWorkflowStudio();
     return true;
   }
@@ -5386,30 +6920,16 @@ const handleWorkflowAction = (workflowAction, event) => {
   if (action === "confirm-reference-modal") {
     event.preventDefault();
     event.stopPropagation();
-    if (state.workflowReferenceTarget === "video-image") {
-      const source = state.workflowReferenceSource || "local";
-      const category = state.workflowReferenceCategory || "角色";
-      const referenceName = source === "local" ? `上传参考图 ${state.workflowVideoReferences.images.length + 1}` : workflowReferenceAssetName(source, category, state.workflowVideoReferences.images.length);
-      const imageIndex = Math.max(0, workflowReferenceCategories.indexOf(category)) + state.workflowVideoReferences.images.length;
-      state.workflowVideoReferences.images.push({
-        label: referenceName,
-        image: source === "local" ? "./assets/images/canvas-node-preview.png" : workflowReferenceImagePool[imageIndex % workflowReferenceImagePool.length],
-        source: source === "local" ? "上传" : category,
-      });
-      state.workflowVideoDraftPrompt = `${workflowPromptEditorValue(workflowHomeView?.querySelector("[data-workflow-video-prompt]"))}\n@参考图:${referenceName}`.trim();
-    }
-    if (state.workflowReferenceTarget.startsWith("timeline-")) {
-      appendTimelineUploadedClip(state.workflowReferenceTarget.replace("timeline-", ""));
-    }
-    state.workflowReferenceModalOpen = false;
-    state.workflowReferenceTarget = "keyframe";
+    completeWorkflowUpload(workflowAction);
     renderWorkflowStudio();
     return true;
   }
   if (action === "set-reference-source") {
     event.preventDefault();
     event.stopPropagation();
+    const config = workflowUploadTargetConfig(state.workflowReferenceTarget);
     state.workflowReferenceSource = workflowAction.dataset.referenceSource || "local";
+    state.workflowReferenceCategory = workflowReferenceCurrentCategory(state.workflowReferenceSource, config.type) || state.workflowReferenceCategory;
     renderWorkflowStudio();
     return true;
   }
@@ -5576,7 +7096,7 @@ const handleWorkflowAction = (workflowAction, event) => {
 };
 
 const isWorkflowFormControl = (target) =>
-  target instanceof Element && Boolean(target.closest("input, textarea, select, option, [contenteditable='true']"));
+  target instanceof Element && Boolean(target.closest("input, textarea, select, option, [contenteditable='true']")) && !target.closest("[data-workflow-action]");
 
 const focusWorkflowFormControl = (target) =>
   target instanceof Element
@@ -5590,7 +7110,7 @@ document.addEventListener(
     if (isWorkflowFormControl(event.target)) return;
     const workflowAction = event.target.closest?.("[data-workflow-action], [data-workflow-stage]");
     if (!workflowAction || !workflowHomeView?.contains(workflowAction)) return;
-    handleWorkflowAction(workflowAction, event);
+    if (handleWorkflowAction(workflowAction, event)) event.stopPropagation();
   },
   true,
 );
@@ -5677,6 +7197,36 @@ workflowRecycleContent?.addEventListener("click", (event) => {
     state.workflowRecycleFilter = "all";
     state.workflowRecycleOpenMenu = null;
     renderWorkflowRecycle();
+  } else if (action === "enter-batch") {
+    state.workflowRecycleBatchMode = true;
+    state.workflowRecycleSelectedIds.clear();
+    state.workflowRecycleOpenMenu = null;
+    renderWorkflowRecycle();
+  } else if (action === "cancel-batch") {
+    state.workflowRecycleBatchMode = false;
+    state.workflowRecycleSelectedIds.clear();
+    renderWorkflowRecycle();
+  } else if (action === "toggle-select") {
+    if (state.workflowRecycleSelectedIds.has(id)) state.workflowRecycleSelectedIds.delete(id);
+    else state.workflowRecycleSelectedIds.add(id);
+    renderWorkflowRecycle();
+  } else if (action === "toggle-select-all") {
+    const visibleIds = workflowRecycleVisibleIds();
+    const allSelected = Boolean(visibleIds.length) && visibleIds.every((visibleId) => state.workflowRecycleSelectedIds.has(visibleId));
+    visibleIds.forEach((visibleId) => {
+      if (allSelected) state.workflowRecycleSelectedIds.delete(visibleId);
+      else state.workflowRecycleSelectedIds.add(visibleId);
+    });
+    renderWorkflowRecycle();
+  } else if (action === "toggle-date") {
+    const date = actionButton.dataset.recycleDate || "";
+    const dateItems = workflowRecycleVisibleItems().filter((item) => workflowRecycleDateLabel(item) === date);
+    const allSelected = Boolean(dateItems.length) && dateItems.every((item) => state.workflowRecycleSelectedIds.has(item.id));
+    dateItems.forEach((item) => {
+      if (allSelected) state.workflowRecycleSelectedIds.delete(item.id);
+      else state.workflowRecycleSelectedIds.add(item.id);
+    });
+    renderWorkflowRecycle();
   } else if (action === "toggle-menu") {
     const menu = actionButton.dataset.recycleMenu || "";
     state.workflowRecycleOpenMenu = state.workflowRecycleOpenMenu === menu ? null : menu;
@@ -5701,14 +7251,13 @@ workflowRecycleContent?.addEventListener("click", (event) => {
     renderWorkflowRecycle();
   } else if (action === "download") {
     const item = state.workflowRecycleItems.find((candidate) => candidate.id === id);
-    if (item) {
-      const link = document.createElement("a");
-      link.href = item.image;
-      link.download = `${item.name}.${item.type === "video" ? "mp4" : item.type === "audio" ? "mp3" : "jpg"}`;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-    }
+    downloadCanvasHistoryItem(item);
+  } else if (action === "download-selected") {
+    const selectedItems = [...state.workflowRecycleSelectedIds].map((selectedId) => state.workflowRecycleItems.find((candidate) => candidate.id === selectedId)).filter(Boolean);
+    downloadWorkflowHistoryItems(selectedItems);
+    state.workflowRecycleBatchMode = false;
+    state.workflowRecycleSelectedIds.clear();
+    renderWorkflowRecycle();
   } else if (action === "toggle-play") {
     state.workflowRecyclePlaying = !state.workflowRecyclePlaying;
     actionButton.innerHTML = state.workflowRecyclePlaying ? workflowPlayerIcon.pause : workflowPlayerIcon.play;
@@ -5864,6 +7413,18 @@ workflowHomeView?.addEventListener("pointerdown", (event) => {
 });
 
 workflowHomeView?.addEventListener("change", (event) => {
+  if (event.target?.matches?.("[data-workflow-tts-model]")) {
+    state.workflowTtsModel = event.target.value;
+    return;
+  }
+  if (event.target?.matches?.("[data-workflow-tts-language]")) {
+    state.workflowTtsLanguage = event.target.value;
+    return;
+  }
+  if (event.target?.matches?.("[data-workflow-audio-param]")) {
+    state.workflowAudioSettings[event.target.dataset.workflowAudioParam] = event.target.value;
+    return;
+  }
   if (event.target?.matches?.("[data-workflow-video-shot-select]")) {
     const { episode, scene } = currentWorkflowStudioSelection();
     state.workflowVideoShotIndex = event.target.value || "";
@@ -5881,7 +7442,7 @@ workflowHomeView?.addEventListener("change", (event) => {
     state.workflowSceneIndex = 0;
     state.workflowShotIndex = 0;
     state.workflowKeyframeFilter = "all";
-    state.workflowResultView = state.workflowStage === "video" ? "generator" : "keyframes";
+    state.workflowResultView = state.workflowStage === "video" ? "generator" : state.workflowStage === "audio" ? "audio-generator" : "keyframes";
     state.workflowVideoShotIndex = "";
     state.workflowVideoDraftPrompt = "";
     renderWorkflowStudio();
@@ -5891,7 +7452,7 @@ workflowHomeView?.addEventListener("change", (event) => {
     state.workflowSceneIndex = Number(event.target.value || 0);
     state.workflowShotIndex = 0;
     state.workflowKeyframeFilter = "all";
-    state.workflowResultView = state.workflowStage === "video" ? "generator" : "keyframes";
+    state.workflowResultView = state.workflowStage === "video" ? "generator" : state.workflowStage === "audio" ? "audio-generator" : "keyframes";
     state.workflowVideoShotIndex = "";
     state.workflowVideoDraftPrompt = "";
     renderWorkflowStudio();
@@ -5930,6 +7491,50 @@ const updateWorkflowPromptMentionMenu = (editor) => {
 };
 
 workflowHomeView?.addEventListener("input", (event) => {
+  if (event.target?.matches?.("[data-workflow-tts-editor]")) {
+    state.workflowTtsText = workflowTtsEditorValue(event.target);
+    const limit = state.workflowTtsLongMode ? 200000 : 5000;
+    if (state.workflowTtsText.length > limit) {
+      state.workflowTtsText = state.workflowTtsText.slice(0, limit);
+      event.target.innerHTML = renderWorkflowTtsContent(state.workflowTtsText);
+    }
+    const counter = event.target.closest(".workflow-tts-editor")?.querySelector(".workflow-tts-tools > span");
+    if (counter) counter.textContent = `${state.workflowTtsText.length.toLocaleString()} / ${(state.workflowTtsLongMode ? 200000 : 5000).toLocaleString()} 字符`;
+    return;
+  }
+  if (event.target?.matches?.("[data-workflow-tts-range]")) {
+    const key = event.target.dataset.workflowTtsRange;
+    const value = Number(event.target.value);
+    if (key === "speed") state.workflowTtsSpeed = value;
+    if (key === "pitch") state.workflowTtsPitch = value;
+    if (key === "volume") state.workflowTtsVolume = value;
+    event.target.closest("label")?.querySelector("em")?.replaceChildren(document.createTextNode(key === "speed" ? `${value.toFixed(1)}×` : key === "pitch" ? `${value > 0 ? "+" : ""}${value}` : `${value}%`));
+    return;
+  }
+  if (event.target?.matches?.('[data-workflow-tts-field="cloneName"]')) {
+    state.workflowTtsCloneName = event.target.value;
+    return;
+  }
+  if (event.target?.matches?.('[data-workflow-music-field="lyrics"]')) {
+    state.workflowAudioLyrics = event.target.value;
+    return;
+  }
+  if (event.target?.matches?.('[data-workflow-music-field="style"]')) {
+    state.workflowAudioStyle = event.target.value;
+    return;
+  }
+  if (event.target?.matches?.('[data-workflow-music-field="songName"]')) {
+    state.workflowAudioSongName = event.target.value;
+    return;
+  }
+  if (event.target?.matches?.("[data-workflow-audio-name]")) {
+    state.workflowAudioName = event.target.value;
+    return;
+  }
+  if (event.target?.matches?.("[data-workflow-audio-prompt]")) {
+    state.workflowAudioDraftPrompt = event.target.value;
+    return;
+  }
   if (event.target?.matches?.("[data-workflow-video-prompt]")) {
     state.workflowVideoDraftPrompt = workflowPromptEditorValue(event.target);
     updateWorkflowPromptMentionMenu(event.target);
@@ -5940,6 +7545,37 @@ workflowHomeView?.addEventListener("keyup", (event) => {
   if (event.target?.matches?.("[data-workflow-video-prompt]")) {
     updateWorkflowPromptMentionMenu(event.target);
   }
+});
+
+const updateWorkflowTtsSelection = () => {
+  const editor = workflowHomeView?.querySelector("[data-workflow-tts-editor]");
+  const button = workflowHomeView?.querySelector('[data-workflow-action="open-tts-emotion"]');
+  const selection = window.getSelection();
+  if (!editor || !button || !selection?.rangeCount || selection.isCollapsed || !editor.contains(selection.anchorNode) || !editor.contains(selection.focusNode)) {
+    state.workflowTtsSelectionRange = null;
+    if (button) button.disabled = true;
+    return;
+  }
+  const range = selection.getRangeAt(0);
+  const start = workflowTtsSelectionOffset(editor, range.startContainer, range.startOffset);
+  const end = workflowTtsSelectionOffset(editor, range.endContainer, range.endOffset);
+  const rect = range.getBoundingClientRect();
+  const editorRect = editor.closest(".workflow-tts-editor")?.getBoundingClientRect();
+  state.workflowTtsSelectionRange = {
+    start: Math.min(start, end),
+    end: Math.max(start, end),
+    x: Math.max(12, Math.min((rect.left - (editorRect?.left || 0)), (editorRect?.width || 360) - 352)),
+    y: Math.max(48, rect.top - (editorRect?.top || 0) + rect.height + 8),
+  };
+  button.disabled = false;
+};
+
+workflowHomeView?.addEventListener("mouseup", (event) => {
+  if (event.target.closest("[data-workflow-tts-editor]")) window.requestAnimationFrame(updateWorkflowTtsSelection);
+});
+
+workflowHomeView?.addEventListener("keyup", (event) => {
+  if (event.target.closest("[data-workflow-tts-editor]")) window.requestAnimationFrame(updateWorkflowTtsSelection);
 });
 
 workflowHomeView?.addEventListener("dragstart", (event) => {
@@ -5997,6 +7633,19 @@ sidebar?.addEventListener("click", (event) => {
     if (state.currentProjectId) openProjectModeModal(state.currentProjectId);
     return;
   }
+  const canvasNav = event.target.closest("[data-canvas-nav]");
+  if (canvasNav) {
+    const target = canvasNav.dataset.canvasNav;
+    if (target === "history") {
+      state.canvasHistoryOpen = true;
+      state.canvasHistoryPreviewId = null;
+    } else if (target === "list") {
+      state.canvasHistoryOpen = false;
+      state.canvasHistoryPreviewId = null;
+    }
+    renderGrid();
+    return;
+  }
   const modeSwitch = event.target.closest("[data-mode-switch]");
   if (!modeSwitch || modeSwitch.disabled) return;
   const mode = modeSwitch.dataset.modeSwitch;
@@ -6014,7 +7663,6 @@ topbarNav?.addEventListener("click", (event) => {
   state.activeMenuId = null;
   state.creatorVideoMenuId = null;
   state.avatarOpen = false;
-  state.noticeOpen = false;
   if (view === "home") {
     state.currentView = "home";
     state.currentProjectId = null;
@@ -6038,7 +7686,6 @@ brandHomeTrigger?.addEventListener("click", () => {
   state.activeMenuId = null;
   state.creatorVideoMenuId = null;
   state.avatarOpen = false;
-  state.noticeOpen = false;
   renderGrid();
 });
 
@@ -6249,7 +7896,14 @@ confirmPublishVideoTrigger?.addEventListener("click", () => {
   openModal(publishSuccessModal);
 });
 
+canvasHistoryPage?.addEventListener("click", (event) => {
+  const canvasHistoryAction = event.target.closest("[data-canvas-history-action]");
+  handleCanvasHistoryAction(canvasHistoryAction, event);
+});
+
 grid.addEventListener("click", (event) => {
+  const canvasHistoryAction = event.target.closest("[data-canvas-history-action]");
+  if (handleCanvasHistoryAction(canvasHistoryAction, event)) return;
   const createBlank = event.target.closest("#empty-create-trigger");
   if (createBlank) {
     openCreateModal(state.currentView === "projects" ? "project-create" : "canvas-create");
@@ -6442,6 +8096,7 @@ const selectNode = (nodeId) => {
   if (!canvas) return;
   canvas.selectedNodeId = nodeId;
   state.canvasContextMenu = null;
+  if (state.canvasToolboxNodeId && state.canvasToolboxNodeId !== nodeId) state.canvasToolboxNodeId = null;
   if (state.cameraControlNodeId && state.cameraControlNodeId !== nodeId) {
     state.cameraControlNodeId = null;
     state.cameraControlDraft = null;
@@ -6546,6 +8201,9 @@ canvasStage.addEventListener("click", (event) => {
   if (!isCanvasDetailView()) return;
   const shareView = isCanvasShareView();
 
+  const canvasHistoryAction = event.target.closest("[data-canvas-history-action]");
+  if (handleCanvasHistoryAction(canvasHistoryAction, event)) return;
+
   const canvasAction = event.target.closest("[data-canvas-action]");
   if (canvasAction) {
     const action = canvasAction.dataset.canvasAction;
@@ -6576,6 +8234,11 @@ canvasStage.addEventListener("click", (event) => {
       event.stopPropagation();
       if (Date.now() < state.canvasAddPanelGuardUntil) return;
       toggleCanvasTemplatePanel();
+    }
+    if (action === "toggle-history") {
+      event.stopPropagation();
+      if (Date.now() < state.canvasAddPanelGuardUntil) return;
+      toggleCanvasHistory();
     }
     if (action === "close-add-panel") {
       state.canvasAddPanelOpen = false;
@@ -6627,6 +8290,7 @@ canvasStage.addEventListener("click", (event) => {
     }
     if (action === "create-node") createNodeAtViewportCenter();
     if (action === "create-image-node") createNodeAtViewportCenter(CANVAS_NODE_PREVIEW);
+    if (action === "create-video-node") createVideoNodeAtViewportCenter();
     if (action === "create-audio-node") createAudioNodeAtViewportCenter();
     if (action === "upload-create-node") {
       state.uploadNodeTarget = null;
@@ -6659,6 +8323,13 @@ canvasStage.addEventListener("click", (event) => {
       renderCanvasDetail();
       return;
     }
+    if (action === "close-portrait-texture-confirm") {
+      event.preventDefault();
+      event.stopPropagation();
+      state.portraitTextureConfirmNodeId = null;
+      renderCanvasDetail();
+      return;
+    }
     if (action === "close-reverse-prompt-confirm") {
       event.preventDefault();
       event.stopPropagation();
@@ -6688,6 +8359,12 @@ canvasStage.addEventListener("click", (event) => {
       event.preventDefault();
       event.stopPropagation();
       if (state.washConfirmNodeId) createWashedImageNode(state.washConfirmNodeId);
+      return;
+    }
+    if (action === "confirm-portrait-texture") {
+      event.preventDefault();
+      event.stopPropagation();
+      if (state.portraitTextureConfirmNodeId) createPortraitTextureNode(state.portraitTextureConfirmNodeId);
       return;
     }
     if (action === "confirm-reverse-prompt") {
@@ -6738,6 +8415,14 @@ canvasStage.addEventListener("click", (event) => {
   if (toolbarAction) {
     const nodeId = toolbarAction.dataset.nodeId;
     const action = toolbarAction.dataset.toolbarAction;
+    if (action === "toggle-toolbox") {
+      state.canvasToolboxNodeId = state.canvasToolboxNodeId === nodeId ? null : nodeId;
+      state.canvasAddPanelOpen = false;
+      state.canvasTemplatePanelOpen = false;
+      state.canvasContextMenu = null;
+      renderCanvasDetail();
+      return;
+    }
     if (action === "reverse-prompt") openReversePromptConfirm(nodeId);
     if (action === "panorama") createPanoramaNode(nodeId);
     if (action === "wash-image") openWashImageConfirm(nodeId);
@@ -6751,10 +8436,76 @@ canvasStage.addEventListener("click", (event) => {
     return;
   }
 
+  const toolboxAction = event.target.closest("[data-toolbox-action]");
+  if (toolboxAction) {
+    const nodeId = toolboxAction.dataset.nodeId;
+    if (toolboxAction.dataset.toolboxAction === "portrait-texture") {
+      openPortraitTextureConfirm(nodeId);
+      return;
+    }
+    if (toolboxAction.dataset.toolboxAction === "storyboard") {
+      createStoryToolNode(nodeId, "storyboard");
+      return;
+    }
+    if (toolboxAction.dataset.toolboxAction === "schedule-storyboard") {
+      createStoryToolNode(nodeId, "scheduleStoryboard");
+      return;
+    }
+    if (toolboxAction.dataset.toolboxAction === "character-sheet") {
+      createStoryToolNode(nodeId, "characterSheet");
+      return;
+    }
+    if (toolboxAction.dataset.toolboxAction === "scene-sheet") {
+      createStoryToolNode(nodeId, "sceneSheet");
+      return;
+    }
+    if (toolboxAction.dataset.toolboxAction === "product-sheet") {
+      createStoryToolNode(nodeId, "productSheet");
+      return;
+    }
+    if (toolboxAction.dataset.toolboxAction === "lighting-correct") {
+      createStoryToolNode(nodeId, "lightingCorrect");
+      return;
+    }
+    state.canvasToolboxNodeId = null;
+    renderCanvasDetail();
+    return;
+  }
+
   const nodeAction = event.target.closest("[data-node-action]");
   if (nodeAction) {
     const nodeId = nodeAction.dataset.nodeId;
     const action = nodeAction.dataset.nodeAction;
+    const targetNode = findNodeById(nodeId);
+    if (action === "remove-tool-tag") {
+      if (targetNode?.type === "image") {
+        targetNode.toolTag = null;
+        targetNode.promptPlaceholder = "";
+        saveProjectsState();
+      }
+      selectNode(nodeId);
+      return;
+    }
+    if (action === "set-video-mode") {
+      if (targetNode?.type === "video") {
+        targetNode.mode = nodeAction.dataset.videoMode || targetNode.mode;
+        saveProjectsState();
+      }
+      selectNode(nodeId);
+      return;
+    }
+    if (action === "optimize-video-prompt") {
+      if (targetNode?.type === "video" && isSeedanceVideoModel(targetNode.model)) {
+        targetNode.prompt = optimizeVideoPromptText(targetNode.prompt);
+        saveProjectsState();
+      }
+      selectNode(nodeId);
+      return;
+    }
+    if (action === "open-camera-control" && targetNode?.toolTag) {
+      selectNode(nodeId);
+      return;
+    }
     selectNode(nodeId);
     if (action === "upload-image") {
       state.uploadNodeTarget = nodeId;
@@ -6796,6 +8547,20 @@ canvasStage.addEventListener("input", (event) => {
 
 canvasStage.addEventListener("change", (event) => {
   if (state.currentView !== "canvas-detail") return;
+  if (event.target.matches("[data-canvas-portrait-model]")) {
+    state.portraitTextureModelId = event.target.value;
+    renderCanvasDetail();
+    return;
+  }
+  const nodeField = event.target.dataset.nodeField;
+  const nodeId = event.target.dataset.nodeId;
+  const node = findNodeById(nodeId);
+  if (nodeField && node) {
+    node[nodeField] = event.target.value;
+    saveProjectsState();
+    renderCanvasDetail();
+    return;
+  }
   const field = event.target.dataset.cameraField;
   if (!field || !state.cameraControlDraft) return;
   syncCameraControlDraft(field, event.target.value);
@@ -6835,7 +8600,7 @@ canvasStage.addEventListener("pointerdown", (event) => {
     event.stopPropagation();
     return;
   }
-  if (event.target.closest(".canvas-add-panel, .canvas-template-panel, .canvas-context-menu, .canvas-bottom-dock")) {
+  if (event.target.closest(".canvas-add-panel, .canvas-template-panel, .canvas-history-modal, .canvas-context-menu, .canvas-bottom-dock")) {
     event.stopPropagation();
     return;
   }
@@ -6845,6 +8610,10 @@ canvasStage.addEventListener("pointerdown", (event) => {
     event.preventDefault();
     if (shareView) return;
     openCanvasAddPanel();
+    return;
+  }
+  if (event.target.closest("[data-canvas-action]")) {
+    event.stopPropagation();
     return;
   }
   if (shareView && event.target.closest("[data-node-id]")) return;
@@ -6946,21 +8715,11 @@ canvasStage.addEventListener("contextmenu", (event) => {
   renderCanvasDetail();
 });
 
-[noticeTrigger].forEach((button) => {
-  if (!button) return;
-  button.addEventListener("click", () => {
-    state.noticeOpen = !state.noticeOpen;
-    state.avatarOpen = false;
-    renderGrid();
-  });
-});
-
 [avatarTrigger].forEach((button) => {
   if (!button) return;
   button.addEventListener("click", (event) => {
     event.stopPropagation();
     state.avatarOpen = !state.avatarOpen;
-    state.noticeOpen = false;
     renderGrid();
   });
 });
@@ -7009,6 +8768,10 @@ document.addEventListener("click", (event) => {
       state.canvasContextMenu = null;
       shouldRenderCanvas = true;
     }
+    if (!event.target.closest(".canvas-toolbox-anchor") && state.canvasToolboxNodeId) {
+      state.canvasToolboxNodeId = null;
+      shouldRenderCanvas = true;
+    }
     if (!event.target.closest(".canvas-add-panel") && !event.target.closest('[data-canvas-action="toggle-add-panel"]') && state.canvasAddPanelOpen) {
       state.canvasAddPanelOpen = false;
       shouldRenderCanvas = true;
@@ -7025,10 +8788,6 @@ document.addEventListener("click", (event) => {
 
   if (!event.target.closest("#avatar-panel") && !event.target.closest("#avatar-trigger")) {
     state.avatarOpen = false;
-  }
-
-  if (!event.target.closest("#notice-panel") && !event.target.closest("#notice-trigger")) {
-    state.noticeOpen = false;
   }
 
   if (!event.target.closest(".menu-anchor")) {
@@ -7055,6 +8814,11 @@ document.addEventListener("keydown", (event) => {
     }
     if (state.washConfirmNodeId) {
       state.washConfirmNodeId = null;
+      renderCanvasDetail();
+      return;
+    }
+    if (state.portraitTextureConfirmNodeId) {
+      state.portraitTextureConfirmNodeId = null;
       renderCanvasDetail();
       return;
     }

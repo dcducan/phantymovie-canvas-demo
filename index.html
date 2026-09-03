@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PhanthyMovie 项目列表</title>
-    <link rel="stylesheet" href="./styles.css?v=history-v3" />
+    <link rel="stylesheet" href="./styles.css?v=workflow-history-v2" />
   </head>
   <body>
     <main class="page-shell">
@@ -40,7 +40,7 @@
             <img src="./assets/icons/credit.svg" alt="" />
             <span>2000</span>
           </button>
-          <button class="icon-button dimmed" type="button" id="notice-trigger" aria-label="提醒">
+          <button class="icon-button dimmed" type="button" aria-label="提醒">
             <img src="./assets/icons/bell.svg" alt="" />
           </button>
           <button class="avatar-button" type="button" id="avatar-trigger" aria-label="用户头像">
@@ -101,29 +101,6 @@
           </div>
         </div>
 
-        <div class="notice-panel" id="notice-panel">
-          <div class="notice-panel-header">
-            <strong>通知中心</strong>
-            <span>3 条未读</span>
-          </div>
-          <div class="notice-list">
-            <div class="notice-item">
-              <strong>创作任务完成</strong>
-              <p>《霓虹魅影：东京》第一批画面已生成完成。</p>
-              <span>刚刚</span>
-            </div>
-            <div class="notice-item">
-              <strong>团队额度提醒</strong>
-              <p>团队星钻已接近阈值，建议前往管理页查看。</p>
-              <span>10 分钟前</span>
-            </div>
-            <div class="notice-item">
-              <strong>系统公告</strong>
-              <p>本周创作手册新增了画面切分与擦除教程。</p>
-              <span>今天 09:20</span>
-            </div>
-          </div>
-        </div>
       </div>
 
       <section class="home-view" id="home-view">
@@ -312,8 +289,9 @@
             </div>
           </section>
           <nav class="sidebar-nav">
-            <button class="sidebar-nav-item active" type="button">画布列表</button>
-            <button class="sidebar-nav-item" type="button">项目资产库</button>
+            <button class="sidebar-nav-item active" type="button" data-canvas-nav="list"><img src="./assets/icons/grid.svg" alt="" /><span>画布列表</span></button>
+            <button class="sidebar-nav-item" type="button" data-canvas-nav="assets"><img src="./assets/icons/image.svg" alt="" /><span>项目资产库</span></button>
+            <button class="sidebar-nav-item sidebar-history-nav" type="button" id="canvas-history-nav-trigger" data-canvas-nav="history"><img src="./assets/icons/clock.svg" alt="" /><span>生成历史</span></button>
           </nav>
         </aside>
 
@@ -369,6 +347,7 @@
         </div>
 
         <div class="project-grid" id="project-grid"></div>
+        <div id="canvas-history-page"></div>
         </div>
       </section>
 
@@ -1015,8 +994,9 @@
           </div>
         </div>
       </div>
+
     </main>
 
-    <script src="./script.js?v=history-v3"></script>
+    <script src="./script.js?v=workflow-history-v2"></script>
   </body>
 </html>
