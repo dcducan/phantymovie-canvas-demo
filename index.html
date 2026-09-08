@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PhanthyMovie 项目列表</title>
-    <link rel="stylesheet" href="./styles.css?v=workflow-history-v2" />
+    <link rel="stylesheet" href="./styles.css?v=quick-flow-mouse-v1" />
   </head>
   <body>
     <main class="page-shell">
@@ -377,25 +377,26 @@
           </section>
 
           <nav class="workflow-nav" aria-label="工作流菜单">
-            <button class="workflow-nav-item" type="button" title="快捷创作">
+            <button class="workflow-nav-item" type="button" title="快捷创作" data-workflow-page="quick">
               <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1v-9.5Z" />
+                <rect x="6.5" y="3" width="11" height="18" rx="5.5" />
+                <path d="M12 3v5" />
               </svg>
               <span>快捷创作</span>
             </button>
-            <button class="workflow-nav-item" type="button" title="剧本分析">
+            <button class="workflow-nav-item" type="button" title="剧本分析" data-workflow-page="script">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M4 5h4v14H4zM10 5h4v14h-4zM16 5h4v14h-4zM2.8 9h18.4M2.8 15h18.4" />
               </svg>
               <span>剧本分析</span>
             </button>
-            <button class="workflow-nav-item" type="button" title="项目资产库">
+            <button class="workflow-nav-item" type="button" title="项目资产库" data-workflow-page="assets">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z" />
               </svg>
               <span>项目资产库</span>
             </button>
-            <button class="workflow-nav-item active" type="button" title="拍摄台">
+            <button class="workflow-nav-item" type="button" title="拍摄台" data-workflow-page="studio">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M4 6h16v12H4z" />
                 <path d="m10 9 5 3-5 3V9Z" />
@@ -635,9 +636,18 @@
           <div id="workflow-generate-modal-root"></div>
         </main>
 
+        <main class="workflow-quick-main is-hidden" id="workflow-quick-main" aria-label="快捷创作">
+          <div id="workflow-quick-content"></div>
+        </main>
+
+        <main class="workflow-placeholder-main is-hidden" id="workflow-placeholder-main" aria-label="工作流结果确认">
+          <div id="workflow-placeholder-content"></div>
+        </main>
+
         <main class="workflow-recycle-main is-hidden" id="workflow-recycle-main" aria-label="生成历史">
           <div id="workflow-recycle-content"></div>
         </main>
+        <div id="workflow-quick-modal-root"></div>
       </section>
 
       <section class="canvas-detail-view" id="canvas-detail-view">
@@ -997,6 +1007,6 @@
 
     </main>
 
-    <script src="./script.js?v=workflow-history-v2"></script>
+    <script src="./script.js?v=quick-flow-mouse-v1"></script>
   </body>
 </html>

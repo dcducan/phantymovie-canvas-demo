@@ -989,7 +989,16 @@ const state = {
   workflowSceneKeyframePickerAnchor: null,
   workflowSceneKeyframePickerShotFilter: "all",
   workflowStage: "keyframe",
-  workflowPage: "studio",
+  workflowPage: "quick",
+  workflowQuickStatus: { script: "ready", assets: "locked", keyframes: "locked", video: "locked" },
+  workflowQuickModal: null,
+  workflowQuickDrawerCollapsed: false,
+  workflowQuickTaskProgress: null,
+  workflowQuickRegenerateType: null,
+  workflowQuickRegenerated: { assets: false, keyframes: false },
+  workflowStoryboardPacing: "standard",
+  workflowScriptAnalysisStage: "empty",
+  workflowQuickScriptUploadMode: "file",
   workflowRecycleItems: loadWorkflowRecycle(),
   workflowRecycleTab: "image",
   workflowRecycleFilter: "all",
@@ -1103,6 +1112,11 @@ const reviewCenterView = document.getElementById("review-center-view");
 const listView = document.getElementById("list-view");
 const workflowHomeView = document.getElementById("workflow-home-view");
 const workflowStudioMain = workflowHomeView?.querySelector(".workflow-studio-main");
+const workflowQuickMain = document.getElementById("workflow-quick-main");
+const workflowQuickContent = document.getElementById("workflow-quick-content");
+const workflowPlaceholderMain = document.getElementById("workflow-placeholder-main");
+const workflowPlaceholderContent = document.getElementById("workflow-placeholder-content");
+const workflowQuickModalRoot = document.getElementById("workflow-quick-modal-root");
 const workflowRecycleMain = document.getElementById("workflow-recycle-main");
 const workflowRecycleContent = document.getElementById("workflow-recycle-content");
 const detailView = document.getElementById("canvas-detail-view");
@@ -3224,6 +3238,237 @@ const addWorkflowRecycleItem = (item) => {
 
 const addWorkflowHistoryItem = addWorkflowRecycleItem;
 
+const workflowQuickStepMeta = {
+  script: { number: "01", title: "剧本分析", description: "上传剧本后，AI 将拆解分集、提取资产清单并生成分镜表。", action: "上传剧本", result: "前往剧本分析查看结果", credits: 28 },
+  assets: { number: "02", title: "准备项目资产", description: "根据资产清单，生成角色、服装、道具与场景参考图。", action: "生成项目资产", result: "前往项目资产库查看结果", credits: 96 },
+  keyframes: { number: "03", title: "生成整场多宫格关键帧", description: "基于分镜表，为每一场生成连贯的多宫格关键帧。", action: "生成整场关键帧", result: "前往拍摄台查看关键帧", credits: 72 },
+  video: { number: "04", title: "进入视频制作", description: "关键帧准备完成后，在拍摄台继续生成镜头与视频片段。", action: "进入拍摄台制作视频", result: "", credits: 0 },
+};
+
+const workflowQuickProgress = () => {
+  const phase = state.workflowScriptAnalysisStage;
+  const task = state.workflowQuickTaskProgress;
+  const taskProgress = task?.progress || 0;
+  if (state.workflowQuickStatus.video === "complete") return 100;
+  if (state.workflowQuickStatus.keyframes === "processing") return Math.round(50 + taskProgress * .25);
+  if (["review", "complete"].includes(state.workflowQuickStatus.keyframes)) return 75;
+  if (state.workflowQuickStatus.assets === "processing") return Math.round(25 + taskProgress * .25);
+  if (["review", "complete"].includes(state.workflowQuickStatus.assets)) return 50;
+  if (phase === "processing-storyboard") return Math.round(20 + taskProgress * .05);
+  if (phase === "storyboard" || state.workflowQuickStatus.script === "complete") return 25;
+  if (phase === "processing-assets") return Math.round(10 + taskProgress * .1);
+  if (phase === "assets") return 20;
+  if (phase === "organize") return 10;
+  if (state.workflowQuickStatus.script === "processing") return Math.round(taskProgress * .1);
+  return 0;
+};
+
+const workflowQuickStatusText = (status) => ({ locked: "请完成上一步再开启本环节", ready: "当前进行中", processing: "当前进行中", review: "当前进行中", complete: "已完成" }[status] || "当前进行中");
+const workflowQuickTaskStages = {
+  script: ["读取剧本", "拆解分集", "生成分镜表"],
+  assets: ["整理资产清单", "生成视觉资产", "保存至项目资产库"],
+  keyframes: ["读取分镜表", "编排整场镜头", "生成多宫格关键帧"],
+};
+const workflowQuickResults = {
+  script: ["雨夜终局_v3.pdf · 12,860 字", "已解析 2 集 · 6 场 · 21 镜"],
+  assets: ["角色 12 · 服装 18 · 道具 24 · 场景 16", "已生成 70 张项目资产"],
+  keyframes: ["已覆盖 24 场 · 84 镜", "已生成 24 组整场多宫格"],
+  video: ["关键帧已就绪可进入拍摄台继续制作", "当前进行中"],
+};
+
+const renderWorkflowScriptQuickDetails = (status) => {
+  const phase = state.workflowScriptAnalysisStage;
+  const taskProgress = status === "processing" && state.workflowQuickTaskProgress?.type === "script" ? state.workflowQuickTaskProgress.progress : 0;
+  const items = [
+    { title: "整理剧本", detail: phase === "empty" ? status === "processing" ? "正在执行···" : "待开始" : "当前剧本已解析 1 集 · 共计 4,800 字", state: phase === "empty" ? status === "processing" ? "processing" : "waiting" : "done", progress: phase === "empty" ? taskProgress : phase === "organize" || phase === "processing-assets" || phase === "assets" || phase === "processing-storyboard" || phase === "storyboard" || status === "complete" ? 100 : taskProgress },
+    { title: "资产清单", detail: phase === "processing-assets" ? "正在执行···" : phase === "assets" || ["processing-storyboard", "storyboard"].includes(phase) || status === "complete" ? "当前已提取 角色 3 · 服装 3 · 场景 4 · 道具 6" : "待开始", state: phase === "processing-assets" ? "processing" : ["processing-storyboard", "storyboard"].includes(phase) || status === "complete" ? "done" : phase === "assets" ? "active" : "waiting", progress: phase === "processing-assets" ? taskProgress : ["assets", "processing-storyboard", "storyboard"].includes(phase) || status === "complete" ? 100 : 0 },
+    { title: "生成分镜脚本", detail: phase === "processing-storyboard" ? "正在执行···" : phase === "storyboard" || status === "complete" ? "已生成 1 集 5 场 25 镜分镜脚本" : "待开始", state: phase === "processing-storyboard" ? "processing" : status === "complete" ? "done" : phase === "storyboard" ? "active" : "waiting", progress: phase === "processing-storyboard" ? taskProgress : status === "complete" ? 100 : 0 },
+  ];
+  return `<div class="workflow-quick-script-steps">${items.map((item, index) => `<div class="is-${item.state}"><span><strong><b class="workflow-quick-script-index">${index + 1}</b>${item.title}</strong><em>${item.detail}</em></span></div>`).join("")}</div>`;
+};
+
+const renderWorkflowScriptProgress = (status, taskProgress) => {
+  const phase = state.workflowScriptAnalysisStage;
+  const fill = phase === "empty" ? (status === "processing" ? taskProgress / 3 : 0)
+    : phase === "organize" ? 33.333
+      : phase === "processing-assets" ? 33.333 + taskProgress / 3
+        : phase === "assets" ? 66.666
+          : phase === "processing-storyboard" ? 66.666 + taskProgress / 3 : 100;
+  return `<div class="workflow-quick-card-progress is-script" aria-label="剧本分析进度"><i><b style="height:${fill}%"></b></i></div>`;
+};
+
+const renderWorkflowAssetResult = (status) => {
+  const generated = status === "review" || status === "complete";
+  const available = status !== "locked";
+  const regenerated = state.workflowQuickRegenerated.assets;
+  const icons = {
+    character: `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 20c.8-4 3-6 6.5-6s5.7 2 6.5 6"/></svg>`,
+    costume: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8.3 5 3.7 2.2L15.7 5 20 8.2l-2.2 3.1-2.1-1.2V20H8.3v-9.9l-2.1 1.2L4 8.2 8.3 5Z"/></svg>`,
+    prop: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 7 4v10l-7 4-7-4V7l7-4Z"/><path d="m5 7 7 4 7-4M12 11v10"/></svg>`,
+    scene: `<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><path d="m5.5 16 4.3-4.3 3.1 3.1 2.1-2.1 3.5 3.5M8 9h.01"/></svg>`,
+  };
+  return `<div class="workflow-quick-result workflow-quick-asset-result${available ? "" : " is-muted"}"><span class="workflow-quick-asset-summary"><b><i>${icons.character}</i>角色 12</b><b><i>${icons.costume}</i>服装 18</b><b><i>${icons.prop}</i>道具 24</b><b><i>${icons.scene}</i>场景 16</b></span><strong class="workflow-quick-generated-copy">${generated ? regenerated ? "已补充生成 70 张项目资产" : "已生成 70 张项目资产" : status === "processing" ? "正在生成项目资产" : available ? "待生成项目资产" : "待开始"}</strong></div>`;
+};
+
+const renderWorkflowKeyframeResult = (status) => {
+  const generated = status === "review" || status === "complete";
+  const regenerated = state.workflowQuickRegenerated.keyframes;
+  return `<div class="workflow-quick-result workflow-quick-keyframe-result"><span>解析结果：1 集 5 场 25 镜</span><strong class="workflow-quick-generated-copy">${generated ? regenerated ? "已补充生成 5 张整场多宫格关键帧" : "已生成 5 张整场多宫格关键帧" : "待生成整场多宫格关键帧"}</strong></div>`;
+};
+
+const renderWorkflowQuickScriptActions = (status) => {
+  if (status === "processing") {
+    const phase = state.workflowScriptAnalysisStage;
+    const nextLabel = phase === "processing-assets" ? "提取资产清单" : phase === "processing-storyboard" ? "生成分镜脚本" : "上传剧本";
+    return `<div class="workflow-quick-script-actions"><button class="workflow-quick-view-action" type="button" data-workflow-action="quick-view-result" data-quick-type="script">前往剧本分析查看结果</button><button class="workflow-quick-text-action" type="button" disabled>${nextLabel}</button></div>`;
+  }
+  if (status === "ready") return `<button type="button" data-workflow-action="quick-open-modal" data-quick-type="script">上传剧本</button>`;
+  if (status === "complete") return `<div class="workflow-quick-script-actions"><button class="workflow-quick-view-action" type="button" data-workflow-action="quick-view-result" data-quick-type="script">前往剧本分析查看结果</button></div>`;
+  const phase = state.workflowScriptAnalysisStage;
+  const followUp = phase === "organize" ? ["quick-script-extract-assets", "提取资产清单"]
+    : phase === "assets" ? ["quick-script-generate-storyboard", "生成分镜脚本"]
+      : phase === "storyboard" ? ["quick-script-finish-analysis", "继续项目资产准备"] : null;
+  return `<div class="workflow-quick-script-actions"><button class="workflow-quick-view-action" type="button" data-workflow-action="quick-view-result" data-quick-type="script">前往剧本分析查看结果</button>${followUp ? `<button class="workflow-quick-text-action" type="button" data-workflow-action="${followUp[0]}">${followUp[1]}</button>` : ""}</div>`;
+};
+
+const renderWorkflowQuickResultActions = (key, status, meta, locked) => {
+  if (status === "processing") {
+    const nextLabel = key === "assets" ? "生成整场关键帧" : key === "keyframes" ? "进入视频制作" : meta.action;
+    return `<div class="workflow-quick-script-actions"><button class="workflow-quick-view-action" type="button" data-workflow-action="quick-view-result" data-quick-type="${key}">${meta.result}</button><button class="workflow-quick-text-action" type="button" disabled>${nextLabel}</button></div>`;
+  }
+  if (status === "complete" && key !== "video") {
+    const rerunLabel = key === "assets" ? "重新生成项目资产" : "重新生成整场关键帧";
+    return `<div class="workflow-quick-script-actions"><button class="workflow-quick-view-action" type="button" data-workflow-action="quick-view-result" data-quick-type="${key}">${meta.result}</button><button class="workflow-quick-text-action" type="button" data-workflow-action="quick-regenerate" data-quick-type="${key}">${rerunLabel}</button></div>`;
+  }
+  if (status === "review") {
+    const next = key === "assets" ? ["quick-regenerate", "重新生成项目资产"] : key === "keyframes" ? ["quick-regenerate", "重新生成整场关键帧"] : null;
+    return `<div class="workflow-quick-script-actions"><button class="workflow-quick-view-action" type="button" data-workflow-action="quick-view-result" data-quick-type="${key}">${meta.result}</button>${next ? `<button class="workflow-quick-text-action" type="button" data-workflow-action="${next[0]}" data-quick-type="${key}">${next[1]}</button>` : ""}</div>`;
+  }
+  const action = key === "video" ? "quick-enter-video" : "quick-open-modal";
+  return `<button type="button" data-workflow-action="${action}" data-quick-type="${key}" ${locked ? "disabled" : ""}>${meta.action}</button>`;
+};
+
+const renderWorkflowQuickModal = () => {
+  const type = state.workflowQuickModal;
+  if (!type) return "";
+  const scriptStageModal = {
+    "script-assets": { title: "提取资产", description: "将对 1 集、4,800 字提取角色、服装、场景、道具。", credits: 72, stage: "assets" },
+    "script-storyboard": { title: "生成分镜脚本", description: "全剧 1 集 · 预计约 5 场。", credits: 54, stage: "storyboard" },
+  }[type];
+  if (scriptStageModal) {
+    const pacingOptions = [{ id: "tight", title: "紧凑", description: "高频切镜，动作和对白推进更快", density: "镜头量较多", duration: "约 3–5 秒 / 镜", shots: "30–34 镜" }, { id: "standard", title: "标准", description: "叙事、动作与情绪留白相对均衡", density: "镜头量适中", duration: "约 5–8 秒 / 镜", shots: "25–28 镜" }, { id: "relaxed", title: "舒缓", description: "长镜头更多，保留表演和情绪发酵", density: "镜头量较少", duration: "约 8–12 秒 / 镜", shots: "18–22 镜" }];
+    const isStoryboard = scriptStageModal.stage === "storyboard";
+    const selectedPacing = pacingOptions.find((option) => option.id === state.workflowStoryboardPacing) || pacingOptions[1];
+    const body = isStoryboard ? `<div class="workflow-storyboard-pacing"><strong>选择全剧默认镜头节奏</strong><div class="workflow-storyboard-pacing-options">${pacingOptions.map((option) => `<button type="button" class="${option.id === selectedPacing.id ? "active" : ""}" data-workflow-action="quick-select-storyboard-pacing" data-storyboard-pacing="${option.id}"><b>${option.title}${option.id === "standard" ? "<em>推荐</em>" : ""}</b><span>${option.description}</span><small>${option.density}<br />${option.duration}</small><strong>预计约 ${option.shots}</strong></button>`).join("")}</div><div class="workflow-storyboard-pacing-summary"><span>已选${selectedPacing.title}节奏</span><b>预计约 ${selectedPacing.shots}</b></div></div>` : "";
+    return `<div class="workflow-quick-modal workflow-script-stage-modal"><button class="workflow-quick-modal-backdrop" type="button" data-workflow-action="quick-close-modal" aria-label="关闭"></button><section class="workflow-quick-dialog" role="dialog" aria-modal="true"><div class="workflow-script-stage-dialog${isStoryboard ? " is-storyboard" : ""}"><button class="workflow-script-dialog-close" type="button" data-workflow-action="quick-close-modal" aria-label="关闭">×</button><h2>${scriptStageModal.title}</h2><p>${scriptStageModal.description}</p>${body}<footer><span class="workflow-script-stage-cost"><img src="${CANVAS_NODE_CREDIT}" alt="" />${scriptStageModal.credits}</span><div><button class="workflow-secondary-button" type="button" data-workflow-action="quick-close-modal">取消</button><button class="workflow-primary-button" type="button" data-workflow-action="quick-confirm-script-stage" data-script-stage="${scriptStageModal.stage}">确认</button></div></footer></div></section></div>`;
+  }
+  const meta = workflowQuickStepMeta[type];
+  const isScript = type === "script";
+  const isAssets = type === "assets";
+  const isRegeneration = state.workflowQuickRegenerateType === type;
+  if (isScript) return `
+    <div class="workflow-quick-modal workflow-script-upload-modal">
+      <button class="workflow-quick-modal-backdrop" type="button" data-workflow-action="quick-close-modal" aria-label="关闭"></button>
+      <section class="workflow-quick-dialog" role="dialog" aria-modal="true" aria-labelledby="workflow-quick-dialog-title">
+        <div class="workflow-script-upload-dialog"><h2 id="workflow-quick-dialog-title">上传剧本</h2><p>支持 txt、docx、fdx。上传后自动分集、校对后再提取资产。</p>
+          <div class="workflow-quick-upload-tabs"><button class="${state.workflowQuickScriptUploadMode === "file" ? "active" : ""}" type="button" data-workflow-action="quick-set-script-upload-mode" data-upload-mode="file">上传文件</button><button class="${state.workflowQuickScriptUploadMode === "paste" ? "active" : ""}" type="button" data-workflow-action="quick-set-script-upload-mode" data-upload-mode="paste">粘贴文本</button></div>
+          ${state.workflowQuickScriptUploadMode === "file" ? `<label class="workflow-script-dropzone"><input type="file" accept=".txt,.doc,.docx,.fdx" /><span>拖到这里，或 <b>选择文件</b></span></label>` : `<textarea class="workflow-script-paste-area" placeholder="粘贴剧本全文…"></textarea>`}
+          <footer><button class="workflow-secondary-button" type="button" data-workflow-action="quick-close-modal">取消</button><button class="workflow-primary-button" type="button" data-workflow-action="quick-confirm-generate" data-quick-type="script">确认</button></footer>
+        </div>
+      </section>
+    </div>`;
+  return `
+    <div class="workflow-quick-modal">
+      <button class="workflow-quick-modal-backdrop" type="button" data-workflow-action="quick-close-modal" aria-label="关闭"></button>
+      <section class="workflow-quick-dialog" role="dialog" aria-modal="true" aria-labelledby="workflow-quick-dialog-title">
+        <header><div><strong id="workflow-quick-dialog-title">${isScript ? "上传剧本" : isRegeneration ? `补充${escapeHtml(meta.action)}` : escapeHtml(meta.title)}</strong></div><button type="button" data-workflow-action="quick-close-modal" aria-label="关闭">×</button></header>
+        <div class="workflow-quick-dialog-body">
+          ${isScript ? "" : ""}
+          <label>选择模型<select><option>PhanthyMovie Pro</option><option>PhanthyMovie Turbo</option></select></label>
+          ${!isScript ? `<div class="workflow-quick-modal-grid"><label>生成张数<select><option>${isAssets ? "每项 2 张" : "每场 1 张"}</option><option>${isAssets ? "每项 4 张" : "每场 2 张"}</option></select></label><label>清晰度<select><option>2K</option><option>4K</option></select></label><label>画面比例<select><option>16:9</option><option>9:16</option><option>1:1</option></select></label></div>` : ""}
+        </div>
+        <footer><span class="workflow-quick-footer-cost"><img src="${CANVAS_NODE_CREDIT}" alt="" />${meta.credits}</span><div><button class="workflow-secondary-button" type="button" data-workflow-action="quick-close-modal">取消</button><button class="workflow-primary-button" type="button" data-workflow-action="quick-confirm-generate" data-quick-type="${type}">确认</button></div></footer>
+      </section>
+    </div>`;
+};
+
+const renderWorkflowQuick = () => {
+  if (!workflowQuickContent) return;
+  const progress = workflowQuickProgress();
+  const currentStep = Object.keys(workflowQuickStepMeta).find((key) => ["ready", "processing", "review"].includes(state.workflowQuickStatus[key])) || "video";
+  const cards = Object.entries(workflowQuickStepMeta).map(([key, meta]) => {
+    const status = state.workflowQuickStatus[key];
+    const locked = status === "locked";
+    const taskProgress = status === "processing" && state.workflowQuickTaskProgress?.type === key ? state.workflowQuickTaskProgress.progress : 0;
+    const visualProgress = status === "processing" ? taskProgress : ["review", "complete"].includes(status) ? 100 : 0;
+    const stages = workflowQuickTaskStages[key] || [];
+    const hasResult = status === "review" || status === "complete";
+    const result = workflowQuickResults[key];
+    const cardProgress = key === "script" ? renderWorkflowScriptProgress(status, taskProgress) : `<div class="workflow-quick-card-progress"><i><b style="height:${visualProgress}%"></b></i></div>`;
+    return `<article class="workflow-quick-step is-${status}">
+      ${cardProgress}
+      <div class="workflow-quick-step-main"><div class="workflow-quick-step-title"><div><h2>${escapeHtml(meta.title)}</h2><em>${key === "video" && status === "complete" ? "当前进行中" : workflowQuickStatusText(status)}</em></div></div>
+        ${key === "script" ? renderWorkflowScriptQuickDetails(status) : key === "assets" ? renderWorkflowAssetResult(status) : key === "keyframes" ? renderWorkflowKeyframeResult(status) : hasResult ? `<div class="workflow-quick-result"><span>${result[0]}</span><strong class="workflow-quick-generated-copy">${result[1]}</strong></div>` : ""}
+      </div>
+      <div class="workflow-quick-step-action">${key === "script" ? renderWorkflowQuickScriptActions(status) : renderWorkflowQuickResultActions(key, status, meta, locked)}</div>
+    </article>`;
+  }).join("");
+  workflowQuickContent.innerHTML = `
+    <section class="workflow-quick-page">
+      <section class="workflow-quick-progress"><div class="workflow-quick-progress-orbit" style="--workflow-progress:${progress}%"><strong>${progress}<small>%</small></strong></div><div><strong>快捷创作进度</strong></div><ol>${Object.entries(workflowQuickStepMeta).map(([key, item]) => `<li class="is-${state.workflowQuickStatus[key]}">${escapeHtml(item.title)}</li>`).join("")}</ol></section>
+      <section class="workflow-quick-steps">${cards}</section>
+    </section>`;
+  if (workflowQuickModalRoot) workflowQuickModalRoot.innerHTML = renderWorkflowQuickModal();
+};
+
+const renderWorkflowPlaceholder = (type) => {
+  if (!workflowPlaceholderContent) return;
+  if (type === "script") {
+    const stage = state.workflowScriptAnalysisStage;
+    const activeIndex = stage === "assets" || stage === "processing-assets" || stage === "storyboard" || stage === "processing-storyboard" ? (stage === "storyboard" || stage === "processing-storyboard" ? 3 : 2) : 1;
+    const steps = ["整理剧本", "资产清单", "生成分镜脚本"];
+    const scriptText = "苏可蜷在客厅的沙发里，窗帘拉得严严实实。房间里唯一的光源是茶几上那部疯狂闪烁的手机。她听见门外传来外卖员扯着嗓子的喊声，确认安全后才从抱枕堆里探出头。";
+    const top = `<header class="workflow-analysis-top">${steps.map((label, index) => `<span class="${index + 1 < activeIndex ? "is-done" : index + 1 === activeIndex ? "active" : ""}"><i>${index + 1 < activeIndex ? "✓" : index + 1}</i>${label}</span>${index < 2 ? "<b>/</b>" : ""}`).join("")}</header>`;
+    let content = "";
+    if (stage === "empty") {
+      content = `<section class="workflow-analysis-empty"><i>▤</i><h1>这个项目还没有剧本</h1><p>请先从快捷创作上传剧本，再开始整理与分析。</p><button type="button" data-workflow-action="script-return-quick">返回快捷创作</button></section>`;
+    } else if (stage === "organize" || stage === "processing-assets") {
+      const processing = stage === "processing-assets";
+      content = `<section class="workflow-analysis-organize"><div><h1>共 1 集</h1><p>当前已整理 1 集 · 4,800 字</p></div><article><header><strong>第 1 集 · 外卖与尊严</strong><span>4,800 字</span></header><p>${scriptText}</p><p>${scriptText}</p></article><footer><span>剧本内容整理完毕 · 共 1 集 · 4,800 字</span>${processing ? `<em>正在提取资产清单…</em>` : `<button type="button" data-workflow-action="script-extract-assets">资产提取 · +40</button>`}</footer></section>`;
+    } else if (stage === "assets" || stage === "processing-storyboard") {
+      const processing = stage === "processing-storyboard";
+      content = `<section class="workflow-analysis-assets"><aside><strong>全剧原文 <span>共 1 集</span></strong><article><em>EPISODE 01</em><h1>第 1 集 · 外卖与尊严</h1><p>${scriptText}</p><p>${scriptText}</p></article></aside><main><header><strong>角色 <b>3</b></strong><strong>服装 <b>3</b></strong><strong>场景 <b>4</b></strong><strong>道具 <b>6</b></header><div class="workflow-analysis-asset-list">${["苏可", "妈妈", "外卖员"].map((name) => `<article><i></i><strong>${name}</strong><span>1 套造型</span><p>【生成规格】角色基础视觉资产设定板 · 16:9 横版构图</p><em>待入库</em></article>`).join("")}</div><footer>${processing ? `<em>正在生成分镜脚本…</em>` : `<button type="button" data-workflow-action="script-generate-storyboard">生成分镜脚本</button>`}</footer></main></section>`;
+    } else {
+      content = `<section class="workflow-analysis-storyboard"><aside><strong>全剧 <span>25 镜</span></strong><h2>第 1 集 · 外卖与尊严</h2><p>第 1 场 客厅沙发　8 镜</p><p>第 2 场 玄关　5 镜</p><p>第 3 场 餐桌　12 镜</p></aside><main><header><span>镜号 · 时长</span><span>景别</span><span>镜头设计</span><span>出场的人和物</span><span>主要内容</span></header>${["特写", "中景", "特写", "近景"].map((view, index) => `<article><strong>0${index + 1}<small>镜</small></strong><em>${3 + index % 2} 秒</em><span>${view}</span><span>${index === 0 ? "慢推" : "定镜"}</span><p>角色 · 苏可　 场景 · 客厅　 道具 · 智能手机</p><p>${scriptText.slice(0, 32)}…</p></article>`).join("")}<footer><span>全剧 1 集 · 4,800 字 · 3 场 · 25 镜</span><button type="button" data-workflow-action="script-return-quick">返回快捷创作</button></footer></main></section>`;
+    }
+    workflowPlaceholderContent.innerHTML = `<section class="workflow-analysis-page">${top}${content}${renderWorkflowQuickDrawer("script")}</section>`;
+    if (workflowQuickModalRoot) workflowQuickModalRoot.innerHTML = renderWorkflowQuickModal();
+    return;
+  }
+  const isScript = type === "script";
+  const title = isScript ? "剧本分析" : "项目资产库";
+  const resultName = isScript ? "剧本分析结果" : "项目资产结果";
+  workflowPlaceholderContent.innerHTML = `
+    <section class="workflow-placeholder-page">
+      <div class="workflow-placeholder-empty"><span>${isScript ? "SCRIPT ANALYSIS" : "PROJECT ASSETS"}</span><h1>${title}</h1><p>${resultName}将在这里展示。本原型暂以空白承接页呈现跳转流程。</p></div>
+      ${renderWorkflowQuickDrawer(type)}
+    </section>`;
+  if (workflowQuickModalRoot) workflowQuickModalRoot.innerHTML = "";
+};
+
+const renderWorkflowQuickDrawer = (type = "studio") => {
+  const hasStarted = state.workflowQuickStatus.script !== "ready" || state.workflowScriptAnalysisStage !== "empty";
+  const isVideoMaking = state.workflowPage === "studio" && state.workflowStage === "video";
+  if (!hasStarted || state.workflowPage === "quick" || isVideoMaking) return "";
+  const meta = type === "script" ? workflowQuickStepMeta.script : type === "assets" ? workflowQuickStepMeta.assets : type === "studio" ? workflowQuickStepMeta.keyframes : workflowQuickStepMeta.video;
+  const isCollapsed = state.workflowQuickDrawerCollapsed;
+  const buttonText = "返回快捷创作";
+  return `<aside class="workflow-quick-drawer${isCollapsed ? " is-collapsed" : ""}">
+    <button class="workflow-quick-drawer-toggle" type="button" data-workflow-action="quick-toggle-drawer" aria-label="${isCollapsed ? "展开" : "收起"}快捷创作">${isCollapsed ? "<svg class=\"workflow-quick-fan-icon\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect x=\"6.5\" y=\"3\" width=\"11\" height=\"18\" rx=\"5.5\"/><path d=\"M12 3v5\"/></svg>" : "›"}</button>
+    <div class="workflow-quick-drawer-inner"><span>快捷创作 · 第 ${meta.number} 步</span><strong>${escapeHtml(meta.title)}</strong><p>确认结果后，可返回继续下一步</p><button type="button" data-workflow-action="quick-drawer-return" data-quick-type="${type}">${buttonText}</button></div>
+  </aside>`;
+};
+
 const renderWorkflowStudio = () => {
   if (!workflowEpisodeSelect || !workflowSceneSelect || !workflowScriptCard || !workflowShotTable || !workflowShotSummary || !workflowKeyframeGrid) return;
   workflowHomeView?.classList.toggle(
@@ -3379,7 +3624,7 @@ const renderWorkflowStudio = () => {
     const label = clip.querySelector("em");
     if (item && label) label.textContent = workflowKeyframeDisplayName(episode, scene, item.frame, item.assignedShotIndex);
   });
-  if (workflowGenerateModalRoot) workflowGenerateModalRoot.innerHTML = `${renderWorkflowGenerateModal()}${renderWorkflowFrameModal()}${renderWorkflowEditModal()}${renderWorkflowEditCostConfirmModal()}${renderWorkflowKeyframeDeleteConfirmModal()}${renderWorkflowVideoDeleteConfirmModal()}${renderWorkflowAudioDeleteConfirmModal()}${renderWorkflowKeyframeClearConfirmModal()}${renderWorkflowEditVersionDeleteConfirmModal()}${renderWorkflowTimelinePreviewModal()}${renderWorkflowReferenceModal()}${renderWorkflowMediaPreviewModal()}${renderWorkflowSceneKeyframePickerModal(episode, scene)}${renderWorkflowClipContextMenu()}`;
+  if (workflowGenerateModalRoot) workflowGenerateModalRoot.innerHTML = `${renderWorkflowGenerateModal()}${renderWorkflowFrameModal()}${renderWorkflowEditModal()}${renderWorkflowEditCostConfirmModal()}${renderWorkflowKeyframeDeleteConfirmModal()}${renderWorkflowVideoDeleteConfirmModal()}${renderWorkflowAudioDeleteConfirmModal()}${renderWorkflowKeyframeClearConfirmModal()}${renderWorkflowEditVersionDeleteConfirmModal()}${renderWorkflowTimelinePreviewModal()}${renderWorkflowReferenceModal()}${renderWorkflowMediaPreviewModal()}${renderWorkflowSceneKeyframePickerModal(episode, scene)}${renderWorkflowClipContextMenu()}${renderWorkflowQuickDrawer("studio")}`;
 };
 
 const currentItems = () => {
@@ -3826,13 +4071,20 @@ const renderGrid = () => {
   }
   if (state.currentView === "workflow-home") {
     const inRecycle = state.workflowPage === "recycle";
+    const inQuick = state.workflowPage === "quick";
+    const inPlaceholder = state.workflowPage === "script" || state.workflowPage === "assets";
     workflowHomeView?.classList.toggle("is-recycle-page", inRecycle);
-    workflowStudioMain?.classList.toggle("is-hidden", inRecycle);
+    workflowHomeView?.classList.toggle("is-quick-page", inQuick);
+    workflowStudioMain?.classList.toggle("is-hidden", state.workflowPage !== "studio");
+    workflowQuickMain?.classList.toggle("is-hidden", !inQuick);
+    workflowPlaceholderMain?.classList.toggle("is-hidden", !inPlaceholder);
     workflowRecycleMain?.classList.toggle("is-hidden", !inRecycle);
     workflowHomeView?.querySelectorAll(".workflow-nav-item").forEach((item) => {
-      item.classList.toggle("active", inRecycle ? item.dataset.workflowPage === "recycle" : item.title === "拍摄台");
+      item.classList.toggle("active", item.dataset.workflowPage === state.workflowPage);
     });
     if (inRecycle) renderWorkflowRecycle();
+    else if (inQuick) renderWorkflowQuick();
+    else if (inPlaceholder) renderWorkflowPlaceholder(state.workflowPage);
     else renderWorkflowStudio();
     return;
   }
@@ -6088,6 +6340,193 @@ const handleWorkflowAction = (workflowAction, event) => {
   }
   const action = workflowAction?.dataset.workflowAction;
   if (!action) return false;
+  if (action === "quick-open-modal") {
+    event.preventDefault();
+    const type = workflowAction.dataset.quickType;
+    if (type && state.workflowQuickStatus[type] === "ready") {
+      state.workflowQuickModal = type;
+      renderGrid();
+    }
+    return true;
+  }
+  if (action === "quick-close-modal") {
+    event.preventDefault();
+    state.workflowQuickModal = null;
+    state.workflowQuickRegenerateType = null;
+    renderGrid();
+    return true;
+  }
+  if (action === "quick-regenerate") {
+    event.preventDefault();
+    const type = workflowAction.dataset.quickType;
+    if (type === "assets" || type === "keyframes") {
+      state.workflowQuickModal = type;
+      state.workflowQuickRegenerateType = type;
+      renderGrid();
+    }
+    return true;
+  }
+  if (action === "quick-set-script-upload-mode") {
+    event.preventDefault();
+    state.workflowQuickScriptUploadMode = workflowAction.dataset.uploadMode === "paste" ? "paste" : "file";
+    renderGrid();
+    return true;
+  }
+  if (action === "quick-select-storyboard-pacing") {
+    event.preventDefault();
+    const pacing = workflowAction.dataset.storyboardPacing;
+    if (["tight", "standard", "relaxed"].includes(pacing)) {
+      state.workflowStoryboardPacing = pacing;
+      renderGrid();
+    }
+    return true;
+  }
+  if (action === "quick-confirm-generate") {
+    event.preventDefault();
+    const type = workflowAction.dataset.quickType;
+    if (!type) return true;
+    const isRegeneration = state.workflowQuickRegenerateType === type;
+    state.workflowQuickModal = null;
+    state.workflowQuickRegenerateType = null;
+    state.workflowQuickStatus[type] = "processing";
+    state.workflowQuickTaskProgress = { type, progress: 8 };
+    renderGrid();
+    const taskMilestones = [8, 36, 68, 100];
+    taskMilestones.slice(1).forEach((progress, index) => {
+      window.setTimeout(() => {
+        if (state.workflowQuickTaskProgress?.type !== type) return;
+        state.workflowQuickTaskProgress.progress = progress;
+        if (progress === 100) {
+          state.workflowQuickStatus[type] = type === "assets" || type === "keyframes" ? "complete" : "review";
+          if (isRegeneration && (type === "assets" || type === "keyframes")) state.workflowQuickRegenerated[type] = true;
+          state.workflowQuickTaskProgress = null;
+          if (type === "script") state.workflowScriptAnalysisStage = "organize";
+          if (type === "assets") state.workflowQuickStatus.keyframes = "ready";
+          if (type === "keyframes") state.workflowQuickStatus.video = "ready";
+        }
+        renderGrid();
+      }, (index + 1) * 650);
+    });
+    return true;
+  }
+  if (action === "quick-confirm-script-stage") {
+    event.preventDefault();
+    const stage = workflowAction.dataset.scriptStage;
+    const isAssets = stage === "assets";
+    if (!isAssets && stage !== "storyboard") return true;
+    state.workflowQuickModal = null;
+    state.workflowScriptAnalysisStage = isAssets ? "processing-assets" : "processing-storyboard";
+    state.workflowQuickStatus.script = "processing";
+    state.workflowQuickTaskProgress = { type: "script", progress: 8 };
+    renderGrid();
+    window.setTimeout(() => {
+      const processingStage = isAssets ? "processing-assets" : "processing-storyboard";
+      if (state.workflowScriptAnalysisStage !== processingStage) return;
+      state.workflowQuickTaskProgress = { type: "script", progress: 58 };
+      renderGrid();
+    }, isAssets ? 400 : 450);
+    window.setTimeout(() => {
+      state.workflowScriptAnalysisStage = isAssets ? "assets" : "storyboard";
+      state.workflowQuickStatus.script = isAssets ? "review" : "complete";
+      if (!isAssets) state.workflowQuickStatus.assets = "ready";
+      state.workflowQuickTaskProgress = null;
+      renderGrid();
+    }, isAssets ? 900 : 1000);
+    return true;
+  }
+  if (action === "script-return-quick") {
+    event.preventDefault();
+    state.workflowPage = "quick";
+    renderGrid();
+    return true;
+  }
+  if (action === "script-extract-assets") {
+    event.preventDefault();
+    state.workflowQuickModal = "script-assets";
+    renderGrid();
+    return true;
+  }
+  if (action === "script-generate-storyboard") {
+    event.preventDefault();
+    state.workflowQuickModal = "script-storyboard";
+    renderGrid();
+    return true;
+  }
+  if (action === "script-finish-analysis") {
+    event.preventDefault();
+    state.workflowQuickStatus.script = "complete";
+    state.workflowQuickStatus.assets = "ready";
+    state.workflowPage = "quick";
+    renderGrid();
+    return true;
+  }
+  if (action === "quick-script-extract-assets") {
+    event.preventDefault();
+    state.workflowQuickModal = "script-assets";
+    renderGrid();
+    return true;
+  }
+  if (action === "quick-script-generate-storyboard") {
+    event.preventDefault();
+    state.workflowQuickModal = "script-storyboard";
+    renderGrid();
+    return true;
+  }
+  if (action === "quick-script-finish-analysis") {
+    event.preventDefault();
+    state.workflowQuickStatus.script = "complete";
+    state.workflowQuickStatus.assets = "ready";
+    renderGrid();
+    return true;
+  }
+  if (action === "quick-continue-from-result") {
+    event.preventDefault();
+    const type = workflowAction.dataset.quickType;
+    if (type === "assets") {
+      state.workflowQuickStatus.assets = "complete";
+      state.workflowQuickStatus.keyframes = "ready";
+      state.workflowQuickModal = "keyframes";
+    }
+    if (type === "keyframes") {
+      state.workflowQuickStatus.keyframes = "complete";
+      state.workflowQuickStatus.video = "ready";
+    }
+    renderGrid();
+    return true;
+  }
+  if (action === "quick-view-result") {
+    event.preventDefault();
+    const type = workflowAction.dataset.quickType;
+    if (type === "script") state.workflowPage = "script";
+    if (type === "assets") state.workflowPage = "assets";
+    if (type === "keyframes") {
+      state.workflowPage = "studio";
+      state.workflowStage = "keyframe";
+    }
+    renderGrid();
+    return true;
+  }
+  if (action === "quick-enter-video") {
+    event.preventDefault();
+    state.workflowQuickStatus.video = "complete";
+    state.workflowPage = "studio";
+    state.workflowStage = "video";
+    state.workflowResultView = "generator";
+    renderGrid();
+    return true;
+  }
+  if (action === "quick-drawer-return") {
+    event.preventDefault();
+    state.workflowPage = "quick";
+    renderGrid();
+    return true;
+  }
+  if (action === "quick-toggle-drawer") {
+    event.preventDefault();
+    state.workflowQuickDrawerCollapsed = !state.workflowQuickDrawerCollapsed;
+    renderGrid();
+    return true;
+  }
   if (action === "set-result-view") {
     event.preventDefault();
     event.stopPropagation();
@@ -7170,7 +7609,9 @@ workflowHomeView?.addEventListener("click", (event) => {
 
   const navItem = event.target.closest(".workflow-nav-item");
   if (!navItem) return;
-  state.workflowPage = navItem.dataset.workflowPage === "recycle" ? "recycle" : "studio";
+  const targetPage = navItem.dataset.workflowPage;
+  if (!targetPage) return;
+  state.workflowPage = targetPage;
   renderGrid();
 });
 

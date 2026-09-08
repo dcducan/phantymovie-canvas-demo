@@ -2461,6 +2461,363 @@ input::placeholder {
   overflow: hidden;
 }
 
+.workflow-quick-main,
+.workflow-placeholder-main {
+  position: relative;
+  min-width: 0;
+  height: calc(100vh - 48px);
+  overflow: auto;
+  background: radial-gradient(circle at 72% 0%, rgba(0, 215, 220, .075), transparent 30%), #0c0f10;
+}
+
+.workflow-quick-main.is-hidden,
+.workflow-placeholder-main.is-hidden { display: none; }
+
+.workflow-quick-page { width: min(1080px, calc(100% - 72px)); margin: 0 auto; padding: 56px 0 72px; }
+.workflow-quick-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 26px; padding-bottom: 34px; }
+.workflow-quick-header > div > span,
+.workflow-placeholder-empty > span { color: var(--accent); font-size: 12px; font-weight: 600; letter-spacing: .14em; }
+.workflow-quick-header h1 { margin: 10px 0 10px; color: #fff; font-size: 28px; line-height: 1.25; letter-spacing: -.02em; }
+.workflow-quick-header p { max-width: 620px; margin: 0; color: rgba(255,255,255,.48); font-size: 14px; line-height: 1.7; }
+.workflow-quick-project { display: grid; min-width: 156px; gap: 6px; padding: 13px 15px; border: 1px solid rgba(255,255,255,.09); border-radius: 10px; background: rgba(255,255,255,.035); }
+.workflow-quick-project strong { color: rgba(255,255,255,.9); font-size: 13px; font-weight: 500; }
+.workflow-quick-project span { color: rgba(255,255,255,.35); font-size: 11px; }
+.workflow-quick-progress { padding: 18px 20px; border: 1px solid rgba(0,216,220,.18); border-radius: 12px; background: linear-gradient(100deg, rgba(0,216,220,.1), rgba(255,255,255,.025) 48%); }
+.workflow-quick-progress-head { display: flex; align-items: baseline; justify-content: space-between; }
+.workflow-quick-progress-head strong { color: #fff; font-size: 14px; }.workflow-quick-progress-head b { color: var(--accent); font-size: 24px; font-weight: 600; }
+.workflow-quick-progress-track { height: 6px; margin-top: 13px; overflow: hidden; border-radius: 99px; background: rgba(255,255,255,.08); }.workflow-quick-progress-track i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #00aeb4, #54f0ed); transition: width .35s ease; }
+.workflow-quick-progress p { margin: 10px 0 0; color: rgba(255,255,255,.45); font-size: 12px; }
+.workflow-quick-steps { display: grid; gap: 10px; margin-top: 18px; }
+.workflow-quick-step { display: grid; grid-template-columns: 58px minmax(0, 1fr) auto; gap: 18px; align-items: center; min-height: 116px; padding: 18px 20px; border: 1px solid rgba(255,255,255,.08); border-radius: 12px; background: rgba(255,255,255,.025); transition: border-color .18s ease, background .18s ease; }
+.workflow-quick-step.is-ready { border-color: rgba(0,216,220,.35); background: linear-gradient(90deg, rgba(0,216,220,.09), rgba(255,255,255,.025) 48%); }.workflow-quick-step.is-review { border-color: rgba(255,255,255,.16); }.workflow-quick-step.is-complete { opacity: .72; }.workflow-quick-step.is-locked { opacity: .42; }
+.workflow-quick-step-no { display: grid; width: 42px; height: 42px; place-items: center; border: 1px solid rgba(255,255,255,.16); border-radius: 50%; color: rgba(255,255,255,.72); font-size: 12px; }.is-ready .workflow-quick-step-no { border-color: var(--accent); color: var(--accent); }
+.workflow-quick-step-copy > div { display: flex; align-items: center; gap: 10px; }.workflow-quick-step h2 { margin: 0; color: #fff; font-size: 16px; font-weight: 600; }.workflow-quick-step p { margin: 9px 0 0; color: rgba(255,255,255,.45); font-size: 13px; line-height: 1.55; }
+.workflow-quick-status { padding: 3px 7px; border-radius: 5px; background: rgba(255,255,255,.07); color: rgba(255,255,255,.55); font-size: 11px; white-space: nowrap; }.is-ready .workflow-quick-status { background: rgba(0,216,220,.13); color: var(--accent); }.is-complete .workflow-quick-status { color: #8ee1ae; background: rgba(91,195,126,.12); }
+.workflow-quick-step-action { min-width: 175px; text-align: right; }.workflow-quick-step-action button { min-width: 164px; }.workflow-quick-step-action button:disabled { cursor: not-allowed; opacity: .38; }
+.workflow-quick-running { display: inline-flex; align-items: center; gap: 9px; color: var(--accent); font-size: 12px; }.workflow-quick-running i { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 0 rgba(0,216,220,.55); animation: workflow-quick-pulse 1.3s infinite; }
+@keyframes workflow-quick-pulse { 70% { box-shadow: 0 0 0 7px rgba(0,216,220,0); } 100% { box-shadow: 0 0 0 0 rgba(0,216,220,0); } }
+.workflow-quick-note { display: flex; gap: 9px; margin-top: 18px; color: rgba(255,255,255,.34); font-size: 12px; }.workflow-quick-note span { color: rgba(255,255,255,.62); }
+
+.workflow-placeholder-page { position: relative; display: grid; min-height: 100%; place-items: center; }.workflow-placeholder-empty { width: min(460px, calc(100% - 48px)); text-align: center; }.workflow-placeholder-empty h1 { margin: 13px 0 12px; color: #fff; font-size: 28px; }.workflow-placeholder-empty p { margin: 0; color: rgba(255,255,255,.4); font-size: 14px; line-height: 1.7; }
+.workflow-quick-drawer { position: fixed; z-index: 25; top: 76px; right: 22px; width: 268px; border: 1px solid rgba(255,255,255,.13); border-radius: 12px; background: rgba(25,29,31,.96); box-shadow: 0 16px 44px rgba(0,0,0,.35); backdrop-filter: blur(14px); transition: width .2s ease; }.workflow-quick-drawer-inner { padding: 17px; }.workflow-quick-drawer-inner > span { color: var(--accent); font-size: 11px; }.workflow-quick-drawer-inner strong { display: block; margin-top: 7px; color: #fff; font-size: 14px; }.workflow-quick-drawer-inner p { margin: 8px 0 14px; color: rgba(255,255,255,.48); font-size: 12px; line-height: 1.55; }.workflow-quick-drawer-inner button { width: 100%; height: 31px; border-radius: 7px; background: rgba(0,216,220,.13); color: var(--accent); font-size: 12px; }.workflow-quick-drawer-toggle { position: absolute; top: 12px; right: 10px; width: 22px; height: 22px; border: 1px solid rgba(255,255,255,.12); border-radius: 6px; color: rgba(255,255,255,.6); font-size: 15px; line-height: 1; }.workflow-quick-drawer.is-collapsed { width: 42px; height: 46px; overflow: hidden; }.workflow-quick-drawer.is-collapsed .workflow-quick-drawer-inner { display: none; }.workflow-quick-drawer.is-collapsed .workflow-quick-drawer-toggle { top: 11px; right: 9px; }
+
+.workflow-quick-modal { position: fixed; z-index: 7000; inset: 0; display: grid; place-items: center; padding: 24px; }.workflow-quick-modal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.7); backdrop-filter: blur(4px); }.workflow-quick-dialog { position: relative; width: min(500px, 100%); overflow: hidden; border: 1px solid rgba(255,255,255,.13); border-radius: 14px; background: #191d1f; box-shadow: 0 26px 80px rgba(0,0,0,.55); }.workflow-quick-dialog header { display: flex; align-items: flex-start; justify-content: space-between; padding: 19px 20px; border-bottom: 1px solid rgba(255,255,255,.08); }.workflow-quick-dialog header span { display: block; color: var(--accent); font-size: 11px; }.workflow-quick-dialog header strong { display: block; margin-top: 5px; color: #fff; font-size: 17px; }.workflow-quick-dialog header > button { color: rgba(255,255,255,.58); font-size: 22px; }.workflow-quick-dialog-body { display: grid; gap: 14px; padding: 20px; }.workflow-quick-dialog label { display: grid; gap: 7px; color: rgba(255,255,255,.65); font-size: 12px; }.workflow-quick-dialog select { height: 38px; padding: 0 11px; border: 1px solid rgba(255,255,255,.1); border-radius: 8px; outline: 0; background: #101314; color: rgba(255,255,255,.85); }.workflow-quick-modal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }.workflow-quick-cost { display: flex; align-items: center; justify-content: space-between; padding: 12px; border-radius: 8px; background: rgba(0,216,220,.07); color: rgba(255,255,255,.54); font-size: 12px; }.workflow-quick-cost strong { display: inline-flex; align-items: center; gap: 6px; color: #fff; font-size: 13px; }.workflow-quick-cost img { width: 15px; height: 15px; }.workflow-quick-dialog-body > p { margin: -5px 0 0; color: rgba(255,255,255,.33); font-size: 11px; }.workflow-quick-dialog footer { display: flex; justify-content: flex-end; gap: 9px; padding: 15px 20px; border-top: 1px solid rgba(255,255,255,.08); }
+.workflow-quick-dialog .workflow-quick-file { position: relative; }.workflow-quick-file input { position: absolute; width: 1px; height: 1px; opacity: 0; }.workflow-quick-file span { display: flex; height: 38px; padding: 0 11px; align-items: center; border: 1px dashed rgba(0,216,220,.42); border-radius: 8px; color: rgba(255,255,255,.55); background: rgba(0,216,220,.045); cursor: pointer; }
+
+@media (max-width: 760px) { .workflow-quick-page { width: min(100% - 32px, 1080px); padding-top: 32px; }.workflow-quick-header { display: block; }.workflow-quick-project { margin-top: 18px; }.workflow-quick-step { grid-template-columns: 42px 1fr; gap: 12px; }.workflow-quick-step-action { grid-column: 2; min-width: 0; text-align: left; }.workflow-quick-step-action button { width: 100%; }.workflow-quick-modal-grid { grid-template-columns: 1fr; }.workflow-quick-drawer { right: 12px; top: 60px; } }
+
+/* 快捷创作：全屏流程轨道 */
+.workflow-quick-main { overflow: hidden; }
+.workflow-quick-page { display: flex; flex-direction: column; width: 100%; min-height: 100%; margin: 0; padding: 26px 30px 30px; }
+.workflow-quick-header { flex: 0 0 auto; align-items: center; padding: 0 0 18px; }.workflow-quick-header h1 { margin: 4px 0 0; font-size: 20px; letter-spacing: 0; }.workflow-quick-header > div > span { font-size: 10px; letter-spacing: .16em; }.workflow-quick-project { display: flex; min-width: 0; padding: 0; align-items: center; gap: 18px; border: 0; background: transparent; }.workflow-quick-project span { color: rgba(255,255,255,.4); font-size: 12px; }.workflow-quick-project strong { color: var(--accent); font-size: 22px; font-weight: 500; }
+.workflow-quick-progress { flex: 0 0 auto; display: flex; align-items: center; gap: 14px; padding: 0 0 18px; border: 0; border-radius: 0; background: transparent; }.workflow-quick-progress-track { flex: 1; height: 3px; margin: 0; background: rgba(255,255,255,.1); }.workflow-quick-progress p { width: 206px; margin: 0; color: rgba(255,255,255,.45); font-size: 12px; text-align: right; }.workflow-quick-progress-head { display: none; }
+.workflow-quick-steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); flex: 1; min-height: 0; gap: 10px; margin: 0; }.workflow-quick-step { position: relative; display: flex; flex-direction: column; align-items: stretch; min-height: 0; padding: 17px; overflow: hidden; border: 1px solid rgba(255,255,255,.08); border-radius: 10px; background: linear-gradient(160deg, rgba(255,255,255,.055), rgba(255,255,255,.014)); }.workflow-quick-step::after { position: absolute; right: -42px; bottom: -42px; width: 145px; height: 145px; border: 1px solid rgba(255,255,255,.06); border-radius: 50%; content: ""; }.workflow-quick-step.is-ready { border-color: rgba(0,216,220,.6); background: linear-gradient(160deg, rgba(0,216,220,.15), rgba(255,255,255,.02) 70%); }.workflow-quick-step.is-review { border-color: rgba(0,216,220,.32); background: linear-gradient(160deg, rgba(0,216,220,.09), rgba(255,255,255,.02) 70%); }.workflow-quick-step.is-complete { opacity: 1; border-color: rgba(107,211,145,.28); }.workflow-quick-step.is-locked { opacity: .46; }
+.workflow-quick-step-top { display: flex; align-items: center; justify-content: space-between; }.workflow-quick-step-top > span { color: rgba(255,255,255,.35); font: 500 11px/1 ui-monospace, SFMono-Regular, Menlo, monospace; }.workflow-quick-step-top em { padding: 4px 7px; border-radius: 4px; background: rgba(255,255,255,.06); color: rgba(255,255,255,.52); font-size: 10px; font-style: normal; }.workflow-quick-step.is-ready .workflow-quick-step-top em { background: rgba(0,216,220,.13); color: var(--accent); }.workflow-quick-step.is-complete .workflow-quick-step-top em { background: rgba(92,199,129,.12); color: #8ee1ae; }
+.workflow-quick-step-main { padding-top: clamp(30px, 9vh, 104px); }.workflow-quick-step-icon { display: grid; width: 43px; height: 43px; place-items: center; margin-bottom: 22px; border: 1px solid rgba(255,255,255,.17); border-radius: 12px; color: rgba(255,255,255,.86); font-size: 23px; font-style: normal; }.workflow-quick-step.is-ready .workflow-quick-step-icon { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 30px rgba(0,216,220,.11); }.workflow-quick-step h2 { font-size: 17px; font-weight: 500; line-height: 1.35; }.workflow-quick-step p { margin: 9px 0 0; color: rgba(255,255,255,.4); font-size: 12px; line-height: 1.5; }.workflow-quick-status, .workflow-quick-step-no { display: none; }
+.workflow-quick-step-action { min-width: 0; margin-top: auto; padding-top: 20px; text-align: left; z-index: 1; }.workflow-quick-step-action button { width: 100%; min-width: 0; height: 38px; border: 1px solid rgba(255,255,255,.15); border-radius: 7px; color: rgba(255,255,255,.82); font-size: 12px; }.workflow-quick-step.is-ready .workflow-quick-step-action button, .workflow-quick-step.is-review .workflow-quick-step-action button { border-color: rgba(0,216,220,.55); background: rgba(0,216,220,.11); color: var(--accent); }.workflow-quick-step-action button:not(:disabled):hover { border-color: var(--accent); background: rgba(0,216,220,.17); }
+.workflow-quick-task { position: relative; z-index: 1; margin-top: auto; padding-top: 26px; }.workflow-quick-task-bar { height: 3px; overflow: hidden; border-radius: 9px; background: rgba(255,255,255,.11); }.workflow-quick-task-bar i { display: block; height: 100%; border-radius: inherit; background: var(--accent); transition: width .35s ease; }.workflow-quick-task-percent { margin-top: 8px; color: var(--accent); font: 12px/1 ui-monospace, SFMono-Regular, Menlo, monospace; }.workflow-quick-task ol { display: grid; gap: 8px; margin: 17px 0 0; padding: 0; list-style: none; }.workflow-quick-task li { display: flex; align-items: center; gap: 7px; color: rgba(255,255,255,.3); font-size: 11px; }.workflow-quick-task li > i { width: 5px; height: 5px; border: 1px solid rgba(255,255,255,.35); border-radius: 50%; }.workflow-quick-task li.is-current { color: rgba(255,255,255,.82); }.workflow-quick-task li.is-current > i { border-color: var(--accent); background: var(--accent); box-shadow: 0 0 10px var(--accent); }.workflow-quick-task li.is-done { color: rgba(255,255,255,.58); }.workflow-quick-task li.is-done > i { border-color: #8ee1ae; background: #8ee1ae; }
+@media (max-width: 1080px) { .workflow-quick-main { overflow: auto; }.workflow-quick-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }.workflow-quick-step { min-height: 310px; }.workflow-quick-step-main { padding-top: 48px; } }
+@media (max-width: 640px) { .workflow-quick-page { min-height: auto; padding: 20px 16px; }.workflow-quick-progress p { width: auto; }.workflow-quick-steps { grid-template-columns: 1fr; }.workflow-quick-step { min-height: 278px; } }
+
+/* 快捷创作：中性深色主题，移除荧光强调 */
+.workflow-quick-main,
+.workflow-placeholder-main { flex: 1 1 0; width: 0; background: #101112; }
+.workflow-quick-header > div > span,
+.workflow-placeholder-empty > span { color: rgba(255,255,255,.42); }
+.workflow-quick-project strong { color: #f2f2f2; }
+.workflow-quick-progress-track i { background: #d8d8d8; }
+.workflow-quick-step { border-color: rgba(255,255,255,.09); background: linear-gradient(160deg, rgba(255,255,255,.045), rgba(255,255,255,.016)); }
+.workflow-quick-step.is-ready,
+.workflow-quick-step.is-review { border-color: rgba(255,255,255,.34); background: linear-gradient(160deg, rgba(255,255,255,.085), rgba(255,255,255,.025) 72%); }
+.workflow-quick-step.is-complete { border-color: rgba(255,255,255,.18); }
+.workflow-quick-step.is-ready .workflow-quick-step-top em,
+.workflow-quick-step.is-review .workflow-quick-step-top em,
+.workflow-quick-step.is-complete .workflow-quick-step-top em { background: rgba(255,255,255,.1); color: rgba(255,255,255,.72); }
+.workflow-quick-step.is-ready .workflow-quick-step-icon { border-color: rgba(255,255,255,.7); color: #fff; box-shadow: none; }
+.workflow-quick-step.is-ready .workflow-quick-step-action button,
+.workflow-quick-step.is-review .workflow-quick-step-action button { border-color: #e7e7e7; background: #e7e7e7; color: #151515; }
+.workflow-quick-step-action button:not(:disabled):hover { border-color: #fff; background: #fff; color: #111; }
+.workflow-quick-task-bar i { background: #e0e0e0; }.workflow-quick-task-percent { color: rgba(255,255,255,.78); }.workflow-quick-task li.is-current > i { border-color: #fff; background: #fff; box-shadow: none; }.workflow-quick-task li.is-done > i { border-color: rgba(255,255,255,.66); background: rgba(255,255,255,.66); }
+.workflow-quick-drawer-inner > span { color: rgba(255,255,255,.5); }.workflow-quick-drawer-inner button { background: rgba(255,255,255,.1); color: rgba(255,255,255,.88); }.workflow-quick-cost { background: rgba(255,255,255,.055); }.workflow-quick-file span { border-color: rgba(255,255,255,.28); background: rgba(255,255,255,.035); }
+.workflow-quick-dialog header span { color: rgba(255,255,255,.48); }.workflow-quick-dialog footer .workflow-primary-button { background: #ededed; color: #111; }.workflow-quick-dialog footer .workflow-secondary-button { border-color: rgba(255,255,255,.16); color: rgba(255,255,255,.74); }
+.workflow-quick-dialog footer { justify-content: space-between; align-items: center; }.workflow-quick-dialog footer > div { display: flex; gap: 9px; }.workflow-quick-footer-cost { display: inline-flex; align-items: center; gap: 6px; color: rgba(255,255,255,.72); font-size: 13px; }.workflow-quick-footer-cost img { width: 15px; height: 15px; }
+
+/* 快捷创作仅复用拍摄台主按钮的柔和蓝色作为重点色 */
+.workflow-quick-project strong { color: #c2f2ff; }
+.workflow-quick-progress-track i { background: linear-gradient(90deg, #9eddec, var(--cta-bottom)); }
+.workflow-quick-step.is-ready .workflow-quick-step-top em,
+.workflow-quick-step.is-review .workflow-quick-step-top em { background: rgba(194,242,255,.12); color: #c2f2ff; }
+.workflow-quick-step.is-ready .workflow-quick-step-icon { border-color: rgba(194,242,255,.78); color: #c2f2ff; }
+.workflow-quick-step.is-ready .workflow-quick-step-action button,
+.workflow-quick-step.is-review .workflow-quick-step-action button { border-color: transparent; background: linear-gradient(180deg, var(--cta-top) 0%, var(--cta-bottom) 100%); color: #102125; }
+.workflow-quick-step-action button:not(:disabled):hover { border-color: transparent; background: linear-gradient(180deg, #d7f7ff 0%, #b9ebf8 100%); color: #102125; }
+.workflow-quick-task-bar i { background: linear-gradient(90deg, #9eddec, var(--cta-bottom)); }.workflow-quick-task-percent { color: #c2f2ff; }.workflow-quick-task li.is-current > i { border-color: #c2f2ff; background: #c2f2ff; }
+.workflow-quick-drawer-inner > span { color: #b9e9f4; }.workflow-quick-drawer-inner button { background: rgba(194,242,255,.1); color: #c2f2ff; }.workflow-quick-dialog header span { color: #b9e9f4; }.workflow-quick-dialog footer .workflow-primary-button { background: linear-gradient(180deg, var(--cta-top) 0%, var(--cta-bottom) 100%); color: #102125; }
+
+/* 快捷创作：冻结进度与无图标步骤 */
+.workflow-home-view.is-quick-page .workflow-home-main { height: calc(100vh - 48px); padding: 0; overflow: hidden; }
+.workflow-home-view.is-quick-page .workflow-quick-main { height: 100%; overflow-y: auto; overflow-x: hidden; }
+.workflow-home-view.is-quick-page .workflow-quick-page { min-height: 100%; padding: 0 32px 32px; }
+.workflow-home-view.is-quick-page .workflow-quick-progress { position: sticky; top: 0; z-index: 30; margin: 0 -32px 18px; padding: 14px 32px; border: 0; border-bottom: 1px solid rgba(255,255,255,.08); border-radius: 0; background: rgba(16,17,18,.97); box-shadow: 0 10px 18px rgba(0,0,0,.2); }
+.workflow-quick-progress ol { gap: clamp(18px, 2.6vw, 38px); }
+.workflow-quick-progress li { display: block; color: rgba(255,255,255,.3); font-size: 12px; }
+.workflow-quick-progress li.is-ready, .workflow-quick-progress li.is-processing, .workflow-quick-progress li.is-review { color: var(--accent); }
+.workflow-quick-progress li.is-complete { color: rgba(255,255,255,.74); }
+.workflow-quick-step { grid-template-columns: minmax(0, 1fr) 190px; }
+.workflow-quick-step-rail { display: none; }
+.workflow-quick-step-main { grid-template-columns: minmax(220px, .8fr) minmax(260px, 1fr); padding: 22px 28px; }
+.workflow-quick-step-title { gap: 0; }
+.workflow-quick-step-main .workflow-quick-step-icon { display: none; }
+.workflow-quick-step-action { grid-column: 2; grid-row: 1; }
+.workflow-quick-script-actions { display: grid; width: 100%; gap: 8px; }
+.workflow-quick-script-actions > button { max-width: none; }
+.workflow-quick-script-actions .workflow-quick-text-action { height: 28px; border: 0; background: transparent; color: rgba(255,255,255,.58); font-size: 11px; }
+.workflow-quick-script-actions .workflow-quick-text-action:hover { background: rgba(255,255,255,.05); color: #fff; }
+.workflow-quick-inline-progress { display: inline-block; width: 130px; height: 3px; margin: 0 0 2px 10px; overflow: hidden; vertical-align: middle; border-radius: 4px; background: rgba(255,255,255,.12); }
+.workflow-quick-inline-progress i { display: block; height: 100%; border-radius: inherit; background: var(--accent); transition: width .35s ease; }
+.workflow-quick-script-steps > div { position: relative; display: block; padding: 0 0 10px; border: 0; border-radius: 0; background: transparent; }
+.workflow-quick-script-steps > div::after, .workflow-quick-script-steps > div::before { position: absolute; right: 0; bottom: 0; left: 0; height: 2px; border-radius: 2px; content: ""; }
+.workflow-quick-script-steps > div::after { background: rgba(255,255,255,.1); }
+.workflow-quick-script-steps > div::before { z-index: 1; width: var(--workflow-step-fill); background: var(--accent); transition: width .35s ease; }
+.workflow-quick-script-steps i { display: none; }
+.workflow-quick-script-steps span { gap: 4px; }
+.workflow-quick-script-steps .is-active, .workflow-quick-script-steps .is-processing { border: 0; background: transparent; }
+.workflow-quick-script-steps .is-active strong, .workflow-quick-script-steps .is-processing strong { color: rgba(255,255,255,.88); }
+.workflow-quick-script-steps .is-active em, .workflow-quick-script-steps .is-processing em { color: var(--accent); }
+@media (max-width: 980px) { .workflow-home-view.is-quick-page .workflow-home-main { height: auto; overflow: visible; }.workflow-home-view.is-quick-page .workflow-quick-main { height: auto; overflow: visible; }.workflow-home-view.is-quick-page .workflow-quick-page { padding: 0 20px 24px; }.workflow-home-view.is-quick-page .workflow-quick-progress { margin-right: -20px; margin-left: -20px; padding-right: 20px; padding-left: 20px; }.workflow-quick-step { grid-template-columns: minmax(0, 1fr) 170px; }.workflow-quick-step-action { grid-column: 2; grid-row: 1; height: auto !important; }.workflow-quick-step-main { grid-template-columns: 1fr; } }
+@media (max-width: 680px) { .workflow-home-view.is-quick-page .workflow-quick-page { padding: 0 14px 22px; }.workflow-home-view.is-quick-page .workflow-quick-progress { margin-right: -14px; margin-left: -14px; padding-right: 14px; padding-left: 14px; }.workflow-quick-step { grid-template-columns: 1fr; }.workflow-quick-step-action { grid-column: 1; grid-row: 2; padding: 0 20px 18px; }.workflow-quick-step-action button { max-width: none; }.workflow-quick-progress > div:nth-child(2) { display: none; } }
+
+/* 任务进度：更宽的细长流光条 */
+.workflow-quick-inline-progress { width: min(280px, 32vw); height: 5px; margin-left: 14px; background: rgba(255,255,255,.09); box-shadow: inset 0 1px 0 rgba(255,255,255,.04); }
+.workflow-quick-inline-progress i { position: relative; overflow: hidden; background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 64%, transparent), var(--accent)); box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 24%, transparent); }
+.workflow-quick-inline-progress i::after { position: absolute; top: 0; right: -32%; width: 30%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,.68), transparent); content: ""; animation: workflow-quick-progress-sheen 1.8s ease-in-out infinite; }
+.workflow-quick-script-steps > div::before { background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 64%, transparent), var(--accent)); box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 20%, transparent); }
+.workflow-quick-script-steps .is-processing::before { animation: workflow-quick-progress-breathe 1.25s ease-in-out infinite; }
+@keyframes workflow-quick-progress-sheen { 0% { transform: translateX(-330%); opacity: 0; } 28% { opacity: .75; } 72% { opacity: .75; } 100% { transform: translateX(430%); opacity: 0; } }
+@keyframes workflow-quick-progress-breathe { 50% { filter: brightness(1.22); } }
+@media (max-width: 680px) { .workflow-quick-inline-progress { width: min(210px, 48vw); } }
+
+/* 剧本三段式进度；下方只保留阶段信息 */
+.workflow-quick-step-main { grid-template-columns: 1fr; gap: 14px; }
+.workflow-quick-script-progress { display: inline-flex; width: min(280px, 32vw); height: 5px; gap: 4px; margin: 0 0 2px 14px; vertical-align: middle; }
+.workflow-quick-script-progress > i { display: block; flex: 1; overflow: hidden; border-radius: 4px; background: rgba(255,255,255,.09); box-shadow: inset 0 1px 0 rgba(255,255,255,.04); }
+.workflow-quick-script-progress b { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 64%, transparent), var(--accent)); box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 22%, transparent); transition: width .35s ease; }
+.workflow-quick-script-steps > div { padding: 0; }
+.workflow-quick-script-steps > div::before, .workflow-quick-script-steps > div::after { display: none; }
+.workflow-quick-script-steps .is-active strong, .workflow-quick-script-steps .is-processing strong { color: var(--accent); }
+.workflow-quick-script-steps .is-active em, .workflow-quick-script-steps .is-processing em { color: rgba(255,255,255,.55); }
+.workflow-quick-asset-result { gap: 9px; }
+.workflow-quick-asset-summary { display: flex; flex-wrap: wrap; gap: 8px 12px; }
+.workflow-quick-asset-summary b { display: inline-flex; align-items: center; gap: 5px; color: rgba(255,255,255,.72); font-size: 12px; font-weight: 500; }
+.workflow-quick-asset-summary i { display: inline-grid; width: 12px; height: 12px; place-items: center; border-radius: 4px; background: rgba(255,255,255,.08); color: var(--accent); font-size: 7px; font-style: normal; }
+.workflow-quick-asset-result strong { color: var(--accent); }
+@media (max-width: 680px) { .workflow-quick-script-progress { width: min(210px, 48vw); } }
+
+/* 卡片顶部进度线与同规格操作按钮 */
+.workflow-quick-step { position: relative; overflow: hidden; }
+.workflow-quick-card-progress { position: absolute; top: 0; right: 0; left: 0; z-index: 2; height: 5px; padding: 0; pointer-events: none; }
+.workflow-quick-card-progress > i { display: block; width: 100%; height: 100%; overflow: hidden; background: rgba(255,255,255,.09); }
+.workflow-quick-card-progress b { display: block; height: 100%; background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 64%, transparent), var(--accent)); box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 22%, transparent); transition: width .35s ease; }
+.workflow-quick-card-progress.is-script { display: flex; gap: 4px; padding: 0 1px; background: #101112; }
+.workflow-quick-card-progress.is-script > i { flex: 1; border-radius: 0 0 2px 2px; }
+.workflow-quick-card-progress.is-script b { border-radius: inherit; }
+.workflow-quick-step-main { padding-top: 27px; }
+.workflow-quick-inline-progress, .workflow-quick-script-progress { display: none; }
+.workflow-quick-script-actions { gap: 14px; }
+.workflow-quick-script-actions > button, .workflow-quick-script-actions .workflow-quick-text-action { display: inline-flex; width: 100%; height: 38px; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,.15); border-radius: 7px; background: transparent; color: rgba(255,255,255,.82); font-size: 12px; }
+.workflow-quick-step.is-review .workflow-quick-script-actions .workflow-quick-text-action { border-color: rgba(255,255,255,.15); background: transparent; color: rgba(255,255,255,.72); }
+.workflow-quick-script-actions .workflow-quick-text-action:hover { border-color: rgba(255,255,255,.48); background: rgba(255,255,255,.06); color: #fff; }
+.workflow-quick-asset-summary i { width: 15px; height: 15px; background: transparent; }
+.workflow-quick-asset-summary svg { width: 14px; height: 14px; fill: none; stroke: var(--accent); stroke-width: 1.65; stroke-linecap: round; stroke-linejoin: round; }
+
+/* 统一操作组与顶部连续进度 */
+.workflow-quick-script-actions { gap: 14px; }
+.workflow-quick-step .workflow-quick-script-actions .workflow-quick-view-action { border-color: transparent; background: linear-gradient(180deg, var(--cta-top) 0%, var(--cta-bottom) 100%); color: #102125; }
+.workflow-quick-step .workflow-quick-script-actions .workflow-quick-text-action { border-color: rgba(255,255,255,.22); background: transparent; color: rgba(255,255,255,.78); }
+.workflow-quick-step .workflow-quick-script-actions .workflow-quick-text-action:disabled { cursor: not-allowed; border-color: rgba(255,255,255,.1); color: rgba(255,255,255,.28); opacity: 1; }
+.workflow-quick-card-progress b { background: linear-gradient(90deg, var(--cta-top), var(--cta-bottom)); box-shadow: 0 0 12px rgba(194,242,255,.2); }
+.workflow-quick-card-progress.is-script { display: block; padding: 0; background: transparent; }
+.workflow-quick-card-progress.is-script > i { display: block; width: 100%; height: 100%; border-radius: 0; }
+.workflow-quick-asset-summary b { color: rgba(255,255,255,.72); }
+.workflow-quick-asset-summary i { color: inherit; }
+.workflow-quick-asset-summary svg { stroke: currentColor; }
+.workflow-quick-progress ol { gap: clamp(10px, 1.6vw, 24px); }
+.workflow-quick-progress li { display: inline-flex; align-items: baseline; gap: 4px; color: rgba(255,255,255,.3); font-size: 11px; }
+.workflow-quick-progress li span { color: inherit; font-size: 10px; }
+.workflow-quick-progress li.is-current { color: #c2f2ff; }
+.workflow-quick-progress li.is-done { color: rgba(255,255,255,.72); }
+
+/* 进度条移至四个模块左侧，右上步骤随流程点亮 */
+.workflow-quick-card-progress { top: 0; bottom: 0; left: 0; right: auto; width: 5px; height: auto; }
+.workflow-quick-card-progress > i { width: 100%; height: 100%; }
+.workflow-quick-card-progress b { position: absolute; bottom: 0; width: 100%; min-height: 0; }
+.workflow-quick-card-progress.is-script { width: 5px; height: auto; }
+.workflow-quick-card-progress.is-script > i { width: 100%; height: 100%; }
+.workflow-quick-step-main { padding-left: 32px; }
+.workflow-quick-generated-copy { color: rgba(255,255,255,.32) !important; font-size: 10px !important; font-weight: 400 !important; }
+.workflow-quick-progress li.is-ready,
+.workflow-quick-progress li.is-processing,
+.workflow-quick-progress li.is-review,
+.workflow-quick-progress li.is-complete { color: var(--accent); }
+
+/* 四张流程卡保持同一节奏 */
+.workflow-quick-steps { grid-template-rows: repeat(4, 176px); gap: 18px; }
+.workflow-quick-step, .workflow-quick-step:first-child { height: 176px; min-height: 176px; }
+.workflow-quick-card-progress b { background: var(--accent); box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 24%, transparent); }
+.workflow-quick-script-actions { gap: 18px; }
+.workflow-quick-step .workflow-quick-script-actions .workflow-quick-view-action,
+.workflow-quick-step .workflow-quick-script-actions .workflow-quick-text-action { box-sizing: border-box; height: 40px; min-height: 40px; }
+.workflow-quick-step .workflow-quick-script-actions .workflow-quick-text-action { border: 1px solid rgba(255,255,255,.24); }
+.workflow-quick-progress li.is-ready,
+.workflow-quick-progress li.is-processing,
+.workflow-quick-progress li.is-review,
+.workflow-quick-progress li.is-complete { color: var(--accent) !important; }
+@media (max-width: 980px) { .workflow-quick-steps { grid-template-rows: none; gap: 14px; }.workflow-quick-step, .workflow-quick-step:first-child { height: auto; min-height: 176px; } }
+
+/* 四张卡片等高等宽，剧本子步骤编号 */
+.workflow-quick-steps { grid-template-rows: repeat(4, 184px); gap: 24px; }
+.workflow-quick-step, .workflow-quick-step:first-child { height: 184px; min-height: 184px; }
+.workflow-quick-script-actions { gap: 24px; }
+.workflow-quick-script-steps > div { display: flex; align-items: flex-start; gap: 8px; }
+.workflow-quick-script-index { flex: 0 0 auto; color: rgba(255,255,255,.38); font: 500 10px/1 ui-monospace, SFMono-Regular, Menlo, monospace; }
+.workflow-quick-script-steps .is-active .workflow-quick-script-index,
+.workflow-quick-script-steps .is-processing .workflow-quick-script-index { color: var(--accent); }
+@media (max-width: 980px) { .workflow-quick-steps { grid-template-rows: none; gap: 16px; }.workflow-quick-step, .workflow-quick-step:first-child { height: auto; min-height: 184px; } }
+
+/* 去除卡片渐变，固定四张卡的尺寸和留白 */
+.workflow-quick-step,
+.workflow-quick-step.is-ready,
+.workflow-quick-step.is-review,
+.workflow-quick-step.is-complete,
+.workflow-quick-step.is-locked { background: #141617; }
+.workflow-quick-steps { grid-template-rows: repeat(4, 184px); grid-auto-rows: 184px; gap: 32px; align-items: stretch; }
+.workflow-quick-step, .workflow-quick-step:first-child { height: 184px; min-height: 184px; max-height: 184px; overflow: hidden; }
+.workflow-quick-script-steps > div { display: block; }
+.workflow-quick-script-index { display: inline; margin-right: 7px; }
+@media (max-width: 980px) { .workflow-quick-steps { grid-template-rows: none; grid-auto-rows: auto; gap: 20px; }.workflow-quick-step, .workflow-quick-step:first-child { height: auto; min-height: 184px; max-height: none; } }
+
+/* 仅为可追加生成的结果提供补充入口 */
+.workflow-quick-regenerate { justify-self: start; height: 24px; padding: 0 8px; border: 1px solid rgba(255,255,255,.16); border-radius: 5px; color: rgba(255,255,255,.58); font-size: 10px; }
+.workflow-quick-regenerate:hover { border-color: rgba(255,255,255,.4); color: #fff; }
+
+/* 上传剧本与剧本阶段扣费提醒 */
+.workflow-script-upload-modal .workflow-quick-dialog { width: min(680px, 100%); border-color: rgba(255,255,255,.13); border-radius: 20px; background: #181a1b; }
+.workflow-script-upload-dialog { padding: 38px 36px 32px; }
+.workflow-script-upload-dialog h2, .workflow-script-stage-dialog h2 { margin: 0; color: #fff; font-size: 26px; font-weight: 600; letter-spacing: -.02em; }
+.workflow-script-upload-dialog > p, .workflow-script-stage-dialog > p { margin: 18px 0 30px; color: rgba(255,255,255,.5); font-size: 16px; line-height: 1.65; }
+.workflow-script-upload-dialog .workflow-quick-upload-tabs { width: max-content; gap: 0; margin-bottom: 24px; padding: 5px; border: 0; border-radius: 999px; background: #111213; }
+.workflow-script-upload-dialog .workflow-quick-upload-tabs button { width: 132px; height: 42px; border: 0; border-radius: 999px; color: rgba(255,255,255,.42); font-size: 15px; }
+.workflow-script-upload-dialog .workflow-quick-upload-tabs button.active { border: 0; background: rgba(255,255,255,.12); color: #fff; }
+.workflow-script-dropzone { position: relative; display: grid; height: 140px; place-items: center; border: 1px dashed rgba(255,255,255,.22); border-radius: 24px; color: rgba(255,255,255,.78); font-size: 17px; }
+.workflow-script-dropzone input { position: absolute; inset: 0; width: 100%; height: 100%; cursor: pointer; opacity: 0; }
+.workflow-script-dropzone b { color: var(--accent); font-weight: 500; }
+.workflow-script-paste-area { display: block; width: 100%; height: 180px; box-sizing: border-box; padding: 22px; border: 1px solid rgba(255,255,255,.16); border-radius: 24px; outline: 0; resize: none; background: #111213; color: #fff; font: 16px/1.6 inherit; }
+.workflow-script-paste-area::placeholder { color: rgba(255,255,255,.35); }
+.workflow-script-upload-dialog footer { display: flex; justify-content: flex-end; gap: 12px; margin-top: 36px; }
+.workflow-script-upload-dialog footer button, .workflow-script-stage-dialog footer button { min-width: 116px; height: 54px; border-radius: 999px; font-size: 16px; }
+.workflow-script-upload-dialog footer .workflow-secondary-button, .workflow-script-stage-dialog footer .workflow-secondary-button { border: 1px solid rgba(255,255,255,.18); color: rgba(255,255,255,.8); }
+.workflow-script-stage-modal .workflow-quick-dialog { width: min(560px, 100%); border-radius: 18px; background: #181a1b; }
+.workflow-script-stage-dialog { padding: 34px 34px 22px; }
+.workflow-script-stage-dialog > p { max-width: 460px; margin-bottom: 32px; font-size: 15px; }
+.workflow-script-stage-dialog footer { display: flex; align-items: center; justify-content: space-between; padding-top: 20px; border-top: 1px solid rgba(255,255,255,.08); }
+.workflow-script-stage-dialog footer > div { display: flex; gap: 12px; }
+.workflow-script-stage-cost { display: inline-flex; align-items: center; gap: 5px; color: rgba(255,255,255,.48); font-size: 14px; }
+.workflow-script-stage-cost img, .workflow-script-stage-dialog .workflow-primary-button img { width: 15px; height: 15px; object-fit: contain; }
+.workflow-script-stage-dialog .workflow-primary-button { display: inline-flex; align-items: center; justify-content: center; gap: 5px; min-width: 164px; }
+@media (max-width: 640px) { .workflow-script-upload-dialog { padding: 28px 22px 22px; }.workflow-script-upload-dialog .workflow-quick-upload-tabs { width: 100%; }.workflow-script-upload-dialog .workflow-quick-upload-tabs button { width: 50%; }.workflow-script-stage-dialog footer { align-items: flex-end; flex-direction: column; }.workflow-script-stage-dialog footer > div { width: 100%; }.workflow-script-stage-dialog footer button { flex: 1; min-width: 0; } }
+
+/* 收紧剧本相关弹窗比例，并提供分镜节奏选择 */
+.workflow-script-upload-modal .workflow-quick-dialog { width: min(560px, 100%); border-radius: 16px; }
+.workflow-script-upload-dialog { padding: 28px 30px 24px; }
+.workflow-script-upload-dialog h2, .workflow-script-stage-dialog h2 { font-size: 22px; }
+.workflow-script-upload-dialog > p, .workflow-script-stage-dialog > p { margin: 12px 0 22px; font-size: 14px; }
+.workflow-script-upload-dialog .workflow-quick-upload-tabs { margin-bottom: 18px; }
+.workflow-script-upload-dialog .workflow-quick-upload-tabs button { width: 108px; height: 36px; font-size: 13px; }
+.workflow-script-dropzone { height: 116px; border-radius: 16px; font-size: 15px; }
+.workflow-script-paste-area { height: 140px; padding: 16px; border-radius: 16px; font-size: 14px; }
+.workflow-script-upload-dialog footer { margin-top: 24px; }
+.workflow-script-upload-dialog footer button, .workflow-script-stage-dialog footer button { min-width: 96px; height: 42px; font-size: 14px; }
+.workflow-script-stage-modal .workflow-quick-dialog { width: min(480px, 100%); border-radius: 14px; }
+.workflow-script-stage-modal .workflow-quick-dialog:has(.is-storyboard) { width: min(760px, 100%); }
+.workflow-script-stage-dialog { position: relative; padding: 28px 28px 18px; }
+.workflow-script-stage-dialog > p { margin-bottom: 24px; font-size: 14px; }
+.workflow-script-dialog-close { position: absolute; top: 18px; right: 18px; color: rgba(255,255,255,.42); font-size: 20px; }
+.workflow-script-stage-dialog footer { padding-top: 16px; }
+.workflow-storyboard-pacing > strong { display: block; margin-bottom: 14px; color: rgba(255,255,255,.86); font-size: 14px; }
+.workflow-storyboard-pacing-options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.workflow-storyboard-pacing-options button { min-height: 166px; padding: 16px; border: 1px solid rgba(255,255,255,.12); border-radius: 14px; text-align: left; background: #151718; color: rgba(255,255,255,.82); }
+.workflow-storyboard-pacing-options button.active { border-color: var(--accent); background: rgba(0,216,220,.055); box-shadow: inset 0 0 0 1px var(--accent); }
+.workflow-storyboard-pacing-options button > b { display: block; color: #fff; font-size: 17px; }.workflow-storyboard-pacing-options button > b em { display: inline-block; margin-left: 7px; padding: 3px 6px; border-radius: 10px; background: var(--accent); color: #102125; font-size: 10px; font-style: normal; }
+.workflow-storyboard-pacing-options button > span { display: block; min-height: 38px; margin-top: 12px; color: rgba(255,255,255,.43); font-size: 12px; line-height: 1.55; }
+.workflow-storyboard-pacing-options button > small { display: block; margin-top: 12px; color: rgba(255,255,255,.48); font-size: 11px; line-height: 1.7; }
+.workflow-storyboard-pacing-options button > strong { display: block; margin-top: 8px; color: rgba(255,255,255,.8); font-size: 13px; }
+.workflow-storyboard-pacing-summary { display: flex; justify-content: space-between; margin-top: 14px; padding: 13px 16px; border: 1px solid rgba(255,255,255,.1); border-radius: 10px; color: rgba(255,255,255,.75); font-size: 13px; }.workflow-storyboard-pacing-summary b { color: var(--accent); font-weight: 500; }
+@media (max-width: 640px) { .workflow-script-stage-modal .workflow-quick-dialog:has(.is-storyboard) { width: min(520px, 100%); }.workflow-storyboard-pacing-options { grid-template-columns: 1fr; }.workflow-storyboard-pacing-options button { min-height: auto; }.workflow-storyboard-pacing-options button > span { min-height: 0; } }
+
+/* 快捷创作当前状态与收起入口 */
+.workflow-quick-step.is-ready .workflow-quick-step-title em,
+.workflow-quick-step.is-processing .workflow-quick-step-title em,
+.workflow-quick-step.is-review .workflow-quick-step-title em { color: var(--accent); }
+.workflow-quick-script-steps .is-waiting strong,
+.workflow-quick-script-steps .is-waiting em,
+.workflow-quick-script-steps .is-done em,
+.workflow-quick-script-steps .is-active em { color: rgba(255,255,255,.4); }
+.workflow-quick-script-steps .is-processing em { color: var(--accent); }
+.workflow-quick-drawer.is-collapsed { width: 38px; height: 38px; border-radius: 9px; }
+.workflow-quick-drawer.is-collapsed .workflow-quick-drawer-toggle { inset: 0; width: 100%; height: 100%; border: 0; color: var(--accent); }
+.workflow-quick-drawer-mark { display: inline-flex; width: 15px; flex-direction: column; gap: 3px; vertical-align: middle; }
+.workflow-quick-drawer-mark i { display: block; height: 2px; border-radius: 2px; background: currentColor; }.workflow-quick-drawer-mark i:nth-child(2) { width: 10px; }.workflow-quick-drawer-mark i:nth-child(3) { width: 6px; }
+.workflow-quick-cable-icon { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.workflow-quick-fan-icon { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+
+/* 剧本三项仅呈现信息，永不参与状态高亮 */
+.workflow-quick-script-steps > div strong,
+.workflow-quick-script-steps > div em,
+.workflow-quick-script-steps > div .workflow-quick-script-index,
+.workflow-quick-script-steps .is-active strong,
+.workflow-quick-script-steps .is-active em,
+.workflow-quick-script-steps .is-active .workflow-quick-script-index,
+.workflow-quick-script-steps .is-processing strong,
+.workflow-quick-script-steps .is-processing em,
+.workflow-quick-script-steps .is-processing .workflow-quick-script-index { color: rgba(255,255,255,.48) !important; }
+
+/* 结果页快捷创作悬浮窗 */
+.workflow-quick-drawer { width: 292px; border-radius: 14px; }
+.workflow-quick-drawer-inner { padding: 20px; }
+.workflow-quick-drawer-inner strong { margin-top: 8px; font-size: 15px; }
+.workflow-quick-drawer-inner p { margin: 10px 0 17px; color: rgba(255,255,255,.5); font-size: 12px; line-height: 1.6; }
+.workflow-quick-drawer-inner button { height: 34px; }
+.workflow-quick-drawer.is-collapsed { width: 38px; height: 38px; }
+
+/* 快捷创作：纵向项目清单 */
+.workflow-quick-main { overflow: auto; }.workflow-quick-page { min-height: 100%; padding: 24px 32px 32px; }.workflow-quick-header { padding-bottom: 16px; }.workflow-quick-header .workflow-quick-project { display: block; color: rgba(255,255,255,.4); font-size: 12px; }
+.workflow-quick-progress { display: grid; grid-template-columns: 54px minmax(170px, .42fr) minmax(0, 1fr); align-items: center; gap: 14px; margin-bottom: 18px; padding: 13px 16px; border: 1px solid rgba(255,255,255,.08); border-radius: 10px; background: rgba(255,255,255,.025); }.workflow-quick-progress-track { display: none; }.workflow-quick-progress-orbit { display: grid; width: 48px; height: 48px; place-items: center; border-radius: 50%; background: conic-gradient(#b7eaf7 var(--workflow-progress), rgba(255,255,255,.1) 0); }.workflow-quick-progress-orbit::before { position: absolute; width: 40px; height: 40px; border-radius: 50%; background: #151718; content: ""; }.workflow-quick-progress-orbit strong { position: relative; z-index: 1; color: #eafaff; font-size: 14px; font-weight: 500; }.workflow-quick-progress-orbit small { margin-left: 1px; font-size: 8px; }.workflow-quick-progress > div:nth-child(2) > strong { color: rgba(255,255,255,.84); font-size: 13px; font-weight: 500; }.workflow-quick-progress p { width: auto; margin: 4px 0 0; text-align: left; color: rgba(255,255,255,.36); font-size: 11px; }.workflow-quick-progress ol { display: flex; justify-content: flex-end; gap: clamp(12px, 2vw, 28px); margin: 0; padding: 0; list-style: none; }.workflow-quick-progress li { display: flex; align-items: center; gap: 6px; color: rgba(255,255,255,.28); font-size: 11px; white-space: nowrap; }.workflow-quick-progress li i { width: 6px; height: 6px; border: 1px solid rgba(255,255,255,.28); border-radius: 50%; }.workflow-quick-progress li span { color: rgba(255,255,255,.44); font: 10px/1 ui-monospace, SFMono-Regular, Menlo, monospace; }.workflow-quick-progress li.is-ready, .workflow-quick-progress li.is-processing, .workflow-quick-progress li.is-review { color: rgba(213,247,255,.88); }.workflow-quick-progress li.is-ready i, .workflow-quick-progress li.is-processing i, .workflow-quick-progress li.is-review i { border-color: #b7eaf7; background: #b7eaf7; }.workflow-quick-progress li.is-complete { color: rgba(255,255,255,.62); }.workflow-quick-progress li.is-complete i { border-color: rgba(255,255,255,.6); background: rgba(255,255,255,.6); }
+.workflow-quick-steps { display: grid; grid-template-columns: 1fr; flex: 0 0 auto; gap: 10px; }.workflow-quick-step { display: grid; grid-template-columns: 58px minmax(0, 1fr) 190px; min-height: 132px; padding: 0; overflow: visible; border-radius: 10px; }.workflow-quick-step::after { display: none; }.workflow-quick-step-rail { position: relative; display: grid; place-items: start center; padding-top: 22px; border-right: 1px solid rgba(255,255,255,.06); }.workflow-quick-step-rail > span { display: grid; width: 24px; height: 24px; place-items: center; border: 1px solid rgba(255,255,255,.2); border-radius: 50%; color: rgba(255,255,255,.55); font: 10px/1 ui-monospace, SFMono-Regular, Menlo, monospace; }.workflow-quick-step:not(:last-child) .workflow-quick-step-rail > i { position: absolute; top: 52px; bottom: -11px; width: 1px; background: rgba(255,255,255,.11); }.workflow-quick-step.is-ready .workflow-quick-step-rail > span, .workflow-quick-step.is-review .workflow-quick-step-rail > span { border-color: #b7eaf7; color: #d8f7ff; }.workflow-quick-step.is-complete .workflow-quick-step-rail > span { border-color: rgba(255,255,255,.55); color: rgba(255,255,255,.8); }
+.workflow-quick-step-main { display: grid; grid-template-columns: minmax(260px, .8fr) minmax(260px, 1fr); align-items: center; gap: 26px; padding: 22px 24px; }.workflow-quick-step-title { display: flex; align-items: center; gap: 14px; }.workflow-quick-step-main .workflow-quick-step-icon { flex: 0 0 auto; width: 34px; height: 34px; margin: 0; border-radius: 8px; font-size: 17px; }.workflow-quick-step h2 { margin: 0; font-size: 15px; }.workflow-quick-step-title em { display: block; margin-top: 6px; color: rgba(255,255,255,.37); font-size: 11px; font-style: normal; }.workflow-quick-result { display: grid; gap: 8px; padding-left: 22px; border-left: 1px solid rgba(255,255,255,.08); }.workflow-quick-result span { color: rgba(255,255,255,.67); font-size: 12px; }.workflow-quick-result strong { color: #d9f7ff; font-size: 13px; font-weight: 500; }.workflow-quick-result.is-muted span, .workflow-quick-result.is-muted strong { color: rgba(255,255,255,.25); }
+.workflow-quick-step-action { display: flex; min-width: 0; padding: 0 20px; align-items: center; justify-content: center; border-left: 1px solid rgba(255,255,255,.06); }.workflow-quick-step-action button { width: 100%; }.workflow-quick-step-action > span { color: #c2f2ff; font-size: 12px; }.workflow-quick-task { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr; margin: 0; padding: 0; }.workflow-quick-task-bar { display: none; }.workflow-quick-task-progress { display: flex; align-items: center; gap: 18px; }.workflow-quick-task-progress > strong { color: #c2f2ff; font: 12px/1 ui-monospace, SFMono-Regular, Menlo, monospace; }.workflow-quick-task ol { display: flex; gap: 16px; margin: 0; }.workflow-quick-task li { font-size: 10px; }
+@media (max-width: 980px) { .workflow-quick-progress { grid-template-columns: 54px 1fr; }.workflow-quick-progress ol { grid-column: 1 / -1; justify-content: flex-start; padding-left: 68px; }.workflow-quick-step { grid-template-columns: 52px minmax(0, 1fr) 170px; }.workflow-quick-step-main { grid-template-columns: 1fr; gap: 12px; }.workflow-quick-result { padding-left: 0; border-left: 0; } }
+@media (max-width: 680px) { .workflow-quick-page { padding: 20px 14px; }.workflow-quick-progress ol { display: none; }.workflow-quick-step { grid-template-columns: 42px minmax(0, 1fr); }.workflow-quick-step-main { padding: 19px 16px; }.workflow-quick-step-action { grid-column: 2; justify-content: flex-start; padding: 0 16px 18px; border-left: 0; }.workflow-quick-task { grid-column: 1 / -1; }.workflow-quick-task ol { flex-wrap: wrap; } }
+.workflow-quick-progress-orbit { position: relative; }
+
+/* 对齐修正：四步填满工作区，信息与操作保持统一基线 */
+.workflow-quick-page { box-sizing: border-box; height: calc(100vh - 48px); min-height: 100%; }
+.workflow-quick-steps { flex: 1 1 auto; min-height: 0; grid-template-rows: repeat(4, minmax(132px, 1fr)); }
+.workflow-quick-step { min-height: 132px; height: 100%; box-sizing: border-box; align-items: stretch; }
+.workflow-quick-step-main { box-sizing: border-box; min-width: 0; }
+.workflow-quick-step-title,
+.workflow-quick-result,
+.workflow-quick-step-action { min-width: 0; }
+.workflow-quick-step-action { align-self: stretch; }
+.workflow-quick-step-action button { max-width: 168px; }
+@media (max-width: 980px) { .workflow-quick-page { height: auto; }.workflow-quick-steps { grid-template-rows: none; }.workflow-quick-step { min-height: 146px; height: auto; } }
+
+/* 剧本分析：三阶段工作台 */
+.workflow-analysis-page { min-height: calc(100vh - 48px); color: rgba(255,255,255,.86); background: #171819; }.workflow-analysis-top { display: flex; height: 54px; align-items: center; justify-content: center; gap: 25px; border-bottom: 1px solid rgba(255,255,255,.13); }.workflow-analysis-top span { color: rgba(255,255,255,.34); font-size: 16px; font-weight: 600; }.workflow-analysis-top span i { margin-right: 9px; color: inherit; font-style: italic; }.workflow-analysis-top span.active { color: #fff; border-bottom: 2px solid #9eddec; line-height: 54px; }.workflow-analysis-top span.active i, .workflow-analysis-top span.is-done, .workflow-analysis-top span.is-done i { color: #9eddec; }.workflow-analysis-top b { color: rgba(255,255,255,.2); font-size: 21px; font-weight: 300; }
+.workflow-analysis-empty { display: grid; min-height: calc(100vh - 102px); place-content: center; justify-items: center; text-align: center; }.workflow-analysis-empty > i { display: grid; width: 94px; height: 94px; place-items: center; margin-bottom: 22px; border: 1px solid rgba(158,221,236,.55); border-radius: 22px; color: #a8e8f5; font-size: 38px; font-style: normal; box-shadow: 0 0 70px rgba(118,210,227,.1); }.workflow-analysis-empty h1 { margin: 0; color: #fff; font-size: 26px; }.workflow-analysis-empty p { max-width: 470px; margin: 16px 0 26px; color: rgba(255,255,255,.5); font-size: 14px; line-height: 1.7; }.workflow-analysis-empty button, .workflow-analysis-organize footer button, .workflow-analysis-assets footer button, .workflow-analysis-storyboard footer button { height: 38px; padding: 0 17px; border: 1px solid rgba(158,221,236,.78); border-radius: 999px; color: #bceef8; font-size: 13px; }
+.workflow-analysis-organize { display: grid; grid-template-rows: auto minmax(0,1fr) auto; min-height: calc(100vh - 102px); padding: 56px 6.7% 0; }.workflow-analysis-organize > div h1 { margin: 0; color: #fff; font-size: 30px; }.workflow-analysis-organize > div p { margin: 12px 0 0; color: rgba(255,255,255,.46); font-size: 14px; }.workflow-analysis-organize article { min-height: 0; margin: 54px 0 18px; padding: 42px 7.8%; overflow: auto; border: 1px solid rgba(255,255,255,.18); border-radius: 16px 16px 0 0; background: #1b1c1d; }.workflow-analysis-organize article header { display: flex; justify-content: space-between; margin-bottom: 25px; }.workflow-analysis-organize article strong { color: #fff; font-size: 18px; }.workflow-analysis-organize article header span { color: rgba(255,255,255,.48); }.workflow-analysis-organize article p { color: rgba(255,255,255,.78); font-size: 16px; line-height: 2; }.workflow-analysis-organize footer, .workflow-analysis-assets footer, .workflow-analysis-storyboard footer { display: flex; height: 74px; align-items: center; justify-content: space-between; margin: 0 -7.2%; padding: 0 22px; border-top: 1px solid rgba(255,255,255,.13); background: #1a1b1c; color: rgba(255,255,255,.48); font-size: 13px; }.workflow-analysis-organize footer em, .workflow-analysis-assets footer em { color: #bceef8; font-style: normal; }
+.workflow-analysis-assets { display: grid; grid-template-columns: 43% 57%; height: calc(100vh - 102px); }.workflow-analysis-assets > aside { padding: 26px 28px; overflow: auto; border-right: 1px solid rgba(255,255,255,.13); }.workflow-analysis-assets > aside > strong { font-size: 15px; }.workflow-analysis-assets > aside > strong span { margin-left: 12px; color: rgba(255,255,255,.45); font-size: 12px; }.workflow-analysis-assets aside article { margin-top: 35px; }.workflow-analysis-assets aside article em { color: rgba(255,255,255,.5); font-size: 11px; font-style: normal; letter-spacing: .32em; }.workflow-analysis-assets aside h1 { margin: 14px 0 22px; color: #fff; font-size: 24px; }.workflow-analysis-assets aside p { color: rgba(255,255,255,.68); font-size: 14px; line-height: 2; }.workflow-analysis-assets main { display: grid; grid-template-rows: 72px 1fr 74px; min-width: 0; }.workflow-analysis-assets main > header { display: flex; gap: 42px; align-items: center; padding: 0 26px; border-bottom: 1px solid rgba(255,255,255,.13); }.workflow-analysis-assets main > header strong:first-child { height: 72px; border-bottom: 2px solid #9eddec; line-height: 72px; }.workflow-analysis-assets main > header b { display: inline-grid; width: 21px; height: 21px; place-items: center; margin-left: 6px; border-radius: 50%; background: rgba(255,255,255,.09); color: rgba(255,255,255,.6); font-size: 11px; }.workflow-analysis-asset-list { overflow: auto; }.workflow-analysis-asset-list article { display: grid; grid-template-columns: 18px 120px 126px minmax(160px,1fr) 74px; gap: 12px; align-items: center; min-height: 82px; padding: 0 26px; border-bottom: 1px solid rgba(255,255,255,.12); }.workflow-analysis-asset-list i { width: 10px; height: 10px; border-radius: 50%; background: #9b82ea; }.workflow-analysis-asset-list strong { color: #fff; }.workflow-analysis-asset-list span { padding: 6px 9px; border-radius: 999px; background: rgba(130,100,210,.22); color: #bdaeff; font-size: 11px; }.workflow-analysis-asset-list p { color: rgba(255,255,255,.54); font-size: 12px; }.workflow-analysis-asset-list em { color: #e4bb5f; font-size: 12px; font-style: normal; }
+.workflow-analysis-storyboard { display: grid; grid-template-columns: 250px 1fr; height: calc(100vh - 102px); }.workflow-analysis-storyboard > aside { padding: 24px 16px; border-right: 1px solid rgba(255,255,255,.13); }.workflow-analysis-storyboard > aside strong { display: flex; justify-content: space-between; padding: 14px; border-radius: 9px; background: rgba(142,221,236,.12); color: #b7eaf7; }.workflow-analysis-storyboard > aside h2 { margin: 44px 14px 24px; color: #fff; font-size: 16px; }.workflow-analysis-storyboard > aside p { margin: 0 14px 20px; color: rgba(255,255,255,.58); font-size: 13px; }.workflow-analysis-storyboard main { display: grid; grid-template-rows: 64px 1fr 72px; min-width: 0; }.workflow-analysis-storyboard main > header, .workflow-analysis-storyboard main > article { display: grid; grid-template-columns: 150px 110px 150px minmax(260px,1.2fr) minmax(260px,1fr); }.workflow-analysis-storyboard main > header { align-items: center; border-bottom: 1px solid rgba(255,255,255,.13); color: rgba(255,255,255,.7); font-size: 13px; }.workflow-analysis-storyboard main > header span { padding-left: 20px; }.workflow-analysis-storyboard main > article { min-height: 120px; border-bottom: 1px solid rgba(255,255,255,.13); }.workflow-analysis-storyboard main > article > * { padding: 18px 20px; border-right: 1px solid rgba(255,255,255,.1); }.workflow-analysis-storyboard article strong { color: #fff; font-size: 25px; }.workflow-analysis-storyboard article small { margin-left: 5px; color: rgba(255,255,255,.45); font-size: 12px; }.workflow-analysis-storyboard article em { color: rgba(255,255,255,.7); font-style: normal; }.workflow-analysis-storyboard article span { color: rgba(255,255,255,.73); }.workflow-analysis-storyboard article p { margin: 0; color: rgba(255,255,255,.65); font-size: 12px; line-height: 1.7; }
+
 .workflow-studio-head {
   display: flex;
   align-items: center;
@@ -12355,3 +12712,64 @@ input::placeholder {
 #limited-activity-modal {
   display: none !important;
 }
+
+/* 顶部快捷创作进度统一使用系统强调色 */
+.workflow-quick-progress-orbit { background: conic-gradient(var(--accent) var(--workflow-progress), rgba(255,255,255,.1) 0); }
+.workflow-quick-progress-orbit strong { color: var(--accent); }
+.workflow-quick-progress li.is-ready,
+.workflow-quick-progress li.is-processing,
+.workflow-quick-progress li.is-review { color: var(--accent); }
+.workflow-quick-progress li.is-ready i,
+.workflow-quick-progress li.is-processing i,
+.workflow-quick-progress li.is-review i { border-color: var(--accent); background: var(--accent); }
+
+/* 快捷创作：固定进度控制条与剧本三小步 */
+.workflow-quick-main { overflow: auto; }.workflow-quick-page { height: auto; min-height: calc(100vh - 48px); }.workflow-quick-progress { position: sticky; top: 0; z-index: 16; margin-top: -24px; padding-top: 18px; padding-bottom: 15px; border-color: rgba(255,255,255,.1); border-radius: 0 0 10px 10px; background: rgba(16,17,18,.94); box-shadow: 0 8px 20px rgba(0,0,0,.24); backdrop-filter: blur(14px); }.workflow-quick-steps { grid-template-rows: repeat(4, minmax(148px, auto)); }.workflow-quick-step { height: auto; min-height: 148px; }.workflow-quick-step:first-child { min-height: 190px; }.workflow-quick-script-steps { display: grid; grid-column: 1 / -1; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }.workflow-quick-script-steps > div { display: flex; min-width: 0; align-items: center; gap: 8px; padding: 8px 10px; border: 1px solid rgba(255,255,255,.08); border-radius: 7px; background: rgba(255,255,255,.025); }.workflow-quick-script-steps i { display: grid; flex: 0 0 auto; width: 18px; height: 18px; place-items: center; border: 1px solid rgba(255,255,255,.2); border-radius: 50%; color: rgba(255,255,255,.46); font-size: 9px; font-style: normal; }.workflow-quick-script-steps span { display: grid; gap: 3px; min-width: 0; }.workflow-quick-script-steps strong { overflow: hidden; color: rgba(255,255,255,.62); font-size: 11px; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }.workflow-quick-script-steps em { overflow: hidden; color: rgba(255,255,255,.32); font-size: 10px; font-style: normal; text-overflow: ellipsis; white-space: nowrap; }.workflow-quick-script-steps .is-active { border-color: rgba(183,234,247,.42); background: rgba(183,234,247,.06); }.workflow-quick-script-steps .is-active i { border-color: #b7eaf7; color: #d8f8ff; }.workflow-quick-script-steps .is-processing i { border-color: #b7eaf7; color: #b7eaf7; animation: workflow-quick-pulse 1.3s infinite; }.workflow-quick-script-steps .is-done i { border-color: rgba(255,255,255,.65); background: rgba(255,255,255,.65); color: #151617; }.workflow-quick-script-steps .is-done strong { color: rgba(255,255,255,.82); }
+.workflow-quick-upload-tabs { display: flex; gap: 18px; border-bottom: 1px solid rgba(255,255,255,.09); }.workflow-quick-upload-tabs button { height: 31px; padding: 0; border-bottom: 2px solid transparent; color: rgba(255,255,255,.42); font-size: 12px; }.workflow-quick-upload-tabs button.active { border-bottom-color: #b7eaf7; color: #dffaff; }.workflow-quick-paste textarea { min-height: 116px; padding: 10px; border: 1px solid rgba(255,255,255,.12); border-radius: 8px; outline: 0; resize: vertical; background: #101314; color: rgba(255,255,255,.86); font: inherit; }.workflow-quick-paste textarea::placeholder { color: rgba(255,255,255,.25); }
+@media (max-width: 980px) { .workflow-quick-script-steps { grid-template-columns: 1fr; }.workflow-quick-step:first-child { min-height: 250px; } }
+
+/* 工作台窄屏对齐修正 */
+.workflow-quick-step-action { grid-column: 3; grid-row: 1; align-self: stretch !important; height: 100% !important; box-sizing: border-box; min-height: 0; display: flex !important; align-items: center !important; }
+.workflow-quick-step-action button { flex: 0 0 auto; }
+@media (max-width: 1500px) {
+  .workflow-analysis-assets { grid-template-columns: 40% 60%; }
+  .workflow-analysis-asset-list article { grid-template-columns: 14px minmax(72px,1fr) minmax(86px,1fr) 58px; gap: 8px; padding: 0 18px; }
+  .workflow-analysis-asset-list article p { display: none; }
+  .workflow-analysis-asset-list article strong,
+  .workflow-analysis-asset-list article span,
+  .workflow-analysis-asset-list article em { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+}
+@media (max-width: 980px) { .workflow-quick-step-action { grid-column: 2; grid-row: auto; height: 38px !important; }.workflow-analysis-assets { grid-template-columns: 1fr; height: auto; }.workflow-analysis-assets > aside { display: none; }.workflow-analysis-assets main { min-height: calc(100vh - 102px); } }
+
+/* 快捷创作最终布局：顶部冻结、纯文字步骤与稳定任务进度 */
+.workflow-home-view.is-quick-page .workflow-home-main { height: calc(100vh - 48px); padding: 0; overflow: hidden; }
+.workflow-home-view.is-quick-page .workflow-quick-main { height: 100%; overflow-y: auto; overflow-x: hidden; }
+.workflow-home-view.is-quick-page .workflow-quick-page { min-height: 100%; padding: 0 32px 32px; }
+.workflow-home-view.is-quick-page .workflow-quick-progress { position: sticky; top: 0; z-index: 30; margin: 0 -32px 18px; padding: 14px 32px; border: 0; border-bottom: 1px solid rgba(255,255,255,.08); border-radius: 0; background: rgba(16,17,18,.97); box-shadow: 0 10px 18px rgba(0,0,0,.2); }
+.workflow-quick-progress ol { gap: clamp(18px, 2.6vw, 38px); }
+.workflow-quick-progress li { display: block; color: rgba(255,255,255,.3); font-size: 12px; }
+.workflow-quick-progress li.is-ready, .workflow-quick-progress li.is-processing, .workflow-quick-progress li.is-review { color: var(--accent); }
+.workflow-quick-progress li.is-complete { color: rgba(255,255,255,.74); }
+.workflow-quick-step { grid-template-columns: minmax(0, 1fr) 190px; }
+.workflow-quick-step-rail { display: none; }
+.workflow-quick-step-main { grid-template-columns: minmax(220px, .8fr) minmax(260px, 1fr); padding: 22px 28px; }
+.workflow-quick-step-title { gap: 0; }
+.workflow-quick-step-main .workflow-quick-step-icon { display: none; }
+.workflow-quick-step-action { grid-column: 2; grid-row: 1; }
+.workflow-quick-script-actions { display: grid; width: 100%; gap: 8px; }
+.workflow-quick-script-actions > button { max-width: none; }
+.workflow-quick-script-actions .workflow-quick-text-action { height: 28px; border: 0; background: transparent; color: rgba(255,255,255,.58); font-size: 11px; }
+.workflow-quick-script-actions .workflow-quick-text-action:hover { background: rgba(255,255,255,.05); color: #fff; }
+.workflow-quick-inline-progress { display: inline-block; width: 130px; height: 3px; margin: 0 0 2px 10px; overflow: hidden; vertical-align: middle; border-radius: 4px; background: rgba(255,255,255,.12); }
+.workflow-quick-inline-progress i { display: block; height: 100%; border-radius: inherit; background: var(--accent); transition: width .35s ease; }
+.workflow-quick-script-steps > div { position: relative; display: block; padding: 0 0 10px; border: 0; border-radius: 0; background: transparent; }
+.workflow-quick-script-steps > div::after, .workflow-quick-script-steps > div::before { position: absolute; right: 0; bottom: 0; left: 0; height: 2px; border-radius: 2px; content: ""; }
+.workflow-quick-script-steps > div::after { background: rgba(255,255,255,.1); }
+.workflow-quick-script-steps > div::before { z-index: 1; width: var(--workflow-step-fill); background: var(--accent); transition: width .35s ease; }
+.workflow-quick-script-steps i { display: none; }
+.workflow-quick-script-steps span { gap: 4px; }
+.workflow-quick-script-steps .is-active, .workflow-quick-script-steps .is-processing { border: 0; background: transparent; }
+.workflow-quick-script-steps .is-active strong, .workflow-quick-script-steps .is-processing strong { color: rgba(255,255,255,.88); }
+.workflow-quick-script-steps .is-active em, .workflow-quick-script-steps .is-processing em { color: var(--accent); }
+@media (max-width: 980px) { .workflow-home-view.is-quick-page .workflow-home-main { height: auto; overflow: visible; }.workflow-home-view.is-quick-page .workflow-quick-main { height: auto; overflow: visible; }.workflow-home-view.is-quick-page .workflow-quick-page { padding: 0 20px 24px; }.workflow-home-view.is-quick-page .workflow-quick-progress { margin-right: -20px; margin-left: -20px; padding-right: 20px; padding-left: 20px; }.workflow-quick-step { grid-template-columns: minmax(0, 1fr) 170px; }.workflow-quick-step-action { grid-column: 2; grid-row: 1; height: auto !important; }.workflow-quick-step-main { grid-template-columns: 1fr; } }
+@media (max-width: 680px) { .workflow-home-view.is-quick-page .workflow-quick-page { padding: 0 14px 22px; }.workflow-home-view.is-quick-page .workflow-quick-progress { margin-right: -14px; margin-left: -14px; padding-right: 14px; padding-left: 14px; }.workflow-quick-step { grid-template-columns: 1fr; }.workflow-quick-step-action { grid-column: 1; grid-row: 2; padding: 0 20px 18px; }.workflow-quick-step-action button { max-width: none; }.workflow-quick-progress > div:nth-child(2) { display: none; } }
