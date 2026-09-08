@@ -2587,6 +2587,55 @@ input::placeholder {
 @media (max-width: 980px) { .workflow-home-view.is-quick-page .workflow-home-main { height: auto; overflow: visible; }.workflow-home-view.is-quick-page .workflow-quick-main { height: auto; overflow: visible; }.workflow-home-view.is-quick-page .workflow-quick-page { padding: 0 20px 24px; }.workflow-home-view.is-quick-page .workflow-quick-progress { margin-right: -20px; margin-left: -20px; padding-right: 20px; padding-left: 20px; }.workflow-quick-step { grid-template-columns: minmax(0, 1fr) 170px; }.workflow-quick-step-action { grid-column: 2; grid-row: 1; height: auto !important; }.workflow-quick-step-main { grid-template-columns: 1fr; } }
 @media (max-width: 680px) { .workflow-home-view.is-quick-page .workflow-quick-page { padding: 0 14px 22px; }.workflow-home-view.is-quick-page .workflow-quick-progress { margin-right: -14px; margin-left: -14px; padding-right: 14px; padding-left: 14px; }.workflow-quick-step { grid-template-columns: 1fr; }.workflow-quick-step-action { grid-column: 1; grid-row: 2; padding: 0 20px 18px; }.workflow-quick-step-action button { max-width: none; }.workflow-quick-progress > div:nth-child(2) { display: none; } }
 
+/* 分镜提示词：作为关键帧前置条件展示，沿用系统强调色 */
+.workflow-prompt-readiness,
+.workflow-analysis-prompt-progress {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  color: rgba(255,255,255,.52);
+  font-size: 12px;
+  line-height: 1;
+}
+.workflow-prompt-readiness > i,
+.workflow-analysis-prompt-progress > i {
+  width: 126px;
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255,255,255,.11);
+}
+.workflow-prompt-readiness > i > b,
+.workflow-analysis-prompt-progress > i > b {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  transition: width .4s ease;
+}
+.workflow-prompt-readiness strong,
+.workflow-analysis-prompt-progress strong { color: rgba(255,255,255,.86); font-size: 12px; font-weight: 500; }
+.workflow-prompt-readiness em,
+.workflow-analysis-prompt-progress em { color: rgba(255,255,255,.42); font-style: normal; }
+.workflow-quick-keyframe-result { gap: 9px; }
+
+.workflow-prompt-block-dialog { position: relative; width: min(360px, calc(100vw - 36px)); padding: 22px; border: 1px solid rgba(255,255,255,.12); border-radius: 14px; background: #171819; box-shadow: 0 20px 56px rgba(0,0,0,.42); }
+.workflow-prompt-block-dialog h2 { margin: 0; color: #fff; font-size: 18px; letter-spacing: -.02em; }
+.workflow-prompt-block-dialog > p { margin: 9px 0 17px; color: rgba(255,255,255,.52); font-size: 13px; line-height: 1.55; }
+.workflow-prompt-block-progress { display: flex; align-items: center; justify-content: space-between; padding: 11px 13px; border: 1px solid rgba(255,255,255,.09); border-radius: 9px; background: rgba(255,255,255,.025); color: rgba(255,255,255,.48); font-size: 12px; }
+.workflow-prompt-block-progress strong { color: var(--accent); font-size: 14px; font-weight: 500; }
+.workflow-prompt-block-dialog footer { display: flex; justify-content: flex-end; gap: 9px; margin-top: 18px; }
+.workflow-prompt-block-dialog footer button { min-width: 92px; height: 36px; border-radius: 999px; font-size: 13px; }
+
+.workflow-analysis-storyboard footer { gap: 18px; }
+.workflow-analysis-storyboard footer > span { flex: 1 1 auto; }
+.workflow-analysis-prompt-progress { flex: 0 0 auto; margin-left: auto; }
+.workflow-analysis-storyboard footer > button { flex: 0 0 auto; }
+.workflow-analysis-storyboard footer > button:disabled { border-color: rgba(255,255,255,.11); color: rgba(255,255,255,.35); cursor: default; }
+@media (max-width: 980px) { .workflow-analysis-storyboard footer { height: auto; min-height: 74px; flex-wrap: wrap; padding-top: 12px; padding-bottom: 12px; }.workflow-analysis-prompt-progress { order: 3; width: 100%; }.workflow-prompt-readiness > i { width: min(112px, 24vw); } }
+
 /* 任务进度：更宽的细长流光条 */
 .workflow-quick-inline-progress { width: min(280px, 32vw); height: 5px; margin-left: 14px; background: rgba(255,255,255,.09); box-shadow: inset 0 1px 0 rgba(255,255,255,.04); }
 .workflow-quick-inline-progress i { position: relative; overflow: hidden; background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 64%, transparent), var(--accent)); box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 24%, transparent); }
