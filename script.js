@@ -990,6 +990,42 @@ const state = {
   workflowSceneKeyframePickerShotFilter: "all",
   workflowStage: "keyframe",
   workflowPage: "quick",
+  workflowModelChats: [
+    { id: "model-chat-1", title: "新对话", time: "今天", createdAt: new Date().toISOString(), pinned: false, model: "sd2.0", type: "video", messages: [] },
+  ],
+  workflowModelChatId: "model-chat-1",
+  workflowModelChatModel: "sd2.0",
+  workflowModelChatType: "video",
+  workflowModelChatSettingsOpen: false,
+  workflowModelPickerOpen: false,
+  workflowModelChatMenuId: null,
+  workflowModelChatRenaming: false,
+  workflowModelChatDraft: "",
+  workflowModelChatAttachments: [],
+  workflowModelChatUploadMenuOpen: false,
+  workflowModelChatMentionOpen: false,
+  workflowModelChatMentionAnchor: null,
+  workflowModelChatSystemAssetsOpen: false,
+  workflowModelChatSystemAssetSource: "project",
+  workflowModelChatSystemAssetCategory: "角色",
+  workflowModelChatSystemAssetSelections: [],
+  workflowModelChatSystemAssetMultiSelect: false,
+  workflowModelChatSystemAssetSearch: "",
+  workflowModelChatSystemAssetPreview: null,
+  workflowModelChatPreview: null,
+  workflowModelChatVideoMode: "全能参考模式",
+  workflowModelChatVideoRatio: "16:9",
+  workflowModelChatVideoResolution: "1080P",
+  workflowModelChatVideoCount: "1",
+  workflowModelChatVideoDuration: 5,
+  workflowModelChatImageRatio: "1:1",
+  workflowModelChatImageResolution: "2K",
+  workflowModelChatImageCount: "1",
+  workflowModelChatImageWidth: 2048,
+  workflowModelChatImageHeight: 2048,
+  workflowModelChatDeleteId: null,
+  workflowModelChatSaveTarget: null,
+  workflowModelChatUploadKind: "image",
   workflowQuickStatus: { script: "ready", assets: "locked", keyframes: "locked", video: "locked" },
   workflowQuickModal: null,
   workflowQuickDrawerCollapsed: false,
@@ -1095,6 +1131,19 @@ const state = {
   publishDraftVideoName: "",
 };
 
+const saveWorkflowModelChats = () => {
+  try { localStorage.setItem("phanty-movie-model-chats-v2", JSON.stringify(state.workflowModelChats)); } catch {}
+};
+try {
+  const savedWorkflowModelChats = JSON.parse(localStorage.getItem("phanty-movie-model-chats-v2") || "null");
+  if (Array.isArray(savedWorkflowModelChats) && savedWorkflowModelChats.length) {
+    state.workflowModelChats = savedWorkflowModelChats;
+    state.workflowModelChatId = savedWorkflowModelChats[0].id;
+    state.workflowModelChatModel = savedWorkflowModelChats[0].model || state.workflowModelChatModel;
+    state.workflowModelChatType = savedWorkflowModelChats[0].type || state.workflowModelChatType;
+  }
+} catch {}
+
 const canvasRuntime = {
   mode: null,
   pointerId: null,
@@ -1124,6 +1173,8 @@ const workflowPlaceholderContent = document.getElementById("workflow-placeholder
 const workflowQuickModalRoot = document.getElementById("workflow-quick-modal-root");
 const workflowRecycleMain = document.getElementById("workflow-recycle-main");
 const workflowRecycleContent = document.getElementById("workflow-recycle-content");
+const workflowModelChatMain = document.getElementById("workflow-model-chat-main");
+const workflowModelChatContent = document.getElementById("workflow-model-chat-content");
 const detailView = document.getElementById("canvas-detail-view");
 const canvasStage = document.getElementById("canvas-stage");
 const brandHomeTrigger = document.getElementById("brand-home-trigger");
@@ -3449,6 +3500,206 @@ const renderWorkflowQuick = () => {
   if (workflowQuickModalRoot) workflowQuickModalRoot.innerHTML = renderWorkflowQuickModal();
 };
 
+const workflowModelCatalog = [
+  { name: "Gemini 3.1 Pro", type: "text", note: "复杂创作与多轮推理 · 适合高质量内容" },
+  { name: "Gemini 3.1 Flash Lite", type: "text", note: "极速响应 · 适合灵感发散与日常改写" },
+  { name: "Doubao 2.0 Pro", type: "text", note: "中文表达自然 · 适合剧本与文案创作" },
+  { name: "Kimi 3", type: "text", note: "长文本理解 · 适合资料梳理与大纲创作" },
+  { name: "gpt-image-2", type: "image", note: "图像生成与编辑 · 适合创意迭代" },
+  { name: "doubao-seedream-5.0-lite", type: "image", note: "轻量快速生成 · 适合视觉草稿" },
+  { name: "doubao-seedream-4.5", type: "image", note: "通用图片生成 · 适合日常视觉创作" },
+  { name: "gemini-3-pro-image-preview", type: "image", note: "图像理解与生成 · 适合语义化创作" },
+  { name: "midjourney-t2i", type: "image", note: "风格化视觉表达 · 仅支持文生图" },
+  { name: "seedream 4.0", type: "image", note: "细节表现丰富 · 适合高质感画面" },
+  { name: "sd2.0", type: "video", note: "通用视频生成 · 画质与效率兼顾" },
+  { name: "sd 1.5", type: "video", note: "轻量稳定生成 · 适合快速尝试" },
+  { name: "可灵 o1", type: "video", note: "擅长主体动作与镜头表现" },
+  { name: "sd 海外版", type: "video", note: "海外版视频生成 · 风格表现丰富" },
+  { name: "wan2.2（t2v i2v）", type: "video", note: "文生视频 / 图生视频" },
+  { name: "sd 2.5", type: "video", note: "高质量视频生成 · 细节表现更佳" },
+  { name: "sd 2.0 mini", type: "video", note: "轻量快速生成 · 适合草稿预览" },
+  { name: "sd 2.0 fast", type: "video", note: "极速生成 · 快速验证创意" },
+];
+
+const workflowModelParameterGroups = {
+  video: [
+    ["基础生成", "生成模式（文生视频 / 图生视频 / 首尾帧 / 视频编辑）", "画幅比例、分辨率、时长、生成数量、随机种子"],
+    ["参考与一致性", "参考图片 / 视频 / 音频、首帧、尾帧、参考强度", "角色一致性、主体锁定、场景一致性、风格一致性"],
+    ["镜头与画面", "运镜（固定 / 推拉 / 平移 / 跟拍 / 环绕）、运镜强度", "景别、镜头焦段、速度曲线、运动幅度、构图、景深、光线、色调、视觉风格"],
+    ["动作与声音", "动作幅度、动作节奏、物理真实感、口型同步", "原声开关、环境音、配音、音色、背景音乐、音画同步"],
+    ["高级控制", "提示词、反向提示词、提示词权重、CFG / 引导强度", "帧率、运动强度、去闪烁、超分、固定种子、内容安全等级"],
+  ],
+  image: [
+    ["基础生成", "生成模式（文生图 / 图生图 / 局部重绘 / 扩图 / 多图融合）", "画幅比例、像素尺寸、生成数量、随机种子"],
+    ["参考与构图", "参考图、参考强度、构图参考、角色 / 商品一致性", "主体位置、镜头角度、画面留白、边缘扩展方向"],
+    ["风格与细节", "风格预设、材质、光线、色彩、艺术媒介", "细节强度、清晰度、真实感、文字渲染、负面提示词"],
+    ["编辑控制", "局部蒙版、重绘区域、保留区域、替换目标", "扩图倍数、背景移除、透明底、高清放大、修复强度"],
+    ["高级控制", "提示词权重、CFG / 引导强度、采样器、迭代步数", "去噪强度、固定种子、版权 / 商用标识、内容安全等级"],
+  ],
+  text: [
+    ["回答方式", "系统角色、输出语言、语气、受众、输出长度", "思考模式、流式输出、联网检索、引用来源"],
+    ["上下文", "上传文件、图片理解、项目知识库、历史对话引用", "上下文范围、记忆开关、隐私模式"],
+    ["创作约束", "文体、结构模板、字数、格式（Markdown / 表格 / JSON）", "创意度、严谨度、重复惩罚、禁用词 / 必含词"],
+    ["专业能力", "代码执行、数据分析、函数 / 工具调用", "翻译语种、术语库、事实核验、敏感内容策略"],
+    ["高级控制", "Temperature、Top P、最大输出 Token", "固定随机种子、停止词、模型思考预算、响应优先级"],
+  ],
+};
+
+const renderWorkflowModelChat = () => {
+  if (!workflowModelChatContent) return;
+  let chat = state.workflowModelChats.find((item) => item.id === state.workflowModelChatId);
+  if (!chat) chat = state.workflowModelChats[0];
+  const type = state.workflowModelChatType;
+  const messages = chat?.messages || [];
+  const mediaMarkup = (media) => {
+    const outputs = Array.isArray(media) ? media : media ? [{ kind: media }] : [];
+    if (!outputs.length) return "";
+    return `<div class="model-chat-media-grid is-${outputs[0].kind}">${outputs.map((output, index) => {
+      const kind = output.kind || output;
+      const source = kind === "video"
+        ? ["canvas-chase-sequence.jpg", "project-neon-tokyo.jpg"][index % 2]
+        : ["canvas-character.jpg", "style-cinematic.jpg", "style-realistic.jpg"][index % 3];
+      const media = kind === "video"
+        ? `<div class="model-chat-media is-video" role="button" tabindex="0" data-model-chat-action="preview-result" data-result-type="video" data-result-src="./assets/images/${source}" data-result-duration="00:05"><img src="./assets/images/${source}" alt="视频生成结果 ${index + 1}" /><button type="button">▶</button><span>00:05</span></div>`
+        : `<div class="model-chat-media" role="button" tabindex="0" data-model-chat-action="preview-result" data-result-type="image" data-result-src="./assets/images/${source}"><img src="./assets/images/${source}" alt="图片生成结果 ${index + 1}" /></div>`;
+      return `<div class="model-chat-result-card">${media}<div class="model-chat-media-actions"><button type="button" data-model-chat-action="download-result" data-result-src="./assets/images/${source}" data-result-type="${kind}">下载</button><button type="button" data-model-chat-action="save-result" data-result-src="./assets/images/${source}" data-result-type="${kind}">保存至</button><button type="button" data-model-chat-action="add-result-reference" data-result-src="./assets/images/${source}" data-result-type="${kind}" data-result-duration="${kind === "video" ? "00:05" : ""}">添加至参考</button></div></div>`;
+    }).join("")}</div>`;
+  };
+  const typeLabel = { video: "视频生成", image: "图片生成", text: "文本创作" }[type];
+  const typeIcon = (item) => `<img class="model-chat-type-icon" src="./assets/icons/${{ video: "file-play", image: "file-image", text: "file-text" }[item]}.svg" alt="" />`;
+  const compactParameter = type === "video" ? "16:9 · 1080P · 5秒 · 1条" : type === "image" ? "1:1 · 2K · 1张" : "深度思考 · 标准长度";
+  const estimatedCost = type === "video" ? "20" : type === "image" ? "2" : "1";
+  const videoModeOptions = ["全能参考", "首尾帧", "智能多帧", "智能编辑", "超长视频"];
+  const videoGenerationMode = state.workflowModelChatVideoMode.replace("模式", "");
+  const videoGenerationModePicker = `<div class="model-chat-video-picker"><strong>生成模式</strong>${videoModeOptions.map((item) => `<button type="button" class="${item === videoGenerationMode ? "active" : ""}" data-model-chat-action="set-video-generation-mode" data-video-generation-mode="${item}">${item}</button>`).join("")}</div>`;
+  const videoSpecPicker = `<div class="model-chat-video-picker model-chat-video-spec-picker"><strong>选择比例</strong><div>${["21:9", "16:9", "4:3", "1:1", "3:4", "9:16"].map((item) => `<button type="button" class="${item === state.workflowModelChatVideoRatio ? "active" : ""}" data-model-chat-action="set-video-ratio" data-video-ratio="${item}">${item}</button>`).join("")}</div><strong>选择分辨率</strong><div>${["720P", "1080P", "4K"].map((item) => `<button type="button" class="${item === state.workflowModelChatVideoResolution ? "active" : ""}" data-model-chat-action="set-video-resolution" data-video-resolution="${item}">${item}</button>`).join("")}</div><strong>选择生成数量</strong><div>${["1", "2", "3", "4"].map((item) => `<button type="button" class="${item === state.workflowModelChatVideoCount ? "active" : ""}" data-model-chat-action="set-video-count" data-video-count="${item}">${item}</button>`).join("")}</div></div>`;
+  const videoDurationPicker = `<div class="model-chat-video-picker model-chat-video-duration-picker"><strong>选择视频生成时长</strong><div><input type="range" min="0" max="15" value="${state.workflowModelChatVideoDuration}" data-model-chat-duration /><output>${state.workflowModelChatVideoDuration} s</output></div><span>0 <i>5</i><i>10</i>15</span></div>`;
+  const videoControlMarkup = type === "video" ? `<div class="model-chat-model-wrap"><button class="model-chat-parameter-button" type="button" data-model-chat-action="toggle-video-generation-mode">${videoGenerationMode}<img class="model-chat-chevron" src="./assets/icons/chevron-down.svg" alt="" /></button>${state.workflowModelPickerOpen === "video-generation-mode" ? videoGenerationModePicker : ""}</div><div class="model-chat-model-wrap"><button class="model-chat-parameter-button" type="button" data-model-chat-action="toggle-video-spec">${state.workflowModelChatVideoRatio} · ${state.workflowModelChatVideoResolution} · ${state.workflowModelChatVideoCount}条</button>${state.workflowModelPickerOpen === "video-spec" ? videoSpecPicker : ""}</div><div class="model-chat-model-wrap"><button class="model-chat-parameter-button" type="button" data-model-chat-action="toggle-video-duration">◷ ${state.workflowModelChatVideoDuration}s</button>${state.workflowModelPickerOpen === "video-duration" ? videoDurationPicker : ""}</div>` : "";
+  const imageSpecPicker = `<div class="model-chat-video-picker model-chat-image-spec-picker"><strong>选择比例</strong><div>${["智能", "1:1", "3:4", "16:9", "4:3", "9:16", "2:3", "3:2", "21:9"].map((item) => `<button type="button" class="${item === state.workflowModelChatImageRatio ? "active" : ""}" data-model-chat-action="set-image-ratio" data-image-ratio="${item}">${item}</button>`).join("")}</div><strong>选择分辨率</strong><div>${["2K", "4K"].map((item) => `<button type="button" class="${item === state.workflowModelChatImageResolution ? "active" : ""}" data-model-chat-action="set-image-resolution" data-image-resolution="${item}">${item}${item === "4K" ? " ✦" : ""}</button>`).join("")}</div><strong>选择生成数量</strong><div>${["1", "2", "3", "4", "5", "6", "7", "8"].map((item) => `<button type="button" class="${item === state.workflowModelChatImageCount ? "active" : ""}" data-model-chat-action="set-image-count" data-image-count="${item}">${item}</button>`).join("")}</div><strong>尺寸</strong><div class="model-chat-image-size"><label>W<input type="number" min="256" max="4096" value="${state.workflowModelChatImageWidth}" data-model-chat-image-width /></label><b>↔</b><label>H<input type="number" min="256" max="4096" value="${state.workflowModelChatImageHeight}" data-model-chat-image-height /></label><em>PX</em></div></div>`;
+  const modelTypePicker = `<div class="model-chat-model-picker is-type-picker">${["video", "image", "text"].map((item) => `<button type="button" data-model-chat-action="pick-type" data-type="${item}">${typeIcon(item)}<span><strong>${{ video: "视频生成", image: "图片生成", text: "文本创作" }[item]}</strong><em>${{ video: "生成动态视频片段", image: "生成或编辑图片", text: "写作、问答与脚本" }[item]}</em></span>${item === type ? "✓" : ""}</button>`).join("")}</div>`;
+  const parameterGroups = (workflowModelParameterGroups[type] || []).map(([title, a, b]) => `<section class="model-chat-param-group"><strong>${title}</strong><span>${a}</span><span>${b}</span></section>`).join("");
+  const parameterPopover = `<div class="model-chat-parameter-popover"><header><strong>${typeLabel}设置</strong><span>仅展示当前模型支持的配置</span></header><div class="model-chat-quick-parameter-grid">${type === "video" ? `<button type="button" data-model-chat-action="cycle-video-mode">模式 <b>${state.workflowModelChatVideoMode}</b></button><button>画幅比例 <b>16:9</b></button><button>清晰度 <b>1080P</b></button><button>时长 <b>5 秒</b></button><button>生成数量 <b>1 条</b></button><button>运镜 <b>自动</b></button>` : type === "image" ? `<button>画幅比例 <b>1:1</b></button><button>清晰度 <b>2K</b></button><button>生成数量 <b>1 张</b></button><button>生成模式 <b>文生图</b></button><button>风格 <b>自动</b></button><button>随机种子 <b>随机</b></button>` : `<button>思考模式 <b>深度思考</b></button><button>输出长度 <b>标准</b></button><button>创意度 <b>平衡</b></button><button>联网检索 <b>关闭</b></button><button>输出格式 <b>自动</b></button><button>引用来源 <b>关闭</b></button>`}</div><details><summary>高级参数</summary><div class="model-chat-advanced-parameters">${parameterGroups}</div></details></div>`;
+  const imageControlMarkup = type === "image" ? `<div class="model-chat-model-wrap"><button class="model-chat-parameter-button" type="button" data-model-chat-action="toggle-image-spec">${state.workflowModelChatImageRatio} · ${state.workflowModelChatImageResolution} · ${state.workflowModelChatImageCount}张</button>${state.workflowModelPickerOpen === "image-spec" ? imageSpecPicker : ""}</div>` : "";
+  const parameterControlMarkup = type === "video" ? videoControlMarkup : type === "image" ? imageControlMarkup : "";
+  const groupedChats = (label, items) => items.length ? `<div class="model-chat-history-title">${label}</div><div class="model-chat-history-list">${items.map((item) => `<div class="model-chat-history-row ${item.id === chat?.id ? "active" : ""}">${state.workflowModelChatRenaming === item.id ? `<input class="model-chat-history-rename-input" data-model-chat-rename-input data-chat-id="${item.id}" value="${escapeHtml(item.title)}" aria-label="重命名对话" />` : `<button type="button" data-model-chat-action="open" data-chat-id="${item.id}">${item.pinned ? `<img class="model-chat-pin-icon" src="./assets/icons/pin.svg" alt="" />` : ""}<span>${escapeHtml(item.title)}</span></button>`}<button class="model-chat-more" type="button" aria-label="对话操作" data-model-chat-action="toggle-menu" data-chat-id="${item.id}">···</button>${state.workflowModelChatMenuId === item.id ? `<div class="model-chat-history-menu"><button type="button" data-model-chat-action="pin" data-chat-id="${item.id}">${item.pinned ? "取消置顶" : "置顶"}</button><button type="button" data-model-chat-action="rename" data-chat-id="${item.id}">重命名</button><button class="danger" type="button" data-model-chat-action="delete" data-chat-id="${item.id}">删除</button></div>` : ""}</div>`).join("")}</div>` : "";
+  const chatDateLabel = (item) => {
+    if (!item.createdAt && item.time) return item.time;
+    const date = new Date(item.createdAt || Date.now());
+    const today = new Date();
+    const dayStart = (value) => new Date(value.getFullYear(), value.getMonth(), value.getDate()).getTime();
+    const difference = Math.round((dayStart(today) - dayStart(date)) / 86400000);
+    if (difference === 0) return "今天";
+    if (difference === 1) return "昨天";
+    return `${date.getFullYear()}年${String(date.getMonth() + 1).padStart(2, "0")}月${String(date.getDate()).padStart(2, "0")}日`;
+  };
+  const orderedChats = [...state.workflowModelChats].sort((a, b) => Number(Boolean(b.pinned)) - Number(Boolean(a.pinned)) || new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+  const pinnedChats = orderedChats.filter((item) => item.pinned);
+  const normalChats = orderedChats.filter((item) => !item.pinned);
+  const attachmentMarkup = (item, sent = false) => {
+    const visual = item.kind === "image" ? `<img src="${escapeHtml(item.url || "./assets/images/canvas-character.jpg")}" alt="" />`
+      : item.kind === "video" ? `<span class="model-chat-attachment-video"><img src="./assets/images/canvas-chase-sequence.jpg" alt="" /><i>▶</i></span>`
+        : item.kind === "audio" ? `<span class="model-chat-attachment-audio"><i></i><i></i><i></i><i></i><i></i></span>`
+          : `<img class="model-chat-attachment-file-icon" src="./assets/icons/file-text.svg" alt="" />`;
+    return `<span class="model-chat-attachment is-${item.kind}${sent ? " is-sent" : ""}">${visual}<em>${escapeHtml(item.label)}</em>${item.duration ? `<small>${escapeHtml(item.duration)}</small>` : ""}${sent ? "" : `<button type="button" data-model-chat-action="remove-attachment" data-attachment-id="${item.id}" aria-label="移除">×</button>`}</span>`;
+  };
+  const currentAttachments = state.workflowModelChatAttachments;
+  const uploadMenu = `<div class="model-chat-upload-menu"><button type="button" data-model-chat-action="choose-upload" data-upload-kind="image"><img src="./assets/icons/upload-image.svg" alt="" />图片</button><button type="button" data-model-chat-action="choose-upload" data-upload-kind="video"><img src="./assets/icons/film.svg" alt="" />视频</button><button type="button" data-model-chat-action="choose-upload" data-upload-kind="audio"><img src="./assets/icons/headphones.svg" alt="" />音频</button><button type="button" data-model-chat-action="choose-upload" data-upload-kind="document"><img src="./assets/icons/file.svg" alt="" />文档</button><button type="button" data-model-chat-action="open-system-assets"><img src="./assets/icons/blocks.svg" alt="" />系统素材</button></div>`;
+  const mentionItems = [...currentAttachments];
+  const anchor = state.workflowModelChatMentionAnchor;
+  const mentionMenu = `<div class="model-chat-mention-menu${anchor ? " is-caret-anchor" : ""}"${anchor ? ` style="left:${anchor.left}px;top:${anchor.top}px"` : ""}><header><strong>引用素材</strong></header>${mentionItems.length ? `<div>${mentionItems.map((item) => `<button type="button" data-model-chat-action="mention-attachment" data-attachment-id="${item.id}">${attachmentMarkup(item, true)}</button>`).join("")}</div>` : `<p>先上传素材，再通过 @ 引用</p>`}</div>`;
+  const richDraft = mentionItems
+    .slice()
+    .sort((a, b) => b.label.length - a.label.length)
+    .reduce(
+      (draft, item) => draft.replaceAll(`@${escapeHtml(item.label)}`, `<span class="model-chat-reference-token" contenteditable="false">@${escapeHtml(item.label)}</span>`),
+      escapeHtml(state.workflowModelChatDraft)
+    );
+  const systemSource = state.workflowModelChatSystemAssetSource;
+  const systemSourceKey = systemSource === "team" ? "project" : systemSource;
+  const systemCategories = workflowReferenceCategories.filter((category) => (workflowReferenceCategoryTypes[systemSourceKey]?.[category] || []).some((item) => ["image", "video", "audio"].includes(item)));
+  const systemCategory = systemCategories.includes(state.workflowModelChatSystemAssetCategory) ? state.workflowModelChatSystemAssetCategory : systemCategories[0];
+  const systemAssets = Array.from({ length: 8 }, (_, index) => ({
+    index,
+    type: systemCategory === "音频" ? "audio" : "image",
+    name: workflowReferenceAssetName(systemSourceKey, systemCategory, index).replace(/^项目/, systemSource === "team" ? "团队" : "项目"),
+    image: workflowReferenceVisual(systemCategory === "音频" ? "audio" : "image", index),
+  }));
+  const systemAssetsModal = state.workflowModelChatSystemAssetsOpen ? `<div class="workflow-reference-modal model-chat-system-assets"><button class="workflow-generate-backdrop" type="button" data-model-chat-action="close-system-assets" aria-label="关闭系统素材"></button><section class="workflow-reference-dialog" role="dialog" aria-modal="true"><header><div><strong>上传</strong></div><button type="button" data-model-chat-action="close-system-assets" aria-label="关闭">✕</button></header><main><nav class="workflow-reference-source-nav" aria-label="系统素材来源"><button class="${systemSource === "project" ? "active" : ""}" type="button" data-model-chat-action="set-system-source" data-system-source="project">项目资产库</button><button class="${systemSource === "team" ? "active" : ""}" type="button" data-model-chat-action="set-system-source" data-system-source="team">团队资产库</button><button class="${systemSource === "market" ? "active" : ""}" type="button" data-model-chat-action="set-system-source" data-system-source="market">素材广场</button></nav><section class="workflow-reference-modal-body"><div class="workflow-reference-category-nav">${systemCategories.map((category) => `<button class="${category === systemCategory ? "active" : ""}" type="button" data-model-chat-action="set-system-category" data-system-category="${category}">${category}</button>`).join("")}</div><div class="workflow-reference-asset-grid">${systemAssets.map((asset) => `<button type="button" class="workflow-reference-asset-card is-${asset.type}" data-model-chat-action="add-system-asset" data-system-asset-index="${asset.index}" data-system-asset-type="${asset.type}">${asset.type === "audio" ? `<span class="workflow-reference-audio-card">${icon.audio}<em>Audio</em></span>` : `<img src="${escapeHtml(asset.image)}" alt="" />`}<strong>${escapeHtml(asset.name)}</strong></button>`).join("")}</div><small class="model-chat-system-assets-tip">点击素材即可加入输入框，可连续选择多个。</small></section></main><footer><button class="workflow-primary-button" type="button" data-model-chat-action="close-system-assets">完成</button></footer></section></div>` : "";
+  const preview = state.workflowModelChatPreview;
+  const previewModal = preview ? `<div class="workflow-recycle-modal model-chat-result-preview"><button class="workflow-recycle-backdrop" type="button" data-model-chat-action="close-result-preview" aria-label="关闭预览"></button><section class="workflow-recycle-preview workflow-recycle-preview-unified" role="dialog" aria-modal="true"><header><strong>${preview.type === "video" ? "视频" : "图片"}预览</strong><div><button type="button" data-model-chat-action="download-result" data-result-src="${escapeHtml(preview.src)}" data-result-type="${preview.type}">下载</button><button type="button" data-model-chat-action="close-result-preview">关闭</button></div></header><main><div class="workflow-recycle-preview-stage"><img src="${escapeHtml(preview.src)}" alt="生成${preview.type === "video" ? "视频" : "图片"}预览" />${preview.type === "video" ? `<div class="workflow-recycle-player"><button type="button" aria-label="播放">${workflowPlayerIcon.play}</button><input class="workflow-recycle-progress" type="range" min="0" max="100" value="0" aria-label="进度" /><time>00:00 / ${preview.duration || "00:05"}</time></div>` : ""}</div><aside><dl><dt>${preview.type === "video" ? "视频" : "图片"}信息</dt><div><span>来源</span><strong>模型对话广场</strong></div><div><span>模型</span><strong>${escapeHtml(state.workflowModelChatModel)}</strong></div><div><span>格式</span><strong>${preview.type === "video" ? "MP4" : "JPG"}</strong></div></dl></aside></main></section></div>` : "";
+  const deleteChat = state.workflowModelChats.find((item) => item.id === state.workflowModelChatDeleteId);
+  const deleteModal = deleteChat ? `<div class="modal-backdrop is-open workflow-keyframe-delete-modal model-chat-delete-modal"><div class="modal-shell delete-modal-shell" role="dialog" aria-modal="true"><div class="modal-header"><h2>确认删除</h2><button class="icon-close" type="button" data-model-chat-action="close-delete" aria-label="关闭">✕</button></div><div class="modal-body"><p>是否确认删除？生成记录仍可在生成历史查看</p></div><div class="modal-footer"><button class="pill ghost-footer-pill compact-footer-pill" type="button" data-model-chat-action="close-delete">取消</button><button class="pill confirm-footer-pill compact-footer-pill" type="button" data-model-chat-action="confirm-delete">确认</button></div></div></div>` : "";
+  const saveTarget = state.workflowModelChatSaveTarget;
+  const saveSource = saveTarget?.source || "project";
+  const saveCategory = saveTarget?.category || "其他";
+  const saveCategories = saveSource === "project" ? ["角色", "服装", "场景", "道具", "其他"] : ["角色", "服装", "场景", "道具"];
+  const canAssociate = saveSource === "project" && ["角色", "服装", "场景", "道具"].includes(saveCategory);
+  const existingAssets = { 角色: ["李柏", "罗根", "雨夜线人"], 服装: ["黑色风衣", "战术背心", "婚礼礼服"], 场景: ["医院走廊", "雨夜码头", "废弃仓库"], 道具: ["旧录音机", "加密箱", "金属手枪"] }[saveCategory] || [];
+  const saveModal = saveTarget ? `<div class="workflow-reference-modal model-chat-save-modal"><button class="workflow-generate-backdrop" type="button" data-model-chat-action="close-save-result" aria-label="关闭保存"></button><section class="workflow-reference-dialog" role="dialog" aria-modal="true"><header><div><strong>保存至</strong></div><button type="button" data-model-chat-action="close-save-result" aria-label="关闭">✕</button></header><main><nav class="workflow-reference-source-nav" aria-label="保存位置"><button class="${saveSource === "project" ? "active" : ""}" type="button" data-model-chat-action="set-save-source" data-save-source="project">项目资产库</button>${saveTarget.type === "image" ? `<button class="${saveSource === "team" ? "active" : ""}" type="button" data-model-chat-action="set-save-source" data-save-source="team">团队资产库</button><button class="${saveSource === "market" ? "active" : ""}" type="button" data-model-chat-action="set-save-source" data-save-source="market">素材广场</button>` : ""}</nav><section class="workflow-reference-modal-body model-chat-save-content">${saveSource === "project" ? `<label class="model-chat-save-field is-readonly"><span>项目名称</span><input value="${escapeHtml(currentProject()?.name || "当前项目")}" disabled /></label>` : ""}<div class="model-chat-save-categories">${saveCategories.map((item) => `<button class="${item === saveCategory ? "active" : ""}" type="button" data-model-chat-action="set-save-category" data-save-category="${item}">${item}</button>`).join("")}</div>${canAssociate ? `<div class="model-chat-save-method"><button class="${saveTarget.method !== "existing" ? "active" : ""}" type="button" data-model-chat-action="set-save-method" data-save-method="new">新建资产</button><button class="${saveTarget.method === "existing" ? "active" : ""}" type="button" data-model-chat-action="set-save-method" data-save-method="existing">关联到已有资产</button></div>` : ""}${saveTarget.method === "existing" && canAssociate ? `<label class="model-chat-save-field"><span>选择已有${saveCategory}</span><select data-model-chat-save-existing><option value="">请选择</option>${existingAssets.map((item) => `<option>${item}</option>`).join("")}</select><small>生成结果将补充添加到所选资产中</small></label>` : `<label class="model-chat-save-field"><span>资产名称 <b>*</b></span><input data-model-chat-save-name placeholder="${saveSource === "market" ? "请输入素材名称" : "请输入资产名称"}" value="" /></label>`}</section></main><footer><button class="workflow-secondary-button" type="button" data-model-chat-action="close-save-result">取消</button><button class="workflow-primary-button" type="button" data-model-chat-action="confirm-save-result">保存</button></footer></section></div>` : "";
+  workflowModelChatContent.innerHTML = `
+    <section class="model-chat-layout">
+      <aside class="model-chat-history">
+        <button class="model-chat-new" type="button" data-model-chat-action="new">＋ 新建对话</button>
+        ${groupedChats("置顶", pinnedChats)}${[...new Set(normalChats.map(chatDateLabel))].map((label) => groupedChats(label, normalChats.filter((item) => chatDateLabel(item) === label))).join("")}
+      </aside>
+      <section class="model-chat-conversation">
+        <header class="model-chat-head"><div><strong>${escapeHtml(chat?.title || "新对话")}</strong></div></header>
+        <main class="model-chat-messages">${messages.length ? messages.map((message, messageIndex) => { const generatedMedia = message.role === "assistant" && Boolean(message.media); return `<article class="model-chat-message is-${message.role}"><div class="model-chat-avatar">${message.role === "user" ? `<img src="${CANVAS_NODE_AVATAR_IMAGE}" alt="用户头像" />` : `<img src="./assets/images/model-chat-ai-logo.png" alt="PhanthyMovie" />`}</div><div>${generatedMedia ? "" : `<p>${escapeHtml(message.text)}</p>`}${message.attachments?.length ? `<div class="model-chat-sent-attachments">${message.attachments.map((item) => attachmentMarkup(item, true)).join("")}</div>` : ""}${mediaMarkup(message.media)}${message.role === "user" ? `<footer><button type="button" data-model-chat-action="reuse-user-message" data-message-index="${messageIndex}">重新生成</button></footer>` : message.role === "assistant" && !generatedMedia ? `<footer><button type="button">复制</button></footer>` : ""}</div></article>`; }).join("") : `<div class="model-chat-empty"><h1>想创作什么？</h1><div><button type="button" data-model-chat-prompt="把一张人物图变成电影感视频"><img src="./assets/images/model-chat/icons/video-create-transparent.png" alt="" />关键帧生成视频</button><button type="button" data-model-chat-prompt="生成一张悬疑短剧海报"><img src="./assets/images/model-chat/icons/image-create-transparent.png" alt="" />生成图片</button><button type="button" data-model-chat-prompt="写一个短剧开场"><img src="./assets/images/model-chat/icons/script-create-transparent.png" alt="" />剧本创作</button></div></div>`}</main>
+        <footer class="model-chat-composer">
+          <div class="model-chat-attachments"><button type="button" data-model-chat-action="toggle-upload" title="上传图片、视频、音频或文件"><img src="./assets/icons/plus.svg" alt="" /></button><span>上传素材</span>${currentAttachments.length ? `<div class="model-chat-attachment-list">${currentAttachments.map((item) => attachmentMarkup(item)).join("")}</div>` : ""}${state.workflowModelChatUploadMenuOpen ? uploadMenu : ""}<input id="model-chat-file-input" type="file" hidden multiple /></div>
+          <div id="model-chat-input" class="model-chat-input" contenteditable="true" role="textbox" aria-multiline="true" data-placeholder="描述你想创作的内容…">${richDraft}</div>${state.workflowModelChatMentionOpen ? mentionMenu : ""}
+          <div class="model-chat-composer-actions"><div class="model-chat-model-wrap"><button class="model-chat-mode-button" type="button" data-model-chat-action="toggle-type-picker">${typeIcon(type)}${typeLabel}<img class="model-chat-chevron" src="./assets/icons/chevron-down.svg" alt="" /></button>${state.workflowModelPickerOpen === "type" ? modelTypePicker : ""}</div><div class="model-chat-model-wrap"><button class="model-chat-model-button" type="button" data-model-chat-action="toggle-picker"><img class="model-chat-control-icon" src="./assets/icons/package.svg" alt="" />${escapeHtml(state.workflowModelChatModel)}</button>${state.workflowModelPickerOpen === "model" ? `<div class="model-chat-model-picker">${workflowModelCatalog.filter((model) => model.type === type).map((model) => `<button type="button" data-model-chat-action="pick-model" data-model="${model.name}" data-type="${model.type}"><img class="model-chat-type-icon" src="./assets/icons/package.svg" alt="" /><span><strong>${model.name}</strong><em>${model.note}</em></span>✓</button>`).join("")}</div>` : ""}</div>${parameterControlMarkup}<div class="model-chat-model-wrap"><button class="model-chat-mention" type="button" data-model-chat-action="toggle-mentions">@</button></div><span class="model-chat-cost"><img src="${CANVAS_NODE_CREDIT}" alt="" />${estimatedCost}</span><button class="model-chat-send" type="button" data-model-chat-action="send" aria-label="发送"><img src="./assets/icons/send-outline.svg" alt="" /></button></div>
+        </footer>
+      </section>
+    </section>${systemAssetsModal}${previewModal}${deleteModal}${saveModal}`;
+  if (state.workflowModelChatMentionOpen && !anchor) {
+    const mentionMenuElement = workflowModelChatContent.querySelector(".model-chat-mention-menu");
+    const mentionButton = workflowModelChatContent.querySelector("[data-model-chat-action='toggle-mentions']");
+    mentionButton?.closest(".model-chat-model-wrap")?.append(mentionMenuElement);
+  }
+  if (state.workflowModelChatSystemAssetsOpen) {
+    const selectedKeys = new Set((state.workflowModelChatSystemAssetSelections || []).map((item) => item.key));
+    const systemDialog = workflowModelChatContent.querySelector(".model-chat-system-assets");
+    const systemBody = systemDialog?.querySelector(".workflow-reference-modal-body");
+    const categoryNav = systemBody?.querySelector(".workflow-reference-category-nav");
+    const search = state.workflowModelChatSystemAssetSearch || "";
+    if (categoryNav) categoryNav.insertAdjacentHTML("afterend", `<label class="model-chat-system-search"><span>⌕</span><input type="search" value="${escapeHtml(search)}" placeholder="${systemSource === "market" ? "搜索素材" : "搜索资产"}" data-model-chat-system-search /></label>`);
+    systemDialog?.querySelectorAll("[data-model-chat-action='add-system-asset']").forEach((card) => {
+      const key = `${systemSource}|${systemCategory}|${card.dataset.systemAssetIndex}`;
+      const selected = selectedKeys.has(key);
+      card.classList.toggle("is-selected", selected);
+      card.setAttribute("aria-pressed", String(selected));
+      card.removeAttribute("data-model-chat-action");
+      card.hidden = Boolean(search) && !card.textContent.toLowerCase().includes(search.toLowerCase());
+      card.insertAdjacentHTML("beforeend", `<span class="model-chat-asset-checkbox" role="checkbox" aria-checked="${selected}" tabindex="0" data-model-chat-action="add-system-asset" data-system-asset-index="${card.dataset.systemAssetIndex}" data-system-asset-type="${card.dataset.systemAssetType}">${selected ? "✓" : ""}</span>${card.dataset.systemAssetType === "audio" ? "" : `<span class="model-chat-asset-preview" role="button" tabindex="0" aria-label="预览" data-model-chat-action="preview-system-asset" data-system-asset-index="${card.dataset.systemAssetIndex}" data-system-asset-type="${card.dataset.systemAssetType}"><img src="./assets/icons/eye.svg" alt="" /></span>`}`);
+    });
+    const selectedCount = selectedKeys.size;
+    const tip = systemDialog?.querySelector(".model-chat-system-assets-tip");
+    if (tip) tip.remove();
+    const footer = systemDialog?.querySelector("footer");
+    if (footer) footer.insertAdjacentHTML("afterbegin", `<span class="model-chat-selected-count">已选 ${selectedCount} 项</span>`);
+    const confirm = systemDialog?.querySelector("footer .workflow-primary-button");
+    if (confirm) {
+      confirm.dataset.modelChatAction = "confirm-system-assets";
+      confirm.textContent = "添加";
+    }
+  }
+  const systemAssetPreview = state.workflowModelChatSystemAssetPreview;
+  if (systemAssetPreview) workflowModelChatContent.insertAdjacentHTML("beforeend", `<div class="model-chat-system-preview"><button class="model-chat-system-preview-backdrop" type="button" data-model-chat-action="close-system-asset-preview" aria-label="关闭预览"></button><section><button type="button" data-model-chat-action="close-system-asset-preview" aria-label="关闭">✕</button><img src="${escapeHtml(systemAssetPreview.src)}" alt="${escapeHtml(systemAssetPreview.label)}" /></section></div>`);
+  if (saveTarget?.type === "video") {
+    const saveDialog = workflowModelChatContent.querySelector(".model-chat-save-modal");
+    const sourceNav = saveDialog?.querySelector(".workflow-reference-source-nav");
+    const categoryNav = saveDialog?.querySelector(".model-chat-save-categories");
+    sourceNav?.insertAdjacentHTML("beforeend", '<button type="button" disabled title="视频暂不支持保存至团队资产库">团队资产库</button><button type="button" disabled title="视频暂不支持保存至素材广场">素材广场</button>');
+    categoryNav?.querySelectorAll("button").forEach((button) => {
+      if (button.textContent.trim() !== "其他") {
+        button.disabled = true;
+        button.title = "视频仅支持保存至项目资产库的其他分类";
+      }
+    });
+  }
+};
+
 const renderWorkflowPlaceholder = (type) => {
   if (!workflowPlaceholderContent) return;
   if (type === "script") {
@@ -4050,6 +4301,7 @@ const syncHeader = () => {
   detailView.classList.toggle("is-open", inCanvasSurface);
   detailView.classList.toggle("is-share-view", inCanvasShare);
   const topbar = document.querySelector(".topbar");
+  document.querySelector(".page-shell")?.classList.toggle("is-workflow-active", inWorkflowHome);
   topbar?.classList.remove("is-hidden");
   topbar?.classList.toggle("is-canvas-detail", inCanvasDetail);
   topbar?.classList.toggle("is-canvas-share", inCanvasShare);
@@ -4108,16 +4360,20 @@ const renderGrid = () => {
     const inRecycle = state.workflowPage === "recycle";
     const inQuick = state.workflowPage === "quick";
     const inPlaceholder = state.workflowPage === "script" || state.workflowPage === "assets";
+    const inModelChat = state.workflowPage === "model-chat";
+    workflowHomeView?.classList.toggle("is-model-chat-page", inModelChat);
     workflowHomeView?.classList.toggle("is-recycle-page", inRecycle);
     workflowHomeView?.classList.toggle("is-quick-page", inQuick);
     workflowStudioMain?.classList.toggle("is-hidden", state.workflowPage !== "studio");
     workflowQuickMain?.classList.toggle("is-hidden", !inQuick);
     workflowPlaceholderMain?.classList.toggle("is-hidden", !inPlaceholder);
     workflowRecycleMain?.classList.toggle("is-hidden", !inRecycle);
+    workflowModelChatMain?.classList.toggle("is-hidden", !inModelChat);
     workflowHomeView?.querySelectorAll(".workflow-nav-item").forEach((item) => {
       item.classList.toggle("active", item.dataset.workflowPage === state.workflowPage);
     });
-    if (inRecycle) renderWorkflowRecycle();
+    if (inModelChat) renderWorkflowModelChat();
+    else if (inRecycle) renderWorkflowRecycle();
     else if (inQuick) renderWorkflowQuick();
     else if (inPlaceholder) renderWorkflowPlaceholder(state.workflowPage);
     else renderWorkflowStudio();
@@ -7699,6 +7955,577 @@ workflowHomeView?.addEventListener("click", (event) => {
   if (!targetPage) return;
   state.workflowPage = targetPage;
   renderGrid();
+});
+
+const focusModelChatEditorAtEnd = () => {
+  const editor = document.getElementById("model-chat-input");
+  if (!editor) return;
+  editor.focus();
+  const range = document.createRange();
+  range.selectNodeContents(editor);
+  range.collapse(false);
+  const selection = window.getSelection();
+  selection?.removeAllRanges();
+  selection?.addRange(range);
+};
+
+const modelChatMentionAnchorAtCaret = () => {
+  const editor = document.getElementById("model-chat-input");
+  const composer = editor?.closest(".model-chat-composer");
+  const selection = window.getSelection();
+  if (!editor || !composer || !selection?.rangeCount) return null;
+  const range = selection.getRangeAt(0).cloneRange();
+  range.collapse(false);
+  const caret = range.getBoundingClientRect();
+  const bounds = composer.getBoundingClientRect();
+  return {
+    left: Math.max(8, Math.min(caret.left - bounds.left, bounds.width - 300)),
+    top: Math.max(48, caret.bottom - bounds.top + 5),
+  };
+};
+
+const saveModelChatListRename = (input, cancel = false) => {
+  const chat = state.workflowModelChats.find((item) => item.id === input?.dataset.chatId);
+  const name = input?.value.trim();
+  if (!cancel && chat && name) chat.title = name.slice(0, 30);
+  state.workflowModelChatRenaming = false;
+  saveWorkflowModelChats();
+  renderWorkflowModelChat();
+};
+
+workflowModelChatContent?.addEventListener("click", (event) => {
+  const target = event.target.closest("[data-model-chat-action], [data-model-chat-prompt]");
+  if (!target) return;
+  const action = target.dataset.modelChatAction;
+  const activeChat = () => state.workflowModelChats.find((item) => item.id === state.workflowModelChatId);
+  if (target.dataset.modelChatPrompt) {
+    const presets = {
+      video: { type: "video", model: "sd2.0", videoMode: "智能多帧模式", videoRatio: "16:9", videoResolution: "1080P", videoCount: "1", videoDuration: 5 },
+      image: { type: "image", model: "gpt-image-2", imageRatio: "1:1", imageResolution: "2K", imageCount: "1", imageWidth: 2048, imageHeight: 2048 },
+      text: { type: "text", model: "Gemini 3.1 Pro" },
+    };
+    const presetKey = target.dataset.modelChatPreset || ({
+      "把一张人物图变成电影感视频": "video",
+      "生成一张悬疑短剧海报": "image",
+      "写一个短剧开场": "text",
+    }[target.dataset.modelChatPrompt]);
+    const preset = presets[presetKey] || {};
+    state.workflowModelChatDraft = target.dataset.modelChatPrompt;
+    state.workflowModelChatType = preset.type || state.workflowModelChatType;
+    state.workflowModelChatModel = preset.model || state.workflowModelChatModel;
+    if (preset.videoMode) state.workflowModelChatVideoMode = preset.videoMode;
+    if (preset.videoRatio) state.workflowModelChatVideoRatio = preset.videoRatio;
+    if (preset.videoResolution) state.workflowModelChatVideoResolution = preset.videoResolution;
+    if (preset.videoCount) state.workflowModelChatVideoCount = preset.videoCount;
+    if (preset.videoDuration) state.workflowModelChatVideoDuration = preset.videoDuration;
+    if (preset.imageRatio) state.workflowModelChatImageRatio = preset.imageRatio;
+    if (preset.imageResolution) state.workflowModelChatImageResolution = preset.imageResolution;
+    if (preset.imageCount) state.workflowModelChatImageCount = preset.imageCount;
+    if (preset.imageWidth) state.workflowModelChatImageWidth = preset.imageWidth;
+    if (preset.imageHeight) state.workflowModelChatImageHeight = preset.imageHeight;
+    state.workflowModelPickerOpen = false;
+    state.workflowModelChatMentionOpen = false;
+    renderWorkflowModelChat();
+    window.setTimeout(focusModelChatEditorAtEnd, 0);
+    return;
+  }
+  if (action === "reuse-user-message") {
+    const message = activeChat()?.messages?.[Number(target.dataset.messageIndex)];
+    if (!message || message.role !== "user") return;
+    state.workflowModelChatDraft = message.text === "请参考已上传素材。" ? "" : message.text;
+    state.workflowModelChatAttachments = (message.attachments || []).map((item) => ({ ...item, id: `reused-${Date.now()}-${item.id}` }));
+    state.workflowModelChatMentionOpen = false;
+    renderWorkflowModelChat();
+    window.setTimeout(focusModelChatEditorAtEnd, 0);
+    return;
+  }
+  if (action === "toggle-upload") {
+    state.workflowModelChatUploadMenuOpen = !state.workflowModelChatUploadMenuOpen;
+    state.workflowModelChatMentionOpen = false;
+    state.workflowModelChatMentionAnchor = null;
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "choose-upload") {
+    const kind = target.dataset.uploadKind || "image";
+    const input = document.getElementById("model-chat-file-input");
+    const accepts = { image: "image/*", video: "video/*", audio: "audio/*", document: ".pdf,.doc,.docx,.txt,.md" };
+    state.workflowModelChatUploadKind = kind;
+    state.workflowModelChatUploadMenuOpen = false;
+    if (input) {
+      input.accept = accepts[kind];
+      input.click();
+    }
+    return;
+  }
+  if (action === "preview-result") {
+    state.workflowModelChatPreview = { type: target.dataset.resultType, src: target.dataset.resultSrc, duration: target.dataset.resultDuration };
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "close-result-preview") {
+    state.workflowModelChatPreview = null;
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "download-result") {
+    const link = document.createElement("a");
+    link.href = target.dataset.resultSrc;
+    link.download = target.dataset.resultType === "video" ? "PhanthyMovie-视频结果.jpg" : "PhanthyMovie-图片结果.jpg";
+    link.click();
+    return;
+  }
+  if (action === "save-result") {
+    state.workflowModelChatSaveTarget = { type: target.dataset.resultType, src: target.dataset.resultSrc, source: "project", category: target.dataset.resultType === "video" ? "其他" : "其他", method: "new" };
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "close-save-result") {
+    state.workflowModelChatSaveTarget = null;
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "set-save-source") {
+    if (!state.workflowModelChatSaveTarget) return;
+    state.workflowModelChatSaveTarget.source = target.dataset.saveSource || "project";
+    state.workflowModelChatSaveTarget.category = "其他";
+    state.workflowModelChatSaveTarget.method = "new";
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "set-save-category") {
+    if (!state.workflowModelChatSaveTarget) return;
+    state.workflowModelChatSaveTarget.category = target.dataset.saveCategory || "其他";
+    state.workflowModelChatSaveTarget.method = "new";
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "set-save-method") {
+    if (!state.workflowModelChatSaveTarget) return;
+    state.workflowModelChatSaveTarget.method = target.dataset.saveMethod === "existing" ? "existing" : "new";
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "confirm-save-result") {
+    const save = state.workflowModelChatSaveTarget;
+    const name = workflowModelChatContent?.querySelector("[data-model-chat-save-name]")?.value.trim();
+    const existing = workflowModelChatContent?.querySelector("[data-model-chat-save-existing]")?.value;
+    if (!save) return;
+    if (save.method === "existing" && !existing) {
+      window.alert("请选择要关联的已有资产");
+      return;
+    }
+    if (save.method !== "existing" && !name) {
+      window.alert("请填写资产名称");
+      return;
+    }
+    state.workflowModelChatSaveTarget = null;
+    window.alert(save.method === "existing" ? `已补充添加到“${existing}”` : `已保存“${name}”`);
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "add-result-reference") {
+    const kind = target.dataset.resultType === "video" ? "video" : "image";
+    state.workflowModelChatAttachments.push({
+      id: `result-reference-${Date.now()}`,
+      kind,
+      label: kind === "video" ? "生成视频" : "生成图片",
+      fileName: kind === "video" ? "生成视频" : "生成图片",
+      url: target.dataset.resultSrc,
+      duration: target.dataset.resultDuration || "",
+      source: "模型生成结果",
+    });
+    state.workflowModelChatPreview = null;
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "open-system-assets") {
+    state.workflowModelChatUploadMenuOpen = false;
+    state.workflowModelChatSystemAssetsOpen = true;
+    state.workflowModelChatSystemAssetSelections = [];
+    state.workflowModelChatSystemAssetMultiSelect = false;
+    state.workflowModelChatSystemAssetSearch = "";
+    state.workflowModelChatSystemAssetPreview = null;
+    state.workflowModelChatSystemAssetSource = ["project", "team", "market"].includes(state.workflowModelChatSystemAssetSource) ? state.workflowModelChatSystemAssetSource : "project";
+    const sourceKey = state.workflowModelChatSystemAssetSource === "team" ? "project" : state.workflowModelChatSystemAssetSource;
+    const categories = workflowReferenceCategories.filter((category) => (workflowReferenceCategoryTypes[sourceKey]?.[category] || []).some((item) => ["image", "video", "audio"].includes(item)));
+    state.workflowModelChatSystemAssetCategory = categories.includes(state.workflowModelChatSystemAssetCategory) ? state.workflowModelChatSystemAssetCategory : categories[0];
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "close-system-assets") {
+    state.workflowModelChatSystemAssetsOpen = false;
+    state.workflowModelChatSystemAssetSelections = [];
+    state.workflowModelChatSystemAssetMultiSelect = false;
+    state.workflowModelChatSystemAssetSearch = "";
+    state.workflowModelChatSystemAssetPreview = null;
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "set-system-source") {
+    state.workflowModelChatSystemAssetSource = ["project", "team", "market"].includes(target.dataset.systemSource) ? target.dataset.systemSource : "project";
+    const sourceKey = state.workflowModelChatSystemAssetSource === "team" ? "project" : state.workflowModelChatSystemAssetSource;
+    const categories = workflowReferenceCategories.filter((category) => (workflowReferenceCategoryTypes[sourceKey]?.[category] || []).some((item) => ["image", "video", "audio"].includes(item)));
+    state.workflowModelChatSystemAssetCategory = categories.includes(state.workflowModelChatSystemAssetCategory) ? state.workflowModelChatSystemAssetCategory : categories[0];
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "set-system-category") {
+    state.workflowModelChatSystemAssetCategory = target.dataset.systemCategory || "角色";
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "preview-system-asset") {
+    const index = Number(target.dataset.systemAssetIndex || 0);
+    const isAudio = target.dataset.systemAssetType === "audio";
+    if (isAudio) return;
+    state.workflowModelChatSystemAssetPreview = {
+      src: workflowReferenceVisual("image", index),
+      label: target.closest(".workflow-reference-asset-card")?.querySelector("strong")?.textContent.trim() || "素材预览",
+    };
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "close-system-asset-preview") {
+    state.workflowModelChatSystemAssetPreview = null;
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "add-system-asset") {
+    const source = state.workflowModelChatSystemAssetSource;
+    const sourceKey = source === "team" ? "project" : source;
+    const category = state.workflowModelChatSystemAssetCategory;
+    const index = Number(target.dataset.systemAssetIndex || 0);
+    const kind = target.dataset.systemAssetType === "audio" ? "audio" : "image";
+    const label = workflowReferenceAssetName(sourceKey, category, index).replace(/^项目/, source === "team" ? "团队" : "项目");
+    const key = `${source}|${category}|${index}`;
+    const attachment = {
+      id: `system-attachment-${source}-${category}-${index}`,
+      kind,
+      label,
+      fileName: label,
+      url: kind === "image" ? workflowReferenceVisual("image", index) : "",
+      duration: kind === "audio" ? "00:18" : "",
+      source: source === "team" ? "团队资产库" : workflowReferenceLibraryNames[source],
+      key,
+    };
+    const selections = state.workflowModelChatSystemAssetSelections || [];
+    state.workflowModelChatSystemAssetSelections = selections.some((item) => item.key === key)
+      ? selections.filter((item) => item.key !== key)
+      : [...selections, attachment];
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "confirm-system-assets") {
+    const selections = state.workflowModelChatSystemAssetSelections || [];
+    const currentKeys = new Set(state.workflowModelChatAttachments.map((item) => item.key).filter(Boolean));
+    state.workflowModelChatAttachments.push(...selections.filter((item) => !currentKeys.has(item.key)));
+    state.workflowModelChatSystemAssetSelections = [];
+    state.workflowModelChatSystemAssetsOpen = false;
+    state.workflowModelChatSystemAssetMultiSelect = false;
+    state.workflowModelChatSystemAssetSearch = "";
+    state.workflowModelChatSystemAssetPreview = null;
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "remove-attachment") {
+    state.workflowModelChatAttachments = state.workflowModelChatAttachments.filter((item) => item.id !== target.dataset.attachmentId);
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "toggle-mentions") {
+    state.workflowModelChatMentionOpen = !state.workflowModelChatMentionOpen;
+    state.workflowModelChatMentionAnchor = null;
+    state.workflowModelChatUploadMenuOpen = false;
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "mention-attachment") {
+    const item = state.workflowModelChatAttachments.find((attachment) => attachment.id === target.dataset.attachmentId);
+    if (item) state.workflowModelChatDraft = `${state.workflowModelChatDraft}${state.workflowModelChatDraft ? " " : ""}@${item.label}`;
+    state.workflowModelChatMentionOpen = false;
+    state.workflowModelChatMentionAnchor = null;
+    renderWorkflowModelChat();
+    window.setTimeout(focusModelChatEditorAtEnd, 0);
+    return;
+  }
+  if (action === "new") {
+    const emptyChat = state.workflowModelChats.find((item) => item.title === "新对话" && !item.messages?.length);
+    if (emptyChat) {
+      state.workflowModelChatId = emptyChat.id;
+      state.workflowModelChatModel = emptyChat.model;
+      state.workflowModelChatType = emptyChat.type;
+      state.workflowModelPickerOpen = false;
+      state.workflowModelChatDraft = "";
+      state.workflowModelChatAttachments = [];
+      renderWorkflowModelChat();
+      return;
+    }
+    const id = `model-chat-${Date.now()}`;
+    state.workflowModelChats.unshift({ id, title: "新对话", time: "今天", createdAt: new Date().toISOString(), pinned: false, model: state.workflowModelChatModel, type: state.workflowModelChatType, messages: [] });
+    state.workflowModelChatId = id;
+    state.workflowModelPickerOpen = false;
+    state.workflowModelChatDraft = "";
+    state.workflowModelChatAttachments = [];
+    saveWorkflowModelChats();
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "open") {
+    const chat = state.workflowModelChats.find((item) => item.id === target.dataset.chatId);
+    if (chat) {
+      state.workflowModelChatId = chat.id;
+      state.workflowModelChatModel = chat.model;
+      state.workflowModelChatType = chat.type;
+      state.workflowModelPickerOpen = false;
+      state.workflowModelChatMenuId = null;
+      state.workflowModelChatRenaming = false;
+      state.workflowModelChatDraft = "";
+      state.workflowModelChatAttachments = [];
+      renderWorkflowModelChat();
+    }
+    return;
+  }
+  if (action === "toggle-picker") {
+    state.workflowModelPickerOpen = state.workflowModelPickerOpen === "model" ? false : "model";
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "toggle-type-picker") {
+    state.workflowModelPickerOpen = state.workflowModelPickerOpen === "type" ? false : "type";
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "pick-type") {
+    const model = workflowModelCatalog.find((item) => item.type === target.dataset.type);
+    if (model) {
+      state.workflowModelChatModel = model.name;
+      state.workflowModelChatType = model.type;
+    }
+    state.workflowModelPickerOpen = false;
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "pick-model") {
+    state.workflowModelChatModel = target.dataset.model;
+    state.workflowModelChatType = target.dataset.type;
+    state.workflowModelPickerOpen = false;
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "settings") {
+    state.workflowModelChatSettingsOpen = !state.workflowModelChatSettingsOpen;
+    state.workflowModelPickerOpen = false;
+    renderWorkflowModelChat();
+    return;
+  }
+  if (["toggle-video-generation-mode", "toggle-video-spec", "toggle-video-duration", "toggle-image-spec"].includes(action)) {
+    const picker = action.replace("toggle-", "");
+    state.workflowModelPickerOpen = state.workflowModelPickerOpen === picker ? false : picker;
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "set-video-generation-mode") {
+    state.workflowModelChatVideoMode = `${target.dataset.videoGenerationMode || "全能参考"}模式`;
+    state.workflowModelPickerOpen = false;
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "set-video-ratio") {
+    state.workflowModelChatVideoRatio = target.dataset.videoRatio || "16:9";
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "set-video-resolution") {
+    state.workflowModelChatVideoResolution = target.dataset.videoResolution || "1080P";
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "set-video-count") {
+    state.workflowModelChatVideoCount = target.dataset.videoCount || "1";
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "set-image-ratio") {
+    state.workflowModelChatImageRatio = target.dataset.imageRatio || "1:1";
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "set-image-resolution") {
+    state.workflowModelChatImageResolution = target.dataset.imageResolution || "2K";
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "set-image-count") {
+    state.workflowModelChatImageCount = target.dataset.imageCount || "1";
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "cycle-video-mode") {
+    const modes = ["全能参考模式", "首尾帧模式", "关键帧模式"];
+    const currentIndex = modes.indexOf(state.workflowModelChatVideoMode);
+    state.workflowModelChatVideoMode = modes[(currentIndex + 1) % modes.length];
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "toggle-menu") {
+    state.workflowModelChatMenuId = state.workflowModelChatMenuId === target.dataset.chatId ? null : target.dataset.chatId;
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "pin") {
+    const chat = state.workflowModelChats.find((item) => item.id === target.dataset.chatId);
+    if (chat) chat.pinned = !chat.pinned;
+    state.workflowModelChatMenuId = null;
+    saveWorkflowModelChats();
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "rename") {
+    state.workflowModelChatMenuId = null;
+    state.workflowModelChatRenaming = target.dataset.chatId || state.workflowModelChatId;
+    renderWorkflowModelChat();
+    window.setTimeout(() => workflowModelChatContent?.querySelector("[data-model-chat-rename-input]")?.select(), 0);
+    return;
+  }
+  if (action === "save-rename") {
+    const id = state.workflowModelChatRenaming || state.workflowModelChatId;
+    const chat = state.workflowModelChats.find((item) => item.id === id);
+    const name = workflowModelChatContent?.querySelector("[data-model-chat-rename-input]")?.value.trim();
+    if (chat && name) chat.title = name.slice(0, 30);
+    state.workflowModelChatRenaming = false;
+    saveWorkflowModelChats();
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "delete") {
+    const chat = state.workflowModelChats.find((item) => item.id === target.dataset.chatId);
+    if (!chat) return;
+    state.workflowModelChatMenuId = null;
+    state.workflowModelChatDeleteId = chat.id;
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "close-delete") {
+    state.workflowModelChatDeleteId = null;
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "confirm-delete") {
+    const chat = state.workflowModelChats.find((item) => item.id === state.workflowModelChatDeleteId);
+    if (!chat) {
+      state.workflowModelChatDeleteId = null;
+      renderWorkflowModelChat();
+      return;
+    }
+    state.workflowModelChats = state.workflowModelChats.filter((item) => item.id !== chat.id);
+    if (!state.workflowModelChats.length) {
+      const id = `model-chat-${Date.now()}`;
+      state.workflowModelChats.push({ id, title: "新对话", time: "今天", createdAt: new Date().toISOString(), pinned: false, model: "sd2.0", type: "video", messages: [] });
+    }
+    const next = state.workflowModelChats[0];
+    state.workflowModelChatId = next.id;
+    state.workflowModelChatModel = next.model;
+    state.workflowModelChatType = next.type;
+    state.workflowModelChatMenuId = null;
+    state.workflowModelChatDeleteId = null;
+    saveWorkflowModelChats();
+    renderWorkflowModelChat();
+    return;
+  }
+  if (action === "send") {
+    const input = document.getElementById("model-chat-input");
+    const text = input?.innerText.trim() || state.workflowModelChatDraft.trim();
+    const chat = activeChat();
+    const attachments = state.workflowModelChatAttachments.map((item) => ({ ...item }));
+    if ((!text && !attachments.length) || !chat) return;
+    if (chat.title === "新对话") chat.title = (text || attachments[0]?.label || "未命名对话").replace(/\s+/g, " ").slice(0, 18);
+    chat.model = state.workflowModelChatModel;
+    chat.type = state.workflowModelChatType;
+    chat.messages.push({ role: "user", text: text || "请参考已上传素材。", attachments });
+    const reply = state.workflowModelChatType === "video" ? "已收到。将按当前视频参数生成，可继续补充参考素材或修改镜头语言。" : state.workflowModelChatType === "image" ? "已收到。将按当前图片参数生成，你可以继续描述构图或视觉风格。" : "已收到。我会根据当前对话上下文继续创作。";
+    const generatedMedia = state.workflowModelChatType === "video"
+      ? [{ kind: "video" }, { kind: "video" }]
+      : state.workflowModelChatType === "image"
+        ? [{ kind: "image" }, { kind: "image" }, { kind: "image" }]
+        : undefined;
+    chat.messages.push({ role: "assistant", text: reply, media: generatedMedia });
+    state.workflowModelChatDraft = "";
+    state.workflowModelChatAttachments = [];
+    state.workflowModelChatMentionOpen = false;
+    state.workflowModelChatMentionAnchor = null;
+    saveWorkflowModelChats();
+    renderWorkflowModelChat();
+  }
+});
+
+workflowModelChatContent?.addEventListener("input", (event) => {
+  if (event.target.matches("[data-model-chat-system-search]")) {
+    state.workflowModelChatSystemAssetSearch = event.target.value;
+    const keyword = event.target.value.trim().toLowerCase();
+    event.target.closest(".model-chat-system-assets")?.querySelectorAll(".workflow-reference-asset-card").forEach((card) => {
+      card.hidden = Boolean(keyword) && !card.textContent.toLowerCase().includes(keyword);
+    });
+    return;
+  }
+  if (event.target.id !== "model-chat-input") return;
+  state.workflowModelChatDraft = event.target.innerText.replace(/\n/g, " ");
+  if (/(^|\s)@$/.test(state.workflowModelChatDraft)) {
+    state.workflowModelChatMentionAnchor = modelChatMentionAnchorAtCaret();
+    state.workflowModelChatMentionOpen = true;
+    state.workflowModelChatUploadMenuOpen = false;
+    renderWorkflowModelChat();
+    window.setTimeout(focusModelChatEditorAtEnd, 0);
+  }
+});
+
+workflowModelChatContent?.addEventListener("keydown", (event) => {
+  if (!event.target.matches("[data-model-chat-rename-input]")) return;
+  if (event.key === "Enter") {
+    event.preventDefault();
+    saveModelChatListRename(event.target);
+  }
+  if (event.key === "Escape") {
+    event.preventDefault();
+    saveModelChatListRename(event.target, true);
+  }
+});
+
+workflowModelChatContent?.addEventListener("focusout", (event) => {
+  if (event.target.matches("[data-model-chat-rename-input]")) saveModelChatListRename(event.target);
+});
+
+workflowModelChatContent?.addEventListener("change", (event) => {
+  if (event.target.matches("[data-model-chat-duration]")) {
+    state.workflowModelChatVideoDuration = Number(event.target.value || 5);
+    renderWorkflowModelChat();
+    return;
+  }
+  if (event.target.matches("[data-model-chat-image-width]")) {
+    state.workflowModelChatImageWidth = Math.max(256, Math.min(4096, Number(event.target.value) || 2048));
+    renderWorkflowModelChat();
+    return;
+  }
+  if (event.target.matches("[data-model-chat-image-height]")) {
+    state.workflowModelChatImageHeight = Math.max(256, Math.min(4096, Number(event.target.value) || 2048));
+    renderWorkflowModelChat();
+    return;
+  }
+  if (event.target.id !== "model-chat-file-input") return;
+  const kind = state.workflowModelChatUploadKind;
+  Array.from(event.target.files || []).forEach((file, index) => {
+    const url = kind === "image" ? URL.createObjectURL(file) : "";
+    state.workflowModelChatAttachments.push({
+      id: `attachment-${Date.now()}-${index}`,
+      kind,
+      label: file.name,
+      fileName: file.name,
+      url,
+      duration: kind === "video" ? "00:12" : kind === "audio" ? "00:18" : "",
+    });
+  });
+  event.target.value = "";
+  renderWorkflowModelChat();
 });
 
 let workflowRecyclePlaybackTimer = null;

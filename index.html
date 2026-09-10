@@ -403,7 +403,7 @@
               </svg>
               <span>拍摄台</span>
             </button>
-            <button class="workflow-nav-item" type="button" title="模型对话广场">
+            <button class="workflow-nav-item" type="button" title="模型对话广场" data-workflow-page="model-chat">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M10 3h4M12 3v6l-6 10h12L12 9" />
               </svg>
@@ -646,6 +646,10 @@
 
         <main class="workflow-recycle-main is-hidden" id="workflow-recycle-main" aria-label="生成历史">
           <div id="workflow-recycle-content"></div>
+        </main>
+
+        <main class="workflow-model-chat-main is-hidden" id="workflow-model-chat-main" aria-label="模型对话广场">
+          <div id="workflow-model-chat-content"></div>
         </main>
         <div id="workflow-quick-modal-root"></div>
       </section>
