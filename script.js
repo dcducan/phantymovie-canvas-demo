@@ -989,6 +989,7 @@ const state = {
   workflowSceneKeyframePickerAnchor: null,
   workflowSceneKeyframePickerShotFilter: "all",
   workflowStage: "keyframe",
+  workflowStudioPanels: { script: true, shot: true },
   workflowPage: "quick",
   workflowModelChats: [
     { id: "model-chat-1", title: "新对话", time: "今天", createdAt: new Date().toISOString(), pinned: false, model: "sd2.0", type: "video", messages: [] },
@@ -1078,7 +1079,8 @@ const state = {
   workflowAudioModesExpanded: false,
   workflowTtsVoicesExpanded: false,
   workflowTtsText: "",
-  workflowTtsModel: "phan Voice 2.0",
+  workflowTtsModel: "MiniMax Speech 2.8 HD",
+  workflowTtsAdvanced: {},
   workflowTtsVoiceId: "voice-linxi",
   workflowTtsVoiceTab: "official",
   workflowTtsLongMode: false,
@@ -1842,15 +1844,18 @@ const renderWorkflowVideoGenerator = (episode, scene) => {
   `;
 };
 
-const workflowWaveform = (seed = 0, count = 42) => `<div class="workflow-audio-waveform" aria-hidden="true">${Array.from({ length: count }, (_, index) => {
-  const height = 18 + ((index * 31 + seed * 17) % 68);
+const workflowWaveform = (seed = 0, count = 76) => `<div class="workflow-audio-waveform" aria-hidden="true">${Array.from({ length: count }, (_, index) => {
+  const x = index / (count - 1);
+  const envelope = Math.pow(Math.sin(Math.PI * x), .65);
+  const phrase = .25 + .75 * Math.abs(Math.sin(x * 14 + seed * .8) * Math.cos(x * 7 + .4));
+  const height = 8 + 80 * envelope * phrase * (.6 + .4 * Math.abs(Math.sin(index * 2.17 + seed)));
   return `<b style="height:${height}%"></b>`;
 }).join("")}</div>`;
 
 const renderWorkflowAudioTabs = () => `
-  <div class="workflow-result-tabs" role="tablist" aria-label="本场音频">
-    <button class="${state.workflowResultView === "audio-generator" ? "active" : ""}" type="button" data-workflow-action="set-result-view" data-result-view="audio-generator">音频生成器</button>
-    <button class="${state.workflowResultView === "audios" ? "active" : ""}" type="button" data-workflow-action="set-result-view" data-result-view="audios">本场音频</button>
+  <div class="workflow-result-tabs workflow-audio-primary-tabs" role="tablist" aria-label="本场音频">
+    <button class="${state.workflowResultView === "audio-generator" ? "active" : ""}" role="tab" aria-selected="${state.workflowResultView === "audio-generator"}" type="button" data-workflow-action="set-result-view" data-result-view="audio-generator"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-audio-waveform" aria-hidden="true"><path d="M2 13a2 2 0 0 0 2-2V7a2 2 0 0 1 4 0v13a2 2 0 0 0 4 0V4a2 2 0 0 1 4 0v13a2 2 0 0 0 4 0v-4a2 2 0 0 1 2-2"/></svg>音频生成器</button>
+    <button class="${state.workflowResultView === "audios" ? "active" : ""}" role="tab" aria-selected="${state.workflowResultView === "audios"}" type="button" data-workflow-action="set-result-view" data-result-view="audios"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-headset" aria-hidden="true"><path d="M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5Zm0 0a9 9 0 1 1 18 0m0 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3Z"/><path d="M21 16v2a4 4 0 0 1-4 4h-5"/></svg>本场音频</button>
   </div>`;
 
 const renderWorkflowAudioResults = (scene) => {
@@ -1863,7 +1868,7 @@ const renderWorkflowAudioResults = (scene) => {
         <article class="workflow-audio-card${audio.status === "生成中" ? " is-pending" : ""}" draggable="${audio.status === "已完成"}" data-workflow-audio-index="${index}">
           <button class="workflow-audio-play" type="button" data-workflow-action="preview-scene-audio" data-workflow-audio-index="${index}" aria-label="预览音频">${audio.status === "生成中" ? workflowEditIcon.imageGeneration : workflowPlayerIcon.play}</button>
           <div class="workflow-audio-card-main">
-            <div class="workflow-audio-card-title"><strong>${escapeHtml(audio.title)}</strong><span>${escapeHtml(audio.duration)}</span><em>${escapeHtml(audio.mode)}</em></div>
+            <div class="workflow-audio-card-title"><strong>${escapeHtml(audio.title)}</strong><span>${escapeHtml(audio.duration)}</span><em>${audio.mock ? "模拟配音" : escapeHtml(audio.mode)}</em></div>
             ${workflowWaveform(index)}
           </div>
           <div class="workflow-audio-card-actions">
@@ -1876,15 +1881,50 @@ const renderWorkflowAudioResults = (scene) => {
     </div>`;
 };
 
-const workflowTtsVoice = () => state.workflowTtsVoices.find((voice) => voice.id === state.workflowTtsVoiceId) || state.workflowTtsVoices[0];
+const workflowTtsVoice = () => { DoubaoVoice.sync(); return state.workflowTtsVoices.find((voice) => voice.id === state.workflowTtsVoiceId) || state.workflowTtsVoices[0]; };
 
+const speechTagNames = { laughs: "笑声", chuckle: "轻笑", sighs: "叹气", breath: "呼吸", gasps: "倒吸气", coughs: "咳嗽", "clear-throat": "清嗓", groans: "呻吟", pant: "喘息", inhale: "吸气", exhale: "呼气", sniffs: "吸鼻子", snorts: "哼鼻", burps: "打嗝", "lip-smacking": "咂嘴", humming: "哼唱", hissing: "嘶声", emm: "嗯", sneezes: "打喷嚏" };
+const updateSpeechSlider = input => {
+  const min = Number(input.min), max = Number(input.max), value = Number(input.value);
+  const base = input.dataset.workflowTtsRange === "pitch" ? 0 : input.dataset.workflowTtsRange === "speed" ? 1 : 100;
+  const percent = n => 100 * (n - min) / (max - min);
+  input.style.setProperty("--range-start", `${percent(Math.min(base, value))}%`);
+  input.style.setProperty("--range-end", `${percent(Math.max(base, value))}%`);
+};
+const insertSpeechToken = token => {
+  const editor = workflowHomeView.querySelector("[data-workflow-tts-editor]");
+  const text = workflowTtsEditorValue(editor);
+  const selection = state.workflowTtsTagMenu?.selection;
+  const start = selection?.start ?? text.length, end = selection?.end ?? start;
+  if (text.length - (end - start) + token.length > speechTextLimit()) return;
+  state.workflowTtsText = text.slice(0, start) + token + text.slice(end);
+  state.workflowTtsTagMenu = null;
+  state.workflowTtsSelectionRange = { start: start + token.length, end: start + token.length };
+  renderWorkflowStudio();
+  const next = workflowHomeView.querySelector("[data-workflow-tts-editor]");
+  let offset = 0;
+  for (const node of next.childNodes) {
+    offset += workflowTtsEditorValue({childNodes:[node]}).length;
+    if (offset === start + token.length) {
+      next.focus({preventScroll:true});
+      const range = document.createRange(); range.setStartAfter(node); range.collapse(true);
+      const selection = window.getSelection(); selection.removeAllRanges(); selection.addRange(range); break;
+    }
+  }
+};
+const renderSpeechTagMenu = () => {
+  const menu = state.workflowTtsTagMenu;
+  if (!menu) return "";
+  const pause = menu.type === "pause";
+  return `<div class="workflow-tts-emotion-menu workflow-tts-tag-menu"><strong>${pause ? "插入停顿" : "插入语气词"}</strong><div>${(pause ? [0.2, 0.5, 1, 2, 3] : Object.keys(speechTagNames)).map(value => `<button type="button" data-workflow-action="choose-speech-tag" data-token="${pause ? `<#${value}#>` : `(${value})`}">${pause ? `${value} 秒` : speechTagNames[value]}</button>`).join("")}</div>${pause ? `<label class="workflow-pause-custom"><span>自定义</span><input type="number" data-pause-seconds min="0.01" max="99.99" step="0.01" value="0.5" aria-label="自定义停顿秒数"/><span>秒</span><button type="button" data-workflow-action="custom-speech-pause">插入</button></label><small>支持 0.01–99.99 秒，最多两位小数</small><small data-pause-error role="alert"></small>` : ""}<button class="close" type="button" data-workflow-action="close-speech-tag">×</button></div>`;
+};
 const renderWorkflowTtsContent = (value = "") => {
-  const pattern = /\[([^\]|]+)\|([^\]]+)\]/g;
+  const pattern = /\[([^\]|]+)\|([^\]]+)\]|<#(\d+(?:\.\d+)?)#>|\((laughs|chuckle|sighs|breath|gasps|coughs|clear-throat|groans|pant|inhale|exhale|sniffs|snorts|burps|lip-smacking|humming|hissing|emm|sneezes)\)/g;
   let lastIndex = 0;
   let html = "";
   for (const match of value.matchAll(pattern)) {
     html += escapeHtml(value.slice(lastIndex, match.index)).replace(/\n/g, "<br>");
-    html += `<span class="workflow-tts-emotion-chip" contenteditable="false" data-emotion="${escapeHtml(match[1])}" data-text="${escapeHtml(match[2])}"><b>${escapeHtml(match[1])}</b><span>${escapeHtml(match[2])}</span><i data-workflow-action="remove-tts-emotion-chip">×</i></span>`;
+    html += match[3] || match[4] ? `<span class="workflow-tts-emotion-chip workflow-tts-token-chip" contenteditable="false" data-token="${escapeHtml(match[0])}"><span>${match[3] ? `停顿 ${Number(match[3])} 秒` : speechTagNames[match[4]]}</span><i data-workflow-action="remove-speech-token" role="button" aria-label="删除标签">×</i></span>` : `<span class="workflow-tts-emotion-chip" contenteditable="false" data-emotion="${escapeHtml(match[1])}" data-text="${escapeHtml(match[2])}"><b>${escapeHtml(match[1])}</b><span>${escapeHtml(match[2])}</span><i data-workflow-action="remove-tts-emotion-chip">×</i></span>`;
     lastIndex = match.index + match[0].length;
   }
   return html + escapeHtml(value.slice(lastIndex)).replace(/\n/g, "<br>");
@@ -1895,7 +1935,7 @@ const workflowTtsEditorValue = (editor) => {
   const read = (node) => {
     if (node.nodeType === Node.TEXT_NODE) return node.nodeValue || "";
     if (node.nodeType !== Node.ELEMENT_NODE) return "";
-    if (node.classList.contains("workflow-tts-emotion-chip")) return `[${node.dataset.emotion}|${node.dataset.text}]`;
+    if (node.classList.contains("workflow-tts-emotion-chip")) return node.dataset.token || `[${node.dataset.emotion}|${node.dataset.text}]`;
     if (node.tagName === "BR") return "\n";
     return Array.from(node.childNodes).map(read).join("");
   };
@@ -1915,7 +1955,7 @@ const workflowTtsSelectionOffset = (editor, boundaryNode, boundaryOffset) => {
     }
     if (node.nodeType === Node.TEXT_NODE) { offset += (node.nodeValue || "").length; return; }
     if (node.nodeType !== Node.ELEMENT_NODE) return;
-    if (node.classList.contains("workflow-tts-emotion-chip")) { offset += `[${node.dataset.emotion}|${node.dataset.text}]`.length; return; }
+    if (node.classList.contains("workflow-tts-emotion-chip")) { offset += (node.dataset.token || `[${node.dataset.emotion}|${node.dataset.text}]`).length; return; }
     if (node.tagName === "BR") { offset += 1; return; }
     Array.from(node.childNodes).forEach(walk);
   };
@@ -1923,7 +1963,7 @@ const workflowTtsSelectionOffset = (editor, boundaryNode, boundaryOffset) => {
   return offset;
 };
 
-const renderWorkflowTtsCloneModal = () => state.workflowTtsCloneOpen ? `
+const renderWorkflowTtsCloneModal = () => DoubaoVoice.open ? DoubaoVoice.render() : state.workflowTtsCloneOpen ? `
   <div class="workflow-voice-clone-modal">
     <button class="workflow-voice-clone-backdrop" type="button" data-workflow-action="close-voice-clone" aria-label="关闭音色克隆"></button>
     <section class="workflow-voice-clone-dialog" role="dialog" aria-modal="true" aria-label="克隆音色">
@@ -1941,24 +1981,50 @@ const renderWorkflowTtsCloneModal = () => state.workflowTtsCloneOpen ? `
     </section>
   </div>` : "";
 
+const speechTextLimit = () => state.workflowTtsModel === DoubaoVoice.model ? 5000 : state.workflowTtsLongMode ? 50000 : 9999;
+const speechLanguageOptions = () => {
+  if (state.workflowTtsModel === DoubaoVoice.model) return ["跟随音色默认"];
+  const supported = ["自动检测", "中文", "英语", "日语", "法语"];
+  const voice = state.workflowTtsVoices.find(item => item.id === state.workflowTtsVoiceId);
+  // Only narrow the model's verified list when real voice metadata supplies a restriction.
+  return Array.isArray(voice?.supportedLanguages) ? supported.filter(item => item === "自动检测" || voice.supportedLanguages.includes(item)) : supported;
+};
+const normalizeSpeechLanguage = () => {
+  const options = speechLanguageOptions();
+  if (!options.includes(state.workflowTtsLanguage)) state.workflowTtsLanguage = options[0];
+  return options;
+};
+const speechOptions = () => state.workflowTtsAdvanced[state.workflowTtsModel] ||= { emotion: "自动", instruction: "", context: "", pronunciation: "", effect: "无", format: "mp3", sampleRate: "32000", cloneEffect: "标准版" };
+const renderSpeechControls = isDoubao => {
+  const p = speechOptions();
+  const select = (label, key, values) => `<label class="workflow-video-field"><span>${label}</span><select data-speech-option="${key}">${values.map(value => workflowSelectOption(value, p[key])).join("")}</select></label>`;
+  const text = (label, key, placeholder) => `<label class="workflow-video-field"><span>${label}</span><textarea data-speech-option="${key}" maxlength="1000" placeholder="${placeholder}">${escapeHtml(p[key])}</textarea></label>`;
+  return `<section class="workflow-speech-controls">${isDoubao ? `${state.workflowTtsVoiceId.startsWith("doubao-clone-") ? select("复刻合成效果", "cloneEffect", ["标准版", "表现力增强版"]) : ""}${text("表演要求（可选，按音色支持）", "instruction", "例如：压低声音，紧张但克制。指令只影响表演，不会朗读。")}${text("上文参考（可选，不朗读）", "context", "上一句对白或旁白，帮助保持语气连贯")}` : select("整体情绪", "emotion", ["自动", "开心", "难过", "生气", "害怕", "厌恶", "惊讶", "平静", "生动", "低语"])}<details><summary>高级设置</summary><div class="workflow-speech-options">${!isDoubao ? `${text("发音纠正", "pronunciation", "每行一条，例如：重阳/(chong2)(yang2)")}${select("声音效果", "effect", ["无", "空间回声", "礼堂回声", "电话音", "机器人"])}` : ""}${select("输出格式", "format", ["mp3", "wav"])}${select("采样率（Hz）", "sampleRate", ["16000", "24000", "32000", "44100"])}</div></details></section>`;
+};
+
 const renderWorkflowAudioGenerator = () => {
+  if (state.workflowAudioMode === "voice-design") state.workflowAudioMode = "sfx";
   const isMusic = state.workflowAudioMode === "music";
   const isTts = state.workflowAudioMode === "sfx";
-  const isVoiceDesign = state.workflowAudioMode === "voice-design";
+  const speechModels = ["MiniMax Speech 2.8 HD", "MiniMax Speech 2.8 Turbo", "MiniMax Speech 2.6 HD", "MiniMax Speech 2.6 Turbo", DoubaoVoice.model];
+  if (!speechModels.includes(state.workflowTtsModel)) state.workflowTtsModel = speechModels[0];
+  const isDoubao = state.workflowTtsModel === DoubaoVoice.model;
+  const supportsTags = state.workflowTtsModel.includes("2.8");
   const settings = state.workflowAudioSettings;
   const models = ["phan Music 1.5", "Suno v4.5", "Mureka O2"];
   if (!models.includes(settings.model)) settings.model = models[0];
-  const voiceOptions = state.workflowTtsVoices.filter((voice) => voice.group === state.workflowTtsVoiceTab);
+  DoubaoVoice.sync();
+  const voiceOptions = state.workflowTtsVoices.filter((voice) => voice.group === state.workflowTtsVoiceTab && (state.workflowTtsModel === DoubaoVoice.model ? voice.model === DoubaoVoice.model : voice.model !== DoubaoVoice.model));
   const visibleVoices = state.workflowTtsVoicesExpanded ? voiceOptions : voiceOptions.slice(0, 4);
   const hiddenVoiceCount = Math.max(0, voiceOptions.length - visibleVoices.length);
   const selectedVoice = workflowTtsVoice();
+  const languages = normalizeSpeechLanguage();
   return `
     ${renderWorkflowAudioTabs()}
-    <div class="workflow-audio-generator">
+    <div class="workflow-audio-generator" data-audio-mode-view="${state.workflowAudioMode}">
       <div class="workflow-audio-mode-switch" role="radiogroup" aria-label="音频创作模式">
-        <button class="${isMusic ? "active" : ""}" type="button" data-workflow-action="set-audio-mode" data-audio-mode="music"><span>♫</span><div><strong>音乐创作</strong><small>配乐、主题曲、氛围音乐</small></div></button>
-        <button class="${isTts ? "active" : ""}" type="button" data-workflow-action="set-audio-mode" data-audio-mode="sfx"><span>≋</span><div><strong>文生音频</strong><small>选择音色，将文字生成语音</small></div></button>
-        <button class="${isVoiceDesign ? "active" : ""}" type="button" data-workflow-action="set-audio-mode" data-audio-mode="voice-design"><span>◌</span><div><strong>音色设计</strong><small>设计、管理和调试音色</small></div></button>
+        <button class="${isMusic ? "active" : ""}" type="button" data-workflow-action="set-audio-mode" data-audio-mode="music"><span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-music-4" aria-hidden="true"><path d="M9 18V5l12-2v13"/><path d="m9 9 12-2"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span><div><strong>音乐创作</strong><small>配乐、主题曲、氛围音乐</small></div></button>
+        <button class="${isTts ? "active" : ""}" type="button" data-workflow-action="set-audio-mode" data-audio-mode="sfx"><span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-volume" aria-hidden="true"><path d="M4 11.55V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.706.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2h-1.95"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M12 15a5 5 0 0 1 0 6"/><path d="M8 14.502a.5.5 0 0 0-.826-.381l-1.893 1.631a1 1 0 0 1-.651.243H3.5a.5.5 0 0 0-.5.501v3.006a.5.5 0 0 0 .5.501h1.129a1 1 0 0 1 .652.243l1.893 1.633a.5.5 0 0 0 .826-.38z"/></svg></span><div><strong>文生音频</strong><small>选择音色，将文字生成语音</small></div></button>
       </div>
       ${isMusic ? `
         <label class="workflow-video-field"><span>选择模型</span><select data-workflow-audio-param="model">${models.map((item) => workflowSelectOption(item, settings.model)).join("")}</select></label>
@@ -1977,29 +2043,27 @@ const renderWorkflowAudioGenerator = () => {
         </section>
         <label class="workflow-music-name"><span>歌曲名称</span><input type="text" maxlength="60" value="${escapeHtml(state.workflowAudioSongName)}" data-workflow-music-field="songName" placeholder="输入歌曲名称" /></label>
       ` : isTts ? `
-        <label class="workflow-video-field"><span>选择模型</span><select data-workflow-tts-model>${["phan Voice 2.0", "CosyVoice 3", "Eleven Multilingual v2"].map((item) => workflowSelectOption(item, state.workflowTtsModel)).join("")}</select></label>
+        <label class="workflow-video-field"><span>选择模型</span><select data-workflow-tts-model>${speechModels.map((item) => workflowSelectOption(item, state.workflowTtsModel)).join("")}</select></label>
+
         <section class="workflow-tts-voice-section">
           <header><div><strong>选择音色</strong><span>当前：${escapeHtml(selectedVoice.name)} · ${escapeHtml(selectedVoice.meta)}</span></div><button type="button" data-workflow-action="open-voice-clone">＋ 克隆音色</button></header>
           <div class="workflow-tts-voice-tabs"><button class="${state.workflowTtsVoiceTab === "official" ? "active" : ""}" type="button" data-workflow-action="set-voice-tab" data-voice-tab="official">官方音色</button><button class="${state.workflowTtsVoiceTab === "mine" ? "active" : ""}" type="button" data-workflow-action="set-voice-tab" data-voice-tab="mine">我的音色</button></div>
-          <div class="workflow-tts-voice-list">${visibleVoices.length ? visibleVoices.map((voice) => `<button class="${voice.id === state.workflowTtsVoiceId ? "active" : ""}" type="button" data-workflow-action="select-tts-voice" data-voice-id="${voice.id}"><div><strong>${escapeHtml(voice.name)}</strong><span>${escapeHtml(voice.meta)}</span></div><em data-workflow-action="preview-tts-voice">▷</em>${voice.group === "mine" ? `<span class="workflow-tts-delete-voice" data-workflow-action="delete-tts-voice" data-voice-id="${voice.id}" title="删除音色">删除</span>` : ""}</button>`).join("") : `<div class="workflow-tts-empty-voice"><span>还没有克隆音色</span><button type="button" data-workflow-action="open-voice-clone">创建第一个音色</button></div>`}</div>
+          <div class="workflow-tts-voice-list">${visibleVoices.length ? visibleVoices.map((voice) => `<button class="${voice.id === state.workflowTtsVoiceId ? "active" : ""}" type="button" data-workflow-action="select-tts-voice" data-voice-id="${voice.id}"><div><strong>${escapeHtml(voice.name)}</strong><span>${escapeHtml(voice.meta)}</span></div><em data-workflow-action="preview-tts-voice">▷</em>${voice.group === "mine" ? `<span class="workflow-tts-delete-voice" data-workflow-action="delete-tts-voice" data-voice-id="${voice.id}" title="删除音色" role="button" aria-label="删除音色"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M9 6V4h6v2M5 6l1 14h12l1-14M10 10v6M14 10v6"/></svg></span>` : ""}</button>`).join("") : `<div class="workflow-tts-empty-voice"><span>还没有克隆音色</span><button type="button" data-workflow-action="open-voice-clone">创建第一个音色</button></div>`}</div>
           ${voiceOptions.length > 4 ? `<button class="workflow-tts-voice-more" type="button" data-workflow-action="toggle-tts-voices">${state.workflowTtsVoicesExpanded ? "收起" : `查看更多（${hiddenVoiceCount}）`}</button>` : ""}
         </section>
         <section class="workflow-tts-effects"><header><strong>音色效果</strong><button type="button" data-workflow-action="reset-tts-effects">恢复默认</button></header><div>
           <label><span>语速 <em>${state.workflowTtsSpeed.toFixed(1)}×</em></span><input type="range" min="0.5" max="2" step="0.1" value="${state.workflowTtsSpeed}" data-workflow-tts-range="speed" /></label>
           <label><span>声调 <em>${state.workflowTtsPitch > 0 ? "+" : ""}${state.workflowTtsPitch}</em></span><input type="range" min="-12" max="12" step="1" value="${state.workflowTtsPitch}" data-workflow-tts-range="pitch" /></label>
-          <label><span>音量 <em>${state.workflowTtsVolume}%</em></span><input type="range" min="0" max="150" step="5" value="${state.workflowTtsVolume}" data-workflow-tts-range="volume" /></label>
+          <label><span>${isDoubao ? "响度" : "音量"} <em>${state.workflowTtsVolume}%</em></span><input type="range" min="${isDoubao ? 50 : 5}" max="${isDoubao ? 200 : 1000}" step="5" value="${state.workflowTtsVolume}" data-workflow-tts-range="volume" /></label>
         </div></section>
+        ${renderSpeechControls(isDoubao)}
         <section class="workflow-tts-editor">
-          <div class="workflow-tts-content" contenteditable="true" data-workflow-tts-editor data-placeholder="在此处开始输入文字，生成您的个性化音频。\A\A💡选中文字后点击下方情绪按钮，即可为文字添加情绪。">${renderWorkflowTtsContent(state.workflowTtsText)}</div>
-          <div class="workflow-tts-tools"><div><button type="button" data-workflow-action="open-tts-emotion" disabled>＋ 情绪</button><button type="button" data-workflow-action="insert-tts-tag" data-tts-tag="<#0.5#>">&lt;#&gt; 停顿</button><button type="button" data-workflow-action="insert-tts-tag" data-tts-tag="(轻笑)">( ) 语气词</button></div><label>长文模式 <button class="${state.workflowTtsLongMode ? "active" : ""}" type="button" data-workflow-action="toggle-tts-long-mode"><i></i></button></label><span>${state.workflowTtsText.length.toLocaleString()} / ${(state.workflowTtsLongMode ? 200000 : 5000).toLocaleString()} 字符</span></div>
-          ${state.workflowTtsEmotionMenu ? `<div class="workflow-tts-emotion-menu" style="--emotion-x:${state.workflowTtsEmotionMenu.x}px;--emotion-y:${state.workflowTtsEmotionMenu.y}px"><strong>选择情绪</strong><div>${["开心", "难过", "生气", "害怕", "厌恶", "惊讶", "中性", "生动"].map((emotion) => `<button type="button" data-workflow-action="apply-tts-emotion" data-emotion="${emotion}">${emotion}</button>`).join("")}</div><button class="close" type="button" data-workflow-action="close-tts-emotion">×</button></div>` : ""}
+          <div class="workflow-tts-content" contenteditable="true" data-workflow-tts-editor data-placeholder="${isDoubao ? "输入需要合成语音的文字" : "在此处开始输入文字，生成您的个性化音频。\A\A💡选中文字后点击下方情绪按钮，即可为文字添加情绪。"}">${renderWorkflowTtsContent(state.workflowTtsText)}</div>
+          <div class="workflow-tts-tools"><div>${!isDoubao ? `<button type="button" data-workflow-action="open-tts-emotion" disabled>＋ 分段情绪</button><button type="button" data-workflow-action="open-speech-tag" data-tag-type="pause">＋ 停顿</button>` : ""}${supportsTags ? `<button type="button" data-workflow-action="open-speech-tag" data-tag-type="sound">＋ 语气词</button>` : ""}</div>${!isDoubao ? `<label>长文模式 <button class="${state.workflowTtsLongMode ? "active" : ""}" type="button" data-workflow-action="toggle-tts-long-mode"><i></i></button></label>` : ""}<span>${state.workflowTtsText.length.toLocaleString()} / ${(speechTextLimit()).toLocaleString()} 字符</span></div>
+          ${renderSpeechTagMenu()}${state.workflowTtsEmotionMenu ? `<div class="workflow-tts-emotion-menu" style="--emotion-x:${state.workflowTtsEmotionMenu.x}px;--emotion-y:${state.workflowTtsEmotionMenu.y}px"><strong>选择情绪</strong><div>${["开心", "难过", "生气", "害怕", "厌恶", "惊讶", "中性", "生动"].map((emotion) => `<button type="button" data-workflow-action="apply-tts-emotion" data-emotion="${emotion}">${emotion}</button>`).join("")}</div><button class="close" type="button" data-workflow-action="close-tts-emotion">×</button></div>` : ""}
           <label class="workflow-music-name workflow-tts-audio-name"><span>音频名称</span><input type="text" maxlength="60" value="${escapeHtml(state.workflowAudioName)}" data-workflow-audio-name placeholder="输入音频名称" /></label>
-          <footer><label><span>◎</span><select data-workflow-tts-language>${["自动检测", "中文", "英语", "日语", "法语"].map((item) => workflowSelectOption(item, state.workflowTtsLanguage)).join("")}</select></label><span class="workflow-generate-cost workflow-tts-credit"><img src="${CANVAS_NODE_CREDIT}" alt="" />${Math.max(1, Math.ceil(state.workflowTtsText.length / 100))}</span><button class="primary" type="button" data-workflow-action="generate-scene-audio">✦ 生成音频</button></footer>
-        </section>` : `
-        <section class="workflow-audio-coming-soon">
-          <strong>音色设计</strong>
-          <span>后续可在这里集中创建、调试、管理音色，并复用到文生音频模块。</span>
-        </section>`}
+          <footer><label><span>◎</span><select data-workflow-tts-language aria-label="合成语言" ${isDoubao ? 'disabled title="当前音色的可选语言尚未核实，暂不提供手动指定"' : 'title="选择文本的合成语言，不会自动翻译文本"'}>${languages.map((item) => workflowSelectOption(item, state.workflowTtsLanguage)).join("")}</select></label><span class="workflow-generate-cost workflow-tts-credit"><img src="${CANVAS_NODE_CREDIT}" alt="" />${Math.max(1, Math.ceil(state.workflowTtsText.length / 100))}</span><button class="primary" type="button" data-workflow-action="generate-scene-audio">✦ 生成音频</button></footer>
+        </section>` : ""}
       ${isMusic ? `<div class="workflow-video-generator-actions workflow-audio-generator-actions"><div class="workflow-music-quantity"><span>数量</span><button type="button" data-workflow-action="change-audio-count" data-count-delta="-1" ${state.workflowAudioCount <= 1 ? "disabled" : ""}>−</button><strong>${state.workflowAudioCount}</strong><button type="button" data-workflow-action="change-audio-count" data-count-delta="1" ${state.workflowAudioCount >= 4 ? "disabled" : ""}>＋</button></div><span class="workflow-generate-cost"><img src="${CANVAS_NODE_CREDIT}" alt="" />${48 * state.workflowAudioCount}</span><button class="workflow-primary-button" type="button" data-workflow-action="generate-scene-audio">生成${state.workflowAudioCount} 首音乐</button></div>` : ""}
     </div>${renderWorkflowTtsCloneModal()}`;
 };
@@ -2919,6 +2983,7 @@ const renderWorkflowMediaPreviewModal = () => {
           ${isAudio ? `
             <div class="workflow-media-audio-preview">
               ${workflowWaveform(4, 68)}
+              ${preview.mock ? '<p class="workflow-speech-language-note">模拟结果：播放使用浏览器系统朗读，不代表所选模型或克隆音色。时长与波形为示意。</p>' : ""}
             </div>
           ` : `
             <img src="${escapeHtml(preview.image || "./assets/images/canvas-chase-sequence.jpg")}" alt="" />
@@ -3755,8 +3820,28 @@ const renderWorkflowQuickDrawer = (type = "studio") => {
   </aside>`;
 };
 
+const renderWorkflowStudioLayout = () => {
+  const grid = document.getElementById("workflow-studio-grid");
+  for (const panel of ["script", "shot"]) {
+    const expanded = state.workflowStudioPanels[panel];
+    grid?.classList.toggle(`is-${panel}-collapsed`, !expanded);
+    workflowHomeView?.querySelectorAll(`[data-workflow-action="toggle-studio-panel"][data-panel="${panel}"]`).forEach(button => {
+      button.setAttribute("aria-expanded", String(expanded));
+      button.classList.toggle("active", expanded);
+      button.title = `${expanded ? "收起" : "展开"}${panel === "script" ? "集场" : "分镜表"}`;
+    });
+  }
+};
+
 const renderWorkflowStudio = () => {
   if (!workflowEpisodeSelect || !workflowSceneSelect || !workflowScriptCard || !workflowShotTable || !workflowShotSummary || !workflowKeyframeGrid) return;
+  // The generator is replaced below; preserve its viewport during in-place edits.
+  const previousAudio = workflowKeyframeGrid.querySelector(".workflow-audio-generator");
+  const audioViewport = previousAudio && previousAudio.dataset.audioModeView === state.workflowAudioMode ? {
+    top: previousAudio.scrollTop, left: previousAudio.scrollLeft,
+    editorTop: previousAudio.querySelector("[data-workflow-tts-editor]")?.scrollTop || 0,
+    advancedOpen: previousAudio.querySelector(".workflow-speech-controls details")?.open || false,
+  } : null;
   workflowHomeView?.classList.toggle(
     "is-workflow-modal-open",
     Boolean(state.workflowGenerateMode || state.workflowPreviewFrameIndex !== null || state.workflowDetailFrameIndex !== null || state.workflowEditFrameIndex !== null || state.workflowDeleteFrameIndex !== null || state.workflowDeleteVideoIndex !== null || state.workflowDeleteAudioIndex !== null || state.workflowClearConfirmOpen || state.workflowEditDeleteVersionKey || state.workflowPreviewModalOpen || state.workflowReferenceModalOpen || state.workflowMediaPreview || state.workflowSceneKeyframePickerOpen),
@@ -3773,7 +3858,8 @@ const renderWorkflowStudio = () => {
     button.classList.toggle("active", button.dataset.workflowStage === state.workflowStage);
   });
   workflowHomeView?.querySelector("#workflow-studio-grid")?.setAttribute("aria-label", `${stageLabel}工作台`);
-  workflowHomeView?.querySelector(".workflow-generation-card")?.classList.toggle("is-hidden", state.workflowStage === "video");
+  workflowHomeView?.querySelector(".workflow-generation-card")?.classList.toggle("is-hidden", state.workflowStage !== "keyframe");
+  renderWorkflowStudioLayout();
 
   workflowEpisodeSelect.innerHTML = workflowStudioData
     .map((item, index) => `<option value="${index}"${index === episodeIndex ? " selected" : ""}>${escapeHtml(item.title)}</option>`)
@@ -3904,6 +3990,16 @@ const renderWorkflowStudio = () => {
   } else {
     workflowKeyframeGrid.innerHTML = keyframeResultHtml;
   }
+  const nextAudio = workflowKeyframeGrid.querySelector(".workflow-audio-generator");
+  if (audioViewport && nextAudio) {
+    const details = nextAudio.querySelector(".workflow-speech-controls details");
+    if (details) details.open = audioViewport.advancedOpen;
+    const editor = nextAudio.querySelector("[data-workflow-tts-editor]");
+    if (editor) editor.scrollTop = audioViewport.editorTop;
+    nextAudio.scrollTop = audioViewport.top;
+    nextAudio.scrollLeft = audioViewport.left;
+  }
+  nextAudio?.querySelectorAll("[data-workflow-tts-range]").forEach(updateSpeechSlider);
   const timelineNames = keyedWorkflowFrames.filter(({ frame }) => !frame.grid && !frame.pending);
   workflowHomeView?.querySelectorAll(".workflow-timeline-panel:not(.workflow-timeline-preview-editor) .workflow-keyframe-clip").forEach((clip, index) => {
     const item = timelineNames[index];
@@ -6621,6 +6717,7 @@ workflowHistoryTrigger?.addEventListener("click", () => {
 
 const handleWorkflowAction = (workflowAction, event) => {
   if (!workflowAction) return false;
+  if (DoubaoVoice.handle(workflowAction, event)) return true;
   if (workflowAction.dataset.workflowStage) {
     event.preventDefault();
     event.stopPropagation();
@@ -6631,6 +6728,15 @@ const handleWorkflowAction = (workflowAction, event) => {
   }
   const action = workflowAction?.dataset.workflowAction;
   if (!action) return false;
+  if (action === "toggle-studio-panel") {
+    const panel = workflowAction.dataset.panel;
+    if (panel !== "script" && panel !== "shot") return false;
+    event.preventDefault();
+    state.workflowStudioPanels[panel] = !state.workflowStudioPanels[panel];
+    renderWorkflowStudioLayout();
+    if (!state.workflowStudioPanels[panel]) workflowHomeView?.querySelector(`.workflow-layout-tools [data-panel="${panel}"]`)?.focus({ preventScroll: true });
+    return true;
+  }
   if (action === "quick-open-modal") {
     event.preventDefault();
     const type = workflowAction.dataset.quickType;
@@ -6880,6 +6986,7 @@ const handleWorkflowAction = (workflowAction, event) => {
     event.preventDefault();
     event.stopPropagation();
     state.workflowAudioMode = workflowAction.dataset.audioMode || "music";
+    state.workflowTtsTagMenu = null;
     if (state.workflowAudioMode === "music") state.workflowAudioSettings.model = "phan Music 1.5";
     renderWorkflowStudio();
     return true;
@@ -6920,7 +7027,7 @@ const handleWorkflowAction = (workflowAction, event) => {
   if (action === "preview-tts-voice") {
     event.preventDefault();
     event.stopPropagation();
-    window.alert(`正在试听「${workflowTtsVoice().name}」`);
+    window.alert(`「${workflowTtsVoice().name}」为原型音色，试听服务尚未接入。`);
     return true;
   }
   if (action === "open-voice-clone") {
@@ -6976,6 +7083,7 @@ const handleWorkflowAction = (workflowAction, event) => {
   }
   if (action === "open-tts-emotion") {
     event.preventDefault();
+    state.workflowTtsTagMenu = null;
     const selection = state.workflowTtsSelectionRange;
     if (!selection || selection.start === selection.end) return true;
     const editor = workflowHomeView?.querySelector("[data-workflow-tts-editor]");
@@ -7012,6 +7120,34 @@ const handleWorkflowAction = (workflowAction, event) => {
     state.workflowTtsText = workflowTtsEditorValue(editor);
     state.workflowTtsSelectionRange = null;
     return true;
+  }
+  if (action === "open-speech-tag") {
+    event.preventDefault();
+    state.workflowTtsEmotionMenu = null;
+    state.workflowTtsTagMenu = { type: workflowAction.dataset.tagType, selection: state.workflowTtsSelectionRange ? {...state.workflowTtsSelectionRange} : null };
+    renderWorkflowStudio();
+    return true;
+  }
+  if (action === "close-speech-tag") {
+    event.preventDefault(); state.workflowTtsTagMenu = null; renderWorkflowStudio(); return true;
+  }
+  if (action === "choose-speech-tag" || action === "custom-speech-pause") {
+    event.preventDefault();
+    let token = workflowAction.dataset.token;
+    if (action === "custom-speech-pause") {
+      const input = workflowHomeView.querySelector("[data-pause-seconds]");
+      const value = Number(input.value);
+      if (!/^\d+(\.\d{1,2})?$/.test(input.value) || value < 0.01 || value > 99.99) {
+        workflowHomeView.querySelector("[data-pause-error]").textContent = "请输入 0.01–99.99 秒，最多两位小数"; return true;
+      }
+      token = `<#${value}#>`;
+    }
+    insertSpeechToken(token); return true;
+  }
+  if (action === "remove-speech-token") {
+    event.preventDefault(); workflowAction.closest("[data-token]")?.remove();
+    state.workflowTtsText = workflowTtsEditorValue(workflowHomeView.querySelector("[data-workflow-tts-editor]"));
+    state.workflowTtsSelectionRange = null; renderWorkflowStudio(); return true;
   }
   if (action === "insert-tts-tag") {
     event.preventDefault();
@@ -7082,7 +7218,7 @@ const handleWorkflowAction = (workflowAction, event) => {
     const { scene } = currentWorkflowStudioSelection();
     const audio = workflowSceneAudioResults(scene)[Number(workflowAction.dataset.workflowAudioIndex || 0)];
     if (audio?.status === "已完成") {
-      state.workflowMediaPreview = { kind: "audio", title: "音频预览", duration: audio.duration, playing: false, volume: 72 };
+      state.workflowMediaPreview = { kind: "audio", title: audio.title, duration: audio.duration, playing: false, volume: 72, mock: audio.mock, text: audio.prompt };
       renderWorkflowStudio();
     }
     return true;
@@ -7156,6 +7292,8 @@ const handleWorkflowAction = (workflowAction, event) => {
   if (action === "download-scene-audio") {
     event.preventDefault();
     event.stopPropagation();
+    const audio = workflowSceneAudioResults(currentWorkflowStudioSelection().scene)[Number(workflowAction.dataset.workflowAudioIndex || 0)];
+    if (audio?.mock) { DoubaoVoice.toast("当前为模拟配音，尚无模型生成的音频文件可下载。"); return true; }
     window.alert("已开始下载音频");
     return true;
   }
@@ -7453,6 +7591,20 @@ const handleWorkflowAction = (workflowAction, event) => {
     event.stopPropagation();
     if (state.workflowMediaPreview) {
       state.workflowMediaPreview.playing = !state.workflowMediaPreview.playing;
+      if (state.workflowMediaPreview.mock) {
+        if (!("speechSynthesis" in window)) { state.workflowMediaPreview.playing = false; DoubaoVoice.toast("当前浏览器不支持系统朗读，真实配音服务尚未接入。"); }
+        else {
+          window.speechSynthesis.cancel();
+          if (state.workflowMediaPreview.playing) {
+            const utterance = new SpeechSynthesisUtterance((state.workflowMediaPreview.text || "").replace(/\[[^|\]]+\|([^\]]+)\]/g,"$1").replace(/<#.*?#>|\([^)]*\)/g,""));
+            utterance.volume = (state.workflowMediaPreview.volume ?? 72) / 100;
+            const preview = state.workflowMediaPreview;
+            utterance.onend = () => { if (state.workflowMediaPreview === preview) { preview.playing = false; renderWorkflowStudio(); } };
+            utterance.onerror = () => { if (state.workflowMediaPreview === preview) { preview.playing = false; renderWorkflowStudio(); } };
+            window.speechSynthesis.speak(utterance);
+          }
+        }
+      }
       renderWorkflowStudio();
     }
     return true;
@@ -7465,6 +7617,7 @@ const handleWorkflowAction = (workflowAction, event) => {
     return true;
   }
   if (action === "close-media-preview") {
+    if (state.workflowMediaPreview?.mock) window.speechSynthesis?.cancel();
     event.preventDefault();
     event.stopPropagation();
     state.workflowMediaPreview = null;
@@ -8767,12 +8920,27 @@ workflowHomeView?.addEventListener("pointerdown", (event) => {
 });
 
 workflowHomeView?.addEventListener("change", (event) => {
+  if (event.target.matches("[data-speech-option]")) {
+    speechOptions()[event.target.dataset.speechOption] = event.target.value;
+    return;
+  }
+  if (event.target.matches("[data-speech-tag]")) {
+    const editor = workflowHomeView.querySelector("[data-workflow-tts-editor]");
+    state.workflowTtsText = workflowTtsEditorValue(editor) + event.target.value;
+    renderWorkflowStudio();
+    return;
+  }
   if (event.target?.matches?.("[data-workflow-tts-model]")) {
-    state.workflowTtsModel = event.target.value;
+    DoubaoVoice.switchModel(event.target.value);
+    state.workflowTtsTagMenu = null;
+    state.workflowTtsEmotionMenu = null;
+    state.workflowTtsSelectionRange = null;
+    DoubaoVoice.sync();
+    renderWorkflowStudio();
     return;
   }
   if (event.target?.matches?.("[data-workflow-tts-language]")) {
-    state.workflowTtsLanguage = event.target.value;
+    state.workflowTtsLanguage = speechLanguageOptions().includes(event.target.value) ? event.target.value : speechLanguageOptions()[0];
     return;
   }
   if (event.target?.matches?.("[data-workflow-audio-param]")) {
@@ -8847,13 +9015,13 @@ const updateWorkflowPromptMentionMenu = (editor) => {
 workflowHomeView?.addEventListener("input", (event) => {
   if (event.target?.matches?.("[data-workflow-tts-editor]")) {
     state.workflowTtsText = workflowTtsEditorValue(event.target);
-    const limit = state.workflowTtsLongMode ? 200000 : 5000;
+    const limit = speechTextLimit();
     if (state.workflowTtsText.length > limit) {
       state.workflowTtsText = state.workflowTtsText.slice(0, limit);
       event.target.innerHTML = renderWorkflowTtsContent(state.workflowTtsText);
     }
     const counter = event.target.closest(".workflow-tts-editor")?.querySelector(".workflow-tts-tools > span");
-    if (counter) counter.textContent = `${state.workflowTtsText.length.toLocaleString()} / ${(state.workflowTtsLongMode ? 200000 : 5000).toLocaleString()} 字符`;
+    if (counter) counter.textContent = `${state.workflowTtsText.length.toLocaleString()} / ${(speechTextLimit()).toLocaleString()} 字符`;
     return;
   }
   if (event.target?.matches?.("[data-workflow-tts-range]")) {
@@ -8862,6 +9030,7 @@ workflowHomeView?.addEventListener("input", (event) => {
     if (key === "speed") state.workflowTtsSpeed = value;
     if (key === "pitch") state.workflowTtsPitch = value;
     if (key === "volume") state.workflowTtsVolume = value;
+    updateSpeechSlider(event.target);
     event.target.closest("label")?.querySelector("em")?.replaceChildren(document.createTextNode(key === "speed" ? `${value.toFixed(1)}×` : key === "pitch" ? `${value > 0 ? "+" : ""}${value}` : `${value}%`));
     return;
   }
@@ -8905,7 +9074,7 @@ const updateWorkflowTtsSelection = () => {
   const editor = workflowHomeView?.querySelector("[data-workflow-tts-editor]");
   const button = workflowHomeView?.querySelector('[data-workflow-action="open-tts-emotion"]');
   const selection = window.getSelection();
-  if (!editor || !button || !selection?.rangeCount || selection.isCollapsed || !editor.contains(selection.anchorNode) || !editor.contains(selection.focusNode)) {
+  if (!editor || !button || !selection?.rangeCount || !editor.contains(selection.anchorNode) || !editor.contains(selection.focusNode)) {
     state.workflowTtsSelectionRange = null;
     if (button) button.disabled = true;
     return;
@@ -8921,7 +9090,7 @@ const updateWorkflowTtsSelection = () => {
     x: Math.max(12, Math.min((rect.left - (editorRect?.left || 0)), (editorRect?.width || 360) - 352)),
     y: Math.max(48, rect.top - (editorRect?.top || 0) + rect.height + 8),
   };
-  button.disabled = false;
+  button.disabled = selection.isCollapsed;
 };
 
 workflowHomeView?.addEventListener("mouseup", (event) => {

@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PhanthyMovie 项目列表</title>
-    <link rel="stylesheet" href="./styles.css?v=quick-flow-prompts-v3" />
+    <link rel="stylesheet" href="./styles.css?v=voice-studio-style-v2" />
   </head>
   <body>
     <main class="page-shell">
@@ -432,13 +432,19 @@
                 <button type="button" data-workflow-stage="audio">配音配乐</button>
               </div>
             </div>
+            <div class="workflow-layout-tools" aria-label="拍摄台面板布局">
+              <span>显示面板</span>
+              <button type="button" data-workflow-action="toggle-studio-panel" data-panel="script" aria-controls="workflow-script-panel" aria-expanded="true">集 · 场</button>
+              <button type="button" data-workflow-action="toggle-studio-panel" data-panel="shot" aria-controls="workflow-shot-panel" aria-expanded="true">分镜表</button>
+            </div>
           </div>
 
           <section class="workflow-studio-grid" id="workflow-studio-grid" aria-label="关键帧生成工作台">
-            <aside class="workflow-script-panel">
+            <aside class="workflow-script-panel" id="workflow-script-panel">
               <div class="workflow-panel-title">
                 <strong>集 · 场</strong>
                 <span>当前剧本</span>
+                <button class="workflow-panel-collapse" type="button" data-workflow-action="toggle-studio-panel" data-panel="script" aria-label="收起集场" title="收起集场">‹</button>
               </div>
               <div class="workflow-script-selectors">
                 <label aria-label="选择集">
@@ -463,10 +469,11 @@
             </aside>
             <button class="workflow-panel-resizer" type="button" data-resize-panel="script" aria-label="调整集场宽度"></button>
 
-            <section class="workflow-shot-panel">
+            <section class="workflow-shot-panel" id="workflow-shot-panel">
               <div class="workflow-panel-title">
                 <strong>分镜表</strong>
                 <span id="workflow-shot-summary">第 1 集 · 第 1 场 · 共 4 镜</span>
+                <button class="workflow-panel-collapse" type="button" data-workflow-action="toggle-studio-panel" data-panel="shot" aria-label="收起分镜表" title="收起分镜表">‹</button>
               </div>
               <div class="workflow-shot-table" id="workflow-shot-table">
                 <button type="button">
@@ -1011,6 +1018,8 @@
 
     </main>
 
-    <script src="./script.js?v=quick-flow-prompts-v8"></script>
+    <script src="./doubao-voice.js?v=audio-models-v3"></script>
+    <script src="./script.js?v=audio-models-v3"></script>
+    <script src="./timeline-export.js"></script>
   </body>
 </html>
