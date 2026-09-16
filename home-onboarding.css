@@ -17,7 +17,6 @@
 }
 .home-tour-popover .driver-popover-title { color: #102f36; font-size: 18px; font-weight: 650; line-height: 1.5; padding-right: 28px; }
 .home-tour-popover .driver-popover-description { color: #365b63; font-size: 13px; line-height: 1.85; }
-.home-tour-kicker { display: table; color: #16717b; background: #00a8b010; border-radius: 999px; padding: 2px 9px; font-size: 11px; letter-spacing: .3px; margin: 9px 0 12px; }
 .home-tour-muted { color: #58777d; }
 .home-tour-note { display: block; margin-top: 12px; padding-top: 10px; border-top: 1px solid #16434c20; color: #52747b; font-size: 11px; line-height: 1.7; }
 .home-tour-popover .driver-popover-close-btn { top: 17px; right: 16px; width: 36px; height: 26px; border-radius: 999px; color: #55777e; font-size: 11px; }
@@ -37,3 +36,27 @@
 .home-tour-replay { position: fixed; right: 24px; bottom: 24px; z-index: 100; padding: 10px 16px; border: 1px solid var(--line-mid); border-radius: 999px; background: var(--panel-3); color: var(--text-faint); font: inherit; font-size: 12px; cursor: pointer; box-shadow: 0 4px 20px #0003; }
 .home-tour-replay[hidden] { display: none; }
 .home-tour-replay:hover { color: var(--accent); border-color: var(--accent); }
+
+/* Six actual actions, rendered as a small illuminated progress instrument. */
+.home-tour-progress { position: relative; overflow: hidden; margin: 13px 0 16px; padding: 12px 14px 13px; border: 1px solid #40dfe43d; border-radius: 14px; background: radial-gradient(ellipse at 0 0, #135b64, transparent 75%), #0c2d35; box-shadow: inset 0 1px 0 #ffffff0a, 0 5px 12px #08333e14; }
+.home-tour-progress-head { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 11px; }
+.home-tour-signal { display: flex; align-items: center; gap: 4px; height: 24px; transform: skew(-18deg); }
+.home-tour-signal i { display: block; width: 4px; height: 12px; border-radius: 2px; background: #79f3f4; box-shadow: 0 0 9px #00d8dc60; animation: home-tour-signal 2.8s ease-in-out infinite; }
+.home-tour-signal i:nth-child(2) { height: 23px; background: #cef4ff; animation-delay: .18s; }
+.home-tour-signal i:nth-child(3) { height: 17px; animation-delay: .36s; }
+.home-tour-counter { display: flex; align-items: baseline; gap: 7px; font-variant-numeric: tabular-nums; line-height: 1; }
+.home-tour-counter small { color: #8ab5bf; font-size: 9px; letter-spacing: 2px; margin-right: 3px; }
+.home-tour-counter b { color: #e6fdff; font-size: 27px; font-weight: 650; letter-spacing: -1px; text-shadow: 0 0 13px #54eff94d; animation: home-tour-digit .42s cubic-bezier(.16,1,.3,1) both; }
+.home-tour-counter em { color: #91b8c1; font-size: 12px; font-style: normal; letter-spacing: 1px; }
+.home-tour-segments { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; }
+.home-tour-segments i { position: relative; display: block; height: 4px; overflow: hidden; border-radius: 10px; background: #d5faff1c; animation: home-tour-segment-in .4s ease both; animation-delay: calc(var(--segment) * 45ms); }
+.home-tour-segments .is-done { background: #00bdc5; }
+.home-tour-segments .is-current { background: linear-gradient(90deg, #00d8dc, #c8fbff); box-shadow: 0 0 9px #00d8dc66; }
+.home-tour-segments .is-current::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, #fff, transparent); transform: translateX(-120%); animation: home-tour-scan 2.5s ease-in-out infinite; }
+@keyframes home-tour-scan { 0%, 15% { transform: translateX(-120%); } 65%, 100% { transform: translateX(120%); } }
+@keyframes home-tour-digit { from { opacity: 0; transform: translateY(7px); filter: blur(3px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
+@keyframes home-tour-segment-in { from { opacity: 0; transform: scaleX(.45); } to { opacity: 1; transform: scaleX(1); } }
+@keyframes home-tour-signal { 0%, 100% { opacity: .65; } 45% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .home-tour-signal i, .home-tour-counter b, .home-tour-segments i, .home-tour-segments .is-current::after { animation: none; }
+}

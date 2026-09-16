@@ -17,12 +17,12 @@
   replay.setAttribute("aria-label", "重新查看产品首页新手引导");
   document.body.append(replay);
   const steps = [null,
-    { element: startButton, title: "创建你的第一个项目", text: "点击高亮的「开始」，为你的影视创作建立一个项目。", hint: "创建项目 · 1 / 3", side: "bottom" },
-    { element: "#project-name-input", title: "给项目起个名字", text: "填写项目名称，方便之后在项目管理中找到它。", hint: "项目设置 · 2 / 3", next: "设置画面比例" },
-    { element: "#ratio-section", title: "选择画面比例", text: "根据作品的展示方式，选择横屏、竖屏或正方形。", hint: "项目设置 · 2 / 3", next: "选择视觉风格" },
-    { element: "#style-section", title: "选择视觉风格", text: "选择适合这部作品的视觉风格，例如写实主义、动漫风格或电影感。", hint: "项目设置 · 2 / 3", next: "准备创建" },
-    { element: "#confirm-create-trigger", title: "创建项目", text: "设置完成后，点击高亮的「创建项目」。接下来选择创作模式。", hint: "项目设置 · 2 / 3", side: "top" },
-    { element: "#project-mode-modal .project-mode-grid", title: "选择你的创作方式", text: "<strong>工作流</strong>：按剧本、资产、关键帧和视频逐步制作。<br><strong>无限画布</strong>：通过节点自由组织创作。<br><span class='home-tour-muted'>全自动 AI 生成即将开放。</span>", hint: "选择模式 · 3 / 3", side: "bottom" },
+    { element: startButton, title: "创建你的第一个项目", text: "点击高亮的「开始」，为你的影视创作建立一个项目。", side: "bottom" },
+    { element: "#project-name-input", title: "给项目起个名字", text: "填写项目名称，方便之后在项目管理中找到它。", next: "设置画面比例" },
+    { element: "#ratio-section", title: "选择画面比例", text: "根据作品的展示方式，选择横屏、竖屏或正方形。", next: "选择视觉风格" },
+    { element: "#style-section", title: "选择视觉风格", text: "选择适合这部作品的视觉风格，例如写实主义、动漫风格或电影感。", next: "准备创建" },
+    { element: "#confirm-create-trigger", title: "创建项目", text: "设置完成后，点击高亮的「创建项目」。接下来选择创作模式。", side: "top" },
+    { element: "#project-mode-modal .project-mode-grid", title: "选择你的创作方式", text: "<strong>工作流</strong>：按剧本、资产、关键帧和视频逐步制作。<br><strong>无限画布</strong>：通过节点自由组织创作。<br><span class='home-tour-muted'>全自动 AI 生成即将开放。</span>", side: "bottom" },
   ];
   const tour = window.driver.js.driver({
     animate: !matchMedia("(prefers-reduced-motion: reduce)").matches,
@@ -50,9 +50,11 @@
     if (step === next && tour.isActive()) return;
     step = next;
     const item = steps[next];
+    const total = steps.length - 1;
+    const progress = `<div class="home-tour-progress" role="progressbar" aria-label="新手引导步骤" aria-valuemin="1" aria-valuemax="${total}" aria-valuenow="${next}" aria-valuetext="第 ${next} 步，共 ${total} 步"><div class="home-tour-progress-head" aria-hidden="true"><span class="home-tour-signal"><i></i><i></i><i></i></span><span class="home-tour-counter"><small>STEP</small><b>${String(next).padStart(2, "0")}</b><em>/ ${String(total).padStart(2, "0")}</em></span></div><div class="home-tour-segments" aria-hidden="true">${Array.from({ length: total }, (_, i) => `<i class="${i + 1 < next ? "is-done" : i + 1 === next ? "is-current" : ""}" style="--segment:${i}"></i>`).join("")}</div></div>`;
     tour.highlight({ element: item.element, popover: {
       title: item.title,
-      description: `<span class="home-tour-kicker">${item.hint}</span>${item.text}${next === 6 ? '<small class="home-tour-note">两种模式可在项目内切换，共享项目资产。点击卡片进入。</small>' : ''}`,
+      description: `${progress}${item.text}${next === 6 ? '<small class="home-tour-note">两种模式可在项目内切换，共享项目资产。点击卡片进入。</small>' : ''}`,
       side: item.side || "right", align: "center",
       showButtons: ["close", ...(next > 2 && next < 6 ? ["previous"] : []), ...(item.next ? ["next"] : [])],
       nextBtnText: item.next || "下一步", prevBtnText: "上一步",
