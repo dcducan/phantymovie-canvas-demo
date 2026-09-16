@@ -33,6 +33,8 @@
     onDestroyStarted: () => finish("skipped"),
     onPopoverRender: (popover) => {
       popover.wrapper.setAttribute("aria-label", "产品首页新手引导");
+      const progress = popover.description.querySelector(".home-tour-progress");
+      if (progress) popover.title.before(progress);
       popover.closeButton.textContent = "跳过";
       popover.closeButton.setAttribute("aria-label", "跳过引导");
     },
@@ -53,7 +55,7 @@
     const total = steps.length - 1;
     const progress = `<div class="home-tour-progress" role="status" aria-label="第 ${next} 步，共 ${total} 步">${String(next).padStart(2, "0")}/${String(total).padStart(2, "0")}</div>`;
     tour.highlight({ element: item.element, popover: {
-      title: item.title,
+      title: `<span class="home-tour-title-content"><span class="home-tour-title-icon" aria-hidden="true"></span><span>${item.title}</span></span>`,
       description: `${progress}${item.text}`,
       side: item.side || "right", align: "center",
       showButtons: ["close", ...(next > 2 && next < 6 ? ["previous"] : []), ...(item.next ? ["next"] : [])],

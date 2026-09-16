@@ -15,7 +15,7 @@
   box-shadow: 0 16px 48px #0006, 0 3px 12px #00d8dc14;
   font-family: var(--font-sans);
 }
-.home-tour-popover .driver-popover-title { color: #102f36; font-size: 18px; font-weight: 650; line-height: 1.5; padding-right: 28px; }
+.home-tour-popover .driver-popover-title { color: #102f36; font-size: 18px; font-weight: 650; line-height: 1.5; padding-right: 0; }
 .home-tour-popover .driver-popover-description { color: #365b63; font-size: 13px; line-height: 1.85; }
 .home-tour-muted { color: #58777d; }
 .home-tour-note { display: block; margin-top: 12px; padding-top: 10px; border-top: 1px solid #16434c20; color: #52747b; font-size: 11px; line-height: 1.7; }
@@ -38,4 +38,6 @@
 .home-tour-replay:hover { color: var(--accent); border-color: var(--accent); }
 
 /* Plain current/total step count. */
-.home-tour-progress { margin: 9px 0 12px; color: #52747b; font-size: 12px; line-height: 1.5; font-weight: 500; font-variant-numeric: tabular-nums; }
+.home-tour-progress { margin: 0 44px 14px 0; color: #12363d; font-size: 28px; line-height: 1.15; font-weight: 650; letter-spacing: -.8px; font-variant-numeric: tabular-nums; }
+.home-tour-title-content { display: inline-flex; align-items: flex-start; gap: 9px; }
+.home-tour-title-icon { display: inline-block; flex: 0 0 23px; width: 23px; height: 23px; margin-top: 2px; background: currentColor; -webkit-mask: url("./assets/icons/signpost.svg") center / contain no-repeat; mask: url("./assets/icons/signpost.svg") center / contain no-repeat; }
