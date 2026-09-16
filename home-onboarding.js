@@ -37,7 +37,7 @@
       const meta = document.createElement("div");
       meta.className = "home-tour-footer-meta";
       if (progress) meta.append(progress);
-      meta.append(popover.closeButton);
+
       popover.footer.prepend(meta);
       popover.footer.style.display = "flex";
       popover.previousButton.style.display = step > 2 && step < 6 ? "block" : "none";

@@ -15,11 +15,11 @@
   box-shadow: 0 16px 48px #0006, 0 3px 12px #00d8dc14;
   font-family: var(--font-sans);
 }
-.home-tour-popover .driver-popover-title { color: #102f36; font-size: 18px; font-weight: 650; line-height: 1.5; padding-right: 0; }
+.home-tour-popover .driver-popover-title { color: #102f36; font-size: 18px; font-weight: 650; line-height: 1.5; padding-right: 42px; }
 .home-tour-popover .driver-popover-description { color: #365b63; font-size: 13px; line-height: 1.85; }
 .home-tour-muted { color: #58777d; }
 .home-tour-note { display: block; margin-top: 12px; padding-top: 10px; border-top: 1px solid #16434c20; color: #52747b; font-size: 11px; line-height: 1.7; }
-.home-tour-popover .driver-popover-close-btn { position: static; width: auto; height: 26px; padding: 0 4px; border-radius: 999px; color: #55777e; font-size: 11px; }
+.home-tour-popover .driver-popover-close-btn { position: absolute; top: 24px; right: 20px; width: 36px; height: 27px; padding: 0; border-radius: 999px; color: #55777e; font-size: 11px; }
 .home-tour-popover .driver-popover-close-btn:hover { color: #12363d; background: #12363d0c; }
 .home-tour-popover .driver-popover-footer { margin-top: 18px; }
 .home-tour-popover .driver-popover-footer-btn { padding: 9px 14px; border-radius: 999px; background: transparent; border: 1px solid #1b586428; color: #365b63; text-shadow: none; font-size: 12px; line-height: 1.4; transition: background .16s ease; }
