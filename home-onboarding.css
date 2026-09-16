@@ -1,0 +1,41 @@
+.home-tour-card {
+  box-sizing: border-box;
+  margin: 0 24px 16px;
+  padding: 18px 20px;
+  color: #edf7f4;
+  background: linear-gradient(125deg, #203c34, #192923);
+  border: 1px solid #6bc4a480;
+  border-radius: 16px;
+  font-family: inherit;
+  text-align: left;
+}
+.home-tour-card[hidden], .home-tour-spotlight[hidden], .home-tour-replay[hidden] { display: none; }
+.home-tour-card.is-floating {
+  position: fixed;
+  z-index: 60002;
+  width: min(360px, calc(100vw - 24px));
+  margin: 0;
+  box-shadow: 0 16px 56px #0008;
+}
+.home-tour-top, .home-tour-bottom { display: flex; align-items: center; gap: 16px; justify-content: space-between; }
+.home-tour-top > span { font-size: 11px; letter-spacing: 1px; color: #9ddac3; }
+.home-tour-skip { padding: 4px 0 4px 8px; border: 0; background: none; color: #bdccc5; cursor: pointer; font: inherit; font-size: 12px; }
+.home-tour-skip:hover { color: #fff; }
+.home-tour-card h3 { margin: 10px 0 7px; font-size: 19px; line-height: 1.4; color: #fff; }
+.home-tour-card p { margin: 0; font-size: 13px; line-height: 1.8; color: #d2dfd9; }
+.home-tour-bottom { margin-top: 15px; }
+.home-tour-bottom small { font-size: 11px; line-height: 1.6; color: #9fb8ac; }
+.home-tour-dots { display: flex; gap: 4px; flex-shrink: 0; }
+.home-tour-dots i { width: 16px; height: 3px; border-radius: 3px; background: #ffffff26; }
+.home-tour-dots i.is-active { background: #95eac6; }
+.home-tour-spotlight { position: fixed; z-index: 60001; border: 2px solid #a6f4d2; border-radius: 16px; box-sizing: border-box; box-shadow: 0 0 0 9999px #0008; pointer-events: none; }
+.home-tour-target { outline: 2px solid #95eac6; outline-offset: 5px; }
+.home-tour-shell { max-height: calc(100dvh - 48px); overflow-y: auto; }
+.home-tour-replay { margin-top: 12px; padding: 7px 14px; border: 1px solid #ffffff26; border-radius: 100px; background: #ffffff08; color: #b6c8be; font: inherit; font-size: 12px; cursor: pointer; }
+.home-tour-replay:hover { color: #a6f4d2; border-color: #a6f4d280; }
+.home-tour-skip:focus-visible, .home-tour-replay:focus-visible { outline: 2px solid #a6f4d2; outline-offset: 4px; }
+@media (max-width: 600px) {
+  .home-tour-card { margin: 0 12px 12px; padding: 12px 14px; }
+  .home-tour-card h3 { font-size: 16px; }
+  .home-tour-bottom { margin-top: 10px; }
+}
