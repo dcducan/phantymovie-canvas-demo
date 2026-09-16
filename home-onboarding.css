@@ -1,47 +1,22 @@
-/* Theme-matched speech bubbles; only the onboarding layer is styled. */
+/* Only the tour layer is styled. Existing page/modal geometry is unchanged. */
 .driver-overlay { z-index: 60010 !important; }
-.driver-popover.home-tour-popover {
-  --tour-bubble: rgba(12, 23, 27, .48);
-  --tour-ink: #e8f9fc;
-  --tour-outline: rgba(255, 255, 255, .82);
-  z-index: 60011;
-  width: 316px;
-  min-width: 230px;
-  max-width: min(316px, calc(100vw - 32px));
-  padding: 25px;
-  background: var(--tour-bubble);
-  color: var(--tour-ink);
-  border: 1px solid var(--tour-outline);
-  border-radius: 22px;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  box-shadow: 0 18px 48px #0006, 0 0 8px #ffffff20, 0 0 24px #ffffff12, inset 0 0 10px #ffffff06;
-  font-family: var(--font-sans);
-}
-.home-tour-popover .driver-popover-title { color: #edfcff; font-size: 18px; font-weight: 650; line-height: 1.5; padding-right: 28px; }
-.home-tour-popover .driver-popover-description { color: #b3c9cf; font-size: 13px; line-height: 1.85; }
-.home-tour-kicker { display: table; color: #5bdae0; background: transparent; border-radius: 0; padding: 0; font-size: 11px; letter-spacing: .3px; margin: 9px 0 12px; }
-.home-tour-muted { color: #79949c; }
-.home-tour-note { display: block; margin-top: 12px; padding-top: 10px; border-top: 1px solid #91e7ed1c; color: #8ca8b1; font-size: 11px; line-height: 1.7; }
-.home-tour-popover .driver-popover-close-btn { top: 17px; right: 16px; width: 36px; height: 26px; border-radius: 999px; color: #76939c; font-size: 11px; }
-.home-tour-popover .driver-popover-close-btn:hover { color: #d7faff; background: #b2f6ff0a; }
-.home-tour-popover .driver-popover-footer { margin-top: 18px; }
-.home-tour-popover .driver-popover-footer-btn { padding: 9px 14px; border-radius: 999px; background: transparent; border: 1px solid #8ba8b126; color: #b3c9cf; text-shadow: none; font-size: 12px; line-height: 1.4; transition: background .16s ease; }
-.home-tour-popover .driver-popover-next-btn { color: #84f0f4; background: #00d8dc0c; border-color: #00d8dc70; font-weight: 600; }
-.home-tour-popover .driver-popover-next-btn:hover { background: #00d8dc20; border-color: var(--accent); }
-.home-tour-popover .driver-popover-prev-btn:hover { background: #ffffff08; }
-.home-tour-popover button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-/* Hollow chevron tails. Keep Driver's positioning while replacing its filled triangles. */
-.home-tour-popover .driver-popover-arrow { width: 16px; height: 16px; border: 0; background: transparent; filter: drop-shadow(0 0 4px #ffffff30); }
-.home-tour-popover .driver-popover-arrow::before { content: ""; position: absolute; inset: 0; border: 1px solid var(--tour-outline); background: #0c171be8; transform: rotate(45deg); }
-.home-tour-popover .driver-popover-arrow-side-left { margin-left: -8px; }
-.home-tour-popover .driver-popover-arrow-side-left::before { border-left: 0; border-bottom: 0; }
-.home-tour-popover .driver-popover-arrow-side-right { margin-right: -8px; }
-.home-tour-popover .driver-popover-arrow-side-right::before { border-right: 0; border-top: 0; }
-.home-tour-popover .driver-popover-arrow-side-top { margin-top: -8px; }
-.home-tour-popover .driver-popover-arrow-side-top::before { border-left: 0; border-top: 0; }
-.home-tour-popover .driver-popover-arrow-side-bottom { margin-bottom: -8px; }
-.home-tour-popover .driver-popover-arrow-side-bottom::before { border-right: 0; border-bottom: 0; }
-.home-tour-replay { position: fixed; right: 24px; bottom: 24px; z-index: 100; padding: 10px 16px; border: 1px solid var(--line-mid); border-radius: 999px; background: var(--panel-3); color: var(--text-faint); font: inherit; font-size: 12px; cursor: pointer; box-shadow: 0 4px 20px #0003; }
+.driver-popover.home-tour-popover { z-index: 60011; width: 310px; min-width: 230px; max-width: min(310px, calc(100vw - 32px)); padding: 22px; background: #1c2422; color: #e9f1ed; border: 1px solid #75d8b060; border-radius: 16px; box-shadow: 0 16px 56px #0008; font-family: inherit; }
+.home-tour-popover .driver-popover-title { color: #fff; font-size: 18px; padding-right: 30px; }
+.home-tour-popover .driver-popover-description { color: #c9d4ce; font-size: 13px; line-height: 1.85; }
+.home-tour-kicker { display: block; color: #91dfbd; font-size: 11px; letter-spacing: 1px; margin: 5px 0 10px; }
+.home-tour-muted { color: #84968c; }
+.home-tour-note { display: block; margin-top: 12px; padding-top: 10px; border-top: 1px solid #ffffff16; color: #9dafa4; font-size: 11px; line-height: 1.7; }
+.home-tour-popover .driver-popover-close-btn { top: 12px; right: 12px; width: 34px; color: #9bafa3; font-size: 11px; }
+.home-tour-popover .driver-popover-close-btn:hover { color: #fff; }
+.home-tour-popover .driver-popover-footer-btn { padding: 8px 12px; border-radius: 8px; background: transparent; border-color: #ffffff26; color: #c5d6cc; text-shadow: none; font-size: 12px; }
+.home-tour-popover .driver-popover-next-btn { color: #11291f; background: #95eac6; border-color: #95eac6; }
+.home-tour-popover .driver-popover-next-btn:hover { background: #b4f4d8; }
+.home-tour-popover .driver-popover-prev-btn:hover { background: #ffffff0c; }
+.home-tour-popover button:focus-visible { outline: 2px solid #a6f4d2; outline-offset: 3px; }
+.home-tour-popover .driver-popover-arrow-side-left { border-left-color: #1c2422; }
+.home-tour-popover .driver-popover-arrow-side-right { border-right-color: #1c2422; }
+.home-tour-popover .driver-popover-arrow-side-top { border-top-color: #1c2422; }
+.home-tour-popover .driver-popover-arrow-side-bottom { border-bottom-color: #1c2422; }
+.home-tour-replay { position: fixed; right: 24px; bottom: 24px; z-index: 100; padding: 10px 16px; border: 1px solid #ffffff26; border-radius: 100px; background: #1c2422; color: #b6c8be; font: inherit; font-size: 12px; cursor: pointer; box-shadow: 0 4px 20px #0003; }
 .home-tour-replay[hidden] { display: none; }
-.home-tour-replay:hover { color: var(--accent); border-color: var(--accent); }
+.home-tour-replay:hover { color: #a6f4d2; border-color: #a6f4d280; }
