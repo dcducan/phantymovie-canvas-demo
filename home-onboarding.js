@@ -51,7 +51,7 @@
     step = next;
     const item = steps[next];
     const total = steps.length - 1;
-    const progress = `<div class="home-tour-progress" role="progressbar" aria-label="新手引导步骤" aria-valuemin="1" aria-valuemax="${total}" aria-valuenow="${next}" aria-valuetext="第 ${next} 步，共 ${total} 步"><div class="home-tour-progress-head" aria-hidden="true"><span class="home-tour-signal"><i></i><i></i><i></i></span><span class="home-tour-counter"><small>STEP</small><b>${String(next).padStart(2, "0")}</b><em>/ ${String(total).padStart(2, "0")}</em></span></div><div class="home-tour-segments" aria-hidden="true">${Array.from({ length: total }, (_, i) => `<i class="${i + 1 < next ? "is-done" : i + 1 === next ? "is-current" : ""}" style="--segment:${i}"></i>`).join("")}</div></div>`;
+    const progress = `<div class="home-tour-progress" role="status" aria-label="第 ${next} 步，共 ${total} 步">${String(next).padStart(2, "0")}/${String(total).padStart(2, "0")}</div>`;
     tour.highlight({ element: item.element, popover: {
       title: item.title,
       description: `${progress}${item.text}${next === 6 ? '<small class="home-tour-note">两种模式可在项目内切换，共享项目资产。点击卡片进入。</small>' : ''}`,
