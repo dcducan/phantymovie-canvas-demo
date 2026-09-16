@@ -22,7 +22,7 @@
     { element: "#ratio-section", title: "选择画面比例", text: "根据作品的展示方式，选择横屏、竖屏或正方形。", next: "选择视觉风格" },
     { element: "#style-section", title: "选择视觉风格", text: "选择适合这部作品的视觉风格，例如写实主义、动漫风格或电影感。", next: "准备创建" },
     { element: "#confirm-create-trigger", title: "创建项目", text: "设置完成后，点击高亮的「创建项目」。接下来选择创作模式。", side: "top" },
-    { element: "#project-mode-modal .project-mode-grid", title: "选择你的创作方式", text: "<strong>工作流</strong>：按剧本、资产、关键帧和视频逐步制作。<br><strong>无限画布</strong>：通过节点自由组织创作。<br><span class='home-tour-muted'>全自动 AI 生成即将开放。</span>", side: "bottom" },
+    { element: "#project-mode-modal .project-mode-grid", title: "选择你的创作模式", text: "根据你的创作需求，选择合适的模式开始创作。三种模式共享项目资产，后续可随时切换。", side: "bottom" },
   ];
   const tour = window.driver.js.driver({
     animate: !matchMedia("(prefers-reduced-motion: reduce)").matches,
@@ -54,7 +54,7 @@
     const progress = `<div class="home-tour-progress" role="status" aria-label="第 ${next} 步，共 ${total} 步">${String(next).padStart(2, "0")}/${String(total).padStart(2, "0")}</div>`;
     tour.highlight({ element: item.element, popover: {
       title: item.title,
-      description: `${progress}${item.text}${next === 6 ? '<small class="home-tour-note">两种模式可在项目内切换，共享项目资产。点击卡片进入。</small>' : ''}`,
+      description: `${progress}${item.text}`,
       side: item.side || "right", align: "center",
       showButtons: ["close", ...(next > 2 && next < 6 ? ["previous"] : []), ...(item.next ? ["next"] : [])],
       nextBtnText: item.next || "下一步", prevBtnText: "上一步",
