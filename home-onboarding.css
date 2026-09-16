@@ -7,7 +7,7 @@
   width: 316px;
   min-width: 230px;
   max-width: min(316px, calc(100vw - 32px));
-  padding: 24px;
+  padding: 52px 24px 24px;
   background: var(--tour-bubble);
   color: var(--tour-ink);
   border: 0;
@@ -38,6 +38,6 @@
 .home-tour-replay:hover { color: var(--accent); border-color: var(--accent); }
 
 /* Plain current/total step count. */
-.home-tour-progress { margin: 0 44px 14px 0; color: #12363d; font-size: 28px; line-height: 1.15; font-weight: 650; letter-spacing: -.8px; font-variant-numeric: tabular-nums; }
+.home-tour-progress { position: absolute; top: 17px; right: 64px; height: 26px; display: flex; align-items: center; margin: 0; color: #52747b; font-size: 13px; line-height: 1; font-weight: 500; font-variant-numeric: tabular-nums; }
 .home-tour-title-content { display: inline-flex; align-items: flex-start; gap: 9px; }
 .home-tour-title-icon { display: inline-block; flex: 0 0 23px; width: 23px; height: 23px; margin-top: 2px; background: currentColor; -webkit-mask: url("./assets/icons/signpost.svg") center / contain no-repeat; mask: url("./assets/icons/signpost.svg") center / contain no-repeat; }
