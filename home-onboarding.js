@@ -34,7 +34,14 @@
     onPopoverRender: (popover) => {
       popover.wrapper.setAttribute("aria-label", "产品首页新手引导");
       const progress = popover.description.querySelector(".home-tour-progress");
-      if (progress) popover.title.before(progress);
+      const meta = document.createElement("div");
+      meta.className = "home-tour-footer-meta";
+      if (progress) meta.append(progress);
+      meta.append(popover.closeButton);
+      popover.footer.prepend(meta);
+      popover.footer.style.display = "flex";
+      popover.previousButton.style.display = step > 2 && step < 6 ? "block" : "none";
+      popover.nextButton.style.display = steps[step]?.next ? "block" : "none";
       popover.closeButton.textContent = "跳过";
       popover.closeButton.setAttribute("aria-label", "跳过引导");
     },
