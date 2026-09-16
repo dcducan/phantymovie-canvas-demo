@@ -1,133 +1,87 @@
-/* Homepage-only tour. Observes the existing UI; never creates or edits project data. */
+/* Driver.js 1.8.0. Tour UI only; existing project creation/navigation stays untouched. */
 (() => {
-  const storageKey = "phanty-home-onboarding-v1";
   const home = document.getElementById("home-view");
   const createModal = document.getElementById("create-modal");
   const modeModal = document.getElementById("project-mode-modal");
   const startButton = home?.querySelector(".home-entry-start:not(:disabled)");
-  if (!home || !createModal || !modeModal || !startButton) return;
-
-  let dismissed = false;
-  try { dismissed = Boolean(localStorage.getItem(storageKey)); } catch (_) { /* Private browsing. */ }
-  let active = !dismissed;
+  if (!startButton || !window.driver?.js?.driver) return;
+  const storageKey = "phanty-home-onboarding-v1";
+  let active = true;
+  try { active = !localStorage.getItem(storageKey); } catch (_) { /* Optional persistence. */ }
   let step = 0;
   let frame = 0;
-  let highlighted = null;
-  let guideShell = null;
-  const card = document.createElement("aside");
-  card.className = "home-tour-card";
-  card.setAttribute("aria-label", "产品首页新手引导");
-  card.setAttribute("aria-live", "polite");
-  card.hidden = true;
-  document.body.append(card);
-  const spotlight = document.createElement("div");
-  spotlight.className = "home-tour-spotlight";
-  spotlight.hidden = true;
-  spotlight.setAttribute("aria-hidden", "true");
-  document.body.append(spotlight);
   const replay = document.createElement("button");
   replay.type = "button";
   replay.className = "home-tour-replay";
   replay.textContent = "新手引导";
   replay.setAttribute("aria-label", "重新查看产品首页新手引导");
-  home.querySelector(".home-heading").append(replay);
-
-  const copy = {
-    1: ["创建你的第一个项目", "点击「开始」，为你的影视创作建立一个项目。", "点击高亮按钮继续"],
-    2: ["设置项目信息", "填写项目名称，选择画面比例和视觉风格，然后点击「创建项目」。", "创建成功后进入下一步"],
-    3: ["选择你的创作方式", "工作流：按剧本、资产、关键帧和视频逐步制作。无限画布：通过节点自由组织创作。全自动 AI 生成即将开放。", "工作流与无限画布可在项目内切换，共享项目资产。"],
-  };
-  const isOpen = (modal) => modal.classList.contains("is-open");
+  document.body.append(replay);
+  const steps = [null,
+    { element: startButton, title: "创建你的第一个项目", text: "点击高亮的「开始」，为你的影视创作建立一个项目。", hint: "创建项目 · 1 / 3", side: "bottom" },
+    { element: "#project-name-input", title: "给项目起个名字", text: "填写项目名称，方便之后在项目管理中找到它。", hint: "项目设置 · 2 / 3", next: "设置画面比例" },
+    { element: "#ratio-section", title: "选择画面比例", text: "根据作品的展示方式，选择横屏、竖屏或正方形。", hint: "项目设置 · 2 / 3", next: "选择视觉风格" },
+    { element: "#style-section", title: "选择视觉风格", text: "选择适合这部作品的视觉风格，例如写实主义、动漫风格或电影感。", hint: "项目设置 · 2 / 3", next: "准备创建" },
+    { element: "#confirm-create-trigger", title: "创建项目", text: "设置完成后，点击高亮的「创建项目」。接下来选择创作模式。", hint: "项目设置 · 2 / 3", side: "top" },
+    { element: "#project-mode-modal .project-mode-grid", title: "选择你的创作方式", text: "<strong>工作流</strong>：按剧本、资产、关键帧和视频逐步制作。<br><strong>无限画布</strong>：通过节点自由组织创作。<br><span class='home-tour-muted'>全自动 AI 生成即将开放。</span>", hint: "选择模式 · 3 / 3", side: "bottom" },
+  ];
+  const tour = window.driver.js.driver({
+    animate: !matchMedia("(prefers-reduced-motion: reduce)").matches,
+    duration: 280, overlayColor: "#000000", overlayOpacity: 0.68,
+    stagePadding: 7, stageRadius: 12, popoverOffset: 16,
+    popoverClass: "home-tour-popover", allowKeyboardControl: false,
+    overlayClickBehavior: () => {},
+    onDestroyStarted: () => finish("skipped"),
+    onPopoverRender: (popover) => {
+      popover.wrapper.setAttribute("aria-label", "产品首页新手引导");
+      popover.closeButton.textContent = "跳过";
+      popover.closeButton.setAttribute("aria-label", "跳过引导");
+    },
+  });
+  const isOpen = modal => modal.classList.contains("is-open");
   const homeVisible = () => !home.classList.contains("is-hidden") && home.getClientRects().length > 0;
-  function clearHighlight() {
-    highlighted?.classList.remove("home-tour-target");
-    guideShell?.classList.remove("home-tour-shell");
-    highlighted = guideShell = null;
-    spotlight.hidden = true;
-  }
-  function hide() {
-    clearHighlight();
-    card.hidden = true;
-    step = 0;
-  }
+  function hide() { step = 0; tour.destroy(); }
   function finish(status) {
     active = false;
-    try { localStorage.setItem(storageKey, status); } catch (_) { /* Tour still works without storage. */ }
+    try { localStorage.setItem(storageKey, status); } catch (_) { /* Optional persistence. */ }
     hide();
-  }
-  function position() {
-    if (step !== 1 || card.hidden) return;
-    const bounds = startButton.getBoundingClientRect();
-    const padding = 7;
-    Object.assign(spotlight.style, {
-      left: `${bounds.left - padding}px`, top: `${bounds.top - padding}px`,
-      width: `${bounds.width + padding * 2}px`, height: `${bounds.height + padding * 2}px`,
-    });
-    const width = card.offsetWidth;
-    const height = card.offsetHeight;
-    const left = Math.max(12, Math.min(innerWidth - width - 12, bounds.left));
-    const below = bounds.bottom + 20;
-    const top = below + height < innerHeight - 12 ? below : Math.max(12, bounds.top - height - 20);
-    card.style.left = `${left}px`;
-    card.style.top = `${top}px`;
+    sync();
   }
   function show(next) {
-    if (step === next) { position(); return; }
-    clearHighlight();
+    if (step === next && tour.isActive()) return;
     step = next;
-    const [title, description, hint] = copy[next];
-    card.innerHTML = `<div class="home-tour-top"><span>新手引导 · ${next} / 3</span><button type="button" class="home-tour-skip">跳过引导</button></div><h3>${title}</h3><p>${description}</p><div class="home-tour-bottom"><span class="home-tour-dots" aria-hidden="true">${[1, 2, 3].map(n => `<i class="${n <= next ? "is-active" : ""}"></i>`).join("")}</span><small>${hint}</small></div>`;
-    card.querySelector("button").addEventListener("click", () => {
-      finish("skipped");
-      if (next === 1) replay.focus({ preventScroll: true });
-      else (next === 2 ? document.getElementById("project-name-input") : modeModal.querySelector("[data-project-mode]:not(:disabled)")).focus({ preventScroll: true });
-    });
-    card.hidden = false;
-    card.classList.toggle("is-floating", next === 1);
-    card.style.left = card.style.top = "";
-    if (next === 1) {
-      document.body.append(card);
-      spotlight.hidden = false;
-      startButton.scrollIntoView({ block: "center", behavior: "instant" });
-      position();
-    } else {
-      const modal = next === 2 ? createModal : modeModal;
-      guideShell = modal.querySelector(".modal-shell");
-      guideShell.classList.add("home-tour-shell");
-      guideShell.querySelector(".modal-header").after(card);
-      highlighted = modal.querySelector(next === 2 ? ".confirm-footer-pill" : ".project-mode-grid");
-      highlighted.classList.add("home-tour-target");
-    }
+    const item = steps[next];
+    tour.highlight({ element: item.element, popover: {
+      title: item.title,
+      description: `<span class="home-tour-kicker">${item.hint}</span>${item.text}${next === 6 ? '<small class="home-tour-note">两种模式可在项目内切换，共享项目资产。点击卡片进入。</small>' : ''}`,
+      side: item.side || "right", align: "center",
+      showButtons: ["close", ...(next > 2 && next < 6 ? ["previous"] : []), ...(item.next ? ["next"] : [])],
+      nextBtnText: item.next || "下一步", prevBtnText: "上一步",
+      onNextClick: () => show(next + 1), onPrevClick: () => show(next - 1),
+      onCloseClick: () => finish("skipped"),
+    }});
+    replay.hidden = true;
   }
   function sync() {
     frame = 0;
-    replay.hidden = !homeVisible();
+    replay.hidden = !homeVisible() || (active && step > 0) || isOpen(createModal) || isOpen(modeModal);
     if (!active) return;
-    if (step === 3 && !isOpen(modeModal)) {
-      // Leaving mode selection ends this introduction, without touching navigation.
-      finish("seen");
-      return;
-    }
+    if (step === 6 && !isOpen(modeModal)) { finish("seen"); return; }
     const otherModal = [...document.querySelectorAll(".modal-backdrop.is-open")].some(el => el !== createModal && el !== modeModal && el.getClientRects().length > 0);
     if (otherModal) { hide(); return; }
-    if (isOpen(modeModal) && (step === 2 || step === 3)) { show(3); return; }
+    if (isOpen(modeModal) && step >= 2) { show(6); return; }
     if (!homeVisible()) { hide(); return; }
-    if (isOpen(createModal) && document.getElementById("create-title").textContent === "创建新项目") { show(2); return; }
+    if (isOpen(createModal) && document.getElementById("create-title").textContent === "创建新项目") {
+      if (step < 2 || step > 5) show(2);
+      return;
+    }
     if (isOpen(modeModal)) { hide(); return; }
     show(1);
   }
-  function schedule() {
-    if (!frame) frame = requestAnimationFrame(sync);
-  }
-  // Observe only existing view/modal visibility, not the tour's own DOM changes.
+  function schedule() { if (!frame) frame = requestAnimationFrame(sync); }
   const observer = new MutationObserver(schedule);
   [home, ...document.querySelectorAll(".modal-backdrop")].forEach(el => observer.observe(el, { attributes: true, attributeFilter: ["class"] }));
-  replay.addEventListener("click", () => { active = true; hide(); sync(); });
-  document.addEventListener("keydown", event => {
-    if (event.key === "Escape" && active && step) finish("skipped");
-  });
-  window.addEventListener("resize", position);
-  document.addEventListener("scroll", position, true);
+  replay.addEventListener("click", () => { active = true; sync(); });
+  document.addEventListener("keydown", event => { if (event.key === "Escape" && active && step) finish("skipped"); });
   window.addEventListener("hashchange", schedule);
   sync();
 })();

@@ -1,41 +1,22 @@
-.home-tour-card {
-  box-sizing: border-box;
-  margin: 0 24px 16px;
-  padding: 18px 20px;
-  color: #edf7f4;
-  background: linear-gradient(125deg, #203c34, #192923);
-  border: 1px solid #6bc4a480;
-  border-radius: 16px;
-  font-family: inherit;
-  text-align: left;
-}
-.home-tour-card[hidden], .home-tour-spotlight[hidden], .home-tour-replay[hidden] { display: none; }
-.home-tour-card.is-floating {
-  position: fixed;
-  z-index: 60002;
-  width: min(360px, calc(100vw - 24px));
-  margin: 0;
-  box-shadow: 0 16px 56px #0008;
-}
-.home-tour-top, .home-tour-bottom { display: flex; align-items: center; gap: 16px; justify-content: space-between; }
-.home-tour-top > span { font-size: 11px; letter-spacing: 1px; color: #9ddac3; }
-.home-tour-skip { padding: 4px 0 4px 8px; border: 0; background: none; color: #bdccc5; cursor: pointer; font: inherit; font-size: 12px; }
-.home-tour-skip:hover { color: #fff; }
-.home-tour-card h3 { margin: 10px 0 7px; font-size: 19px; line-height: 1.4; color: #fff; }
-.home-tour-card p { margin: 0; font-size: 13px; line-height: 1.8; color: #d2dfd9; }
-.home-tour-bottom { margin-top: 15px; }
-.home-tour-bottom small { font-size: 11px; line-height: 1.6; color: #9fb8ac; }
-.home-tour-dots { display: flex; gap: 4px; flex-shrink: 0; }
-.home-tour-dots i { width: 16px; height: 3px; border-radius: 3px; background: #ffffff26; }
-.home-tour-dots i.is-active { background: #95eac6; }
-.home-tour-spotlight { position: fixed; z-index: 60001; border: 2px solid #a6f4d2; border-radius: 16px; box-sizing: border-box; box-shadow: 0 0 0 9999px #0008; pointer-events: none; }
-.home-tour-target { outline: 2px solid #95eac6; outline-offset: 5px; }
-.home-tour-shell { max-height: calc(100dvh - 48px); overflow-y: auto; }
-.home-tour-replay { margin-top: 12px; padding: 7px 14px; border: 1px solid #ffffff26; border-radius: 100px; background: #ffffff08; color: #b6c8be; font: inherit; font-size: 12px; cursor: pointer; }
+/* Only the tour layer is styled. Existing page/modal geometry is unchanged. */
+.driver-overlay { z-index: 60010 !important; }
+.driver-popover.home-tour-popover { z-index: 60011; width: 310px; min-width: 230px; max-width: min(310px, calc(100vw - 32px)); padding: 22px; background: #1c2422; color: #e9f1ed; border: 1px solid #75d8b060; border-radius: 16px; box-shadow: 0 16px 56px #0008; font-family: inherit; }
+.home-tour-popover .driver-popover-title { color: #fff; font-size: 18px; padding-right: 30px; }
+.home-tour-popover .driver-popover-description { color: #c9d4ce; font-size: 13px; line-height: 1.85; }
+.home-tour-kicker { display: block; color: #91dfbd; font-size: 11px; letter-spacing: 1px; margin: 5px 0 10px; }
+.home-tour-muted { color: #84968c; }
+.home-tour-note { display: block; margin-top: 12px; padding-top: 10px; border-top: 1px solid #ffffff16; color: #9dafa4; font-size: 11px; line-height: 1.7; }
+.home-tour-popover .driver-popover-close-btn { top: 12px; right: 12px; width: 34px; color: #9bafa3; font-size: 11px; }
+.home-tour-popover .driver-popover-close-btn:hover { color: #fff; }
+.home-tour-popover .driver-popover-footer-btn { padding: 8px 12px; border-radius: 8px; background: transparent; border-color: #ffffff26; color: #c5d6cc; text-shadow: none; font-size: 12px; }
+.home-tour-popover .driver-popover-next-btn { color: #11291f; background: #95eac6; border-color: #95eac6; }
+.home-tour-popover .driver-popover-next-btn:hover { background: #b4f4d8; }
+.home-tour-popover .driver-popover-prev-btn:hover { background: #ffffff0c; }
+.home-tour-popover button:focus-visible { outline: 2px solid #a6f4d2; outline-offset: 3px; }
+.home-tour-popover .driver-popover-arrow-side-left { border-left-color: #1c2422; }
+.home-tour-popover .driver-popover-arrow-side-right { border-right-color: #1c2422; }
+.home-tour-popover .driver-popover-arrow-side-top { border-top-color: #1c2422; }
+.home-tour-popover .driver-popover-arrow-side-bottom { border-bottom-color: #1c2422; }
+.home-tour-replay { position: fixed; right: 24px; bottom: 24px; z-index: 100; padding: 10px 16px; border: 1px solid #ffffff26; border-radius: 100px; background: #1c2422; color: #b6c8be; font: inherit; font-size: 12px; cursor: pointer; box-shadow: 0 4px 20px #0003; }
+.home-tour-replay[hidden] { display: none; }
 .home-tour-replay:hover { color: #a6f4d2; border-color: #a6f4d280; }
-.home-tour-skip:focus-visible, .home-tour-replay:focus-visible { outline: 2px solid #a6f4d2; outline-offset: 4px; }
-@media (max-width: 600px) {
-  .home-tour-card { margin: 0 12px 12px; padding: 12px 14px; }
-  .home-tour-card h3 { font-size: 16px; }
-  .home-tour-bottom { margin-top: 10px; }
-}
