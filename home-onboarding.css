@@ -33,7 +33,8 @@
 .home-tour-popover .driver-popover-arrow-side-right { border-right-color: var(--tour-bubble); }
 .home-tour-popover .driver-popover-arrow-side-top { border-top-color: var(--tour-bubble); }
 .home-tour-popover .driver-popover-arrow-side-bottom { border-bottom-color: var(--tour-bubble); }
-.topbar-tour-trigger { flex-shrink: 0; color: var(--accent); font: inherit; font-size: 14px; line-height: 1; white-space: nowrap; cursor: pointer; }
+.topbar-tour-trigger { display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0; color: #c7cbd0; font: inherit; font-size: 14px; line-height: 1; white-space: nowrap; cursor: pointer; }
+.topbar-tour-trigger::before { content: ""; flex: 0 0 18px; width: 18px; height: 18px; background: currentColor; -webkit-mask: url("./assets/icons/signpost.svg") center / contain no-repeat; mask: url("./assets/icons/signpost.svg") center / contain no-repeat; }
 .topbar-tour-trigger[hidden] { display: none !important; }
 .topbar-tour-trigger:hover { color: var(--text-main); }
 .topbar-tour-trigger:focus-visible { outline: 2px solid var(--accent); outline-offset: 5px; border-radius: 3px; }
