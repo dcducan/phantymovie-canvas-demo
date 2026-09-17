@@ -19,9 +19,9 @@
   const modalOpen = () => [...document.querySelectorAll('.modal-backdrop.is-open, .canvas-action-modal, .canvas-history-modal')].some(visible);
   const replay = document.createElement('button');
   replay.type = 'button';
-  replay.className = 'home-tour-replay';
+  replay.className = 'topbar-tour-trigger';
   replay.hidden = true;
-  document.body.append(replay);
+  document.getElementById('recharge-center-trigger').before(replay);
 
   const workflowSteps = [
     ['quick', '快捷创作', '第一次创作，可以从这里开始。按剧本分析、准备项目资产、生成整场多宫格关键帧、进入视频制作四步推进，并随时查看进度。'],
@@ -74,6 +74,8 @@
   }
   function start(kind) {
     if (!kind || session || document.body.classList.contains('driver-active') || modalOpen()) return;
+    seen.add(kind);
+    try { localStorage.setItem(key(kind), 'started'); } catch (_) { /* Optional persistence. */ }
     session = { kind, index: 0, route: location.hash, nodeId: null, outputId: null };
     show();
   }
@@ -123,8 +125,8 @@
     if (session && (kind !== session.kind || location.hash !== session.route)) stop();
     const blocked = modalOpen();
     replay.hidden = !kind || Boolean(session) || blocked || document.body.classList.contains('driver-active');
-    replay.textContent = kind === 'workflow' ? '工作流引导' : '画布引导';
-    replay.setAttribute('aria-label', kind === 'workflow' ? '重新查看工作流引导' : '重新查看画布引导');
+    replay.textContent = '新手引导';
+    replay.setAttribute('aria-label', '新手引导');
     if (!session) {
       if (kind && !isSeen(kind) && !blocked) start(kind);
       return;

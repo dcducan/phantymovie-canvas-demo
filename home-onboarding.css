@@ -33,9 +33,10 @@
 .home-tour-popover .driver-popover-arrow-side-right { border-right-color: var(--tour-bubble); }
 .home-tour-popover .driver-popover-arrow-side-top { border-top-color: var(--tour-bubble); }
 .home-tour-popover .driver-popover-arrow-side-bottom { border-bottom-color: var(--tour-bubble); }
-.home-tour-replay { position: fixed; right: 24px; bottom: 24px; z-index: 100; padding: 10px 16px; border: 1px solid var(--line-mid); border-radius: 999px; background: var(--panel-3); color: var(--text-faint); font: inherit; font-size: 12px; cursor: pointer; box-shadow: 0 4px 20px #0003; }
-.home-tour-replay[hidden] { display: none; }
-.home-tour-replay:hover { color: var(--accent); border-color: var(--accent); }
+.topbar-tour-trigger { flex-shrink: 0; color: var(--accent); font: inherit; font-size: 14px; line-height: 1; white-space: nowrap; cursor: pointer; }
+.topbar-tour-trigger[hidden] { display: none !important; }
+.topbar-tour-trigger:hover { color: var(--text-main); }
+.topbar-tour-trigger:focus-visible { outline: 2px solid var(--accent); outline-offset: 5px; border-radius: 3px; }
 
 /* Plain current/total step count. */
 .home-tour-progress { margin: 0; color: #52747b; font-size: 13px; line-height: 26px; font-weight: 500; font-variant-numeric: tabular-nums; }

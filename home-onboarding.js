@@ -12,10 +12,11 @@
   let frame = 0;
   const replay = document.createElement("button");
   replay.type = "button";
-  replay.className = "home-tour-replay";
+  replay.className = "topbar-tour-trigger";
+  replay.hidden = true;
   replay.textContent = "新手引导";
-  replay.setAttribute("aria-label", "重新查看产品首页新手引导");
-  document.body.append(replay);
+  replay.setAttribute("aria-label", "新手引导");
+  document.getElementById("recharge-center-trigger").before(replay);
   const steps = [null,
     { element: startButton, title: "创建你的第一个项目", text: "点击高亮的「开始」，为你的影视创作建立一个项目。", side: "bottom" },
     { element: "#project-name-input", title: "给项目起个名字", text: "填写项目名称，方便之后在项目管理中找到它。", next: "设置画面比例" },
@@ -58,6 +59,7 @@
   function show(next) {
     if (step === next && tour.isActive()) return;
     step = next;
+    try { localStorage.setItem(storageKey, "started"); } catch (_) { /* Optional persistence. */ }
     const item = steps[next];
     const total = steps.length - 1;
     const progress = `<div class="home-tour-progress" role="status" aria-label="第 ${next} 步，共 ${total} 步">${String(next).padStart(2, "0")}/${String(total).padStart(2, "0")}</div>`;
